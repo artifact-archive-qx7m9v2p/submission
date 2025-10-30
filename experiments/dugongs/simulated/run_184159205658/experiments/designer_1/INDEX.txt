@@ -1,0 +1,243 @@
+================================================================================
+DESIGNER 1: BAYESIAN MODEL PROPOSALS
+Parsimonious & Interpretable Approach
+================================================================================
+
+DIRECTORY STRUCTURE:
+/workspace/experiments/designer_1/
+│
+├── INDEX.txt                        ← You are here (navigation guide)
+├── README.md                        ← Start here (overview, 351 lines)
+├── QUICK_REFERENCE.md               ← Quick lookup (TL;DR, 315 lines)
+├── MODEL_COMPARISON_MATRIX.md       ← Decision matrix (12K, comprehensive)
+├── proposed_models.md               ← Full specifications (31K, main document)
+└── implementation_guide.md          ← Code templates (22K, PyMC/Stan)
+
+================================================================================
+READING GUIDE
+================================================================================
+
+For BUSY READERS (5 minutes):
+  1. QUICK_REFERENCE.md - TL;DR and decision flowchart
+  2. MODEL_COMPARISON_MATRIX.md - Model comparison table
+
+For IMPLEMENTERS (30 minutes):
+  1. README.md - Overview
+  2. proposed_models.md - Section 1 (Model 1: Logarithmic)
+  3. implementation_guide.md - Model 1 code
+  4. → Start coding!
+
+For COMPLETE UNDERSTANDING (2 hours):
+  1. README.md - Full overview
+  2. proposed_models.md - All three models
+  3. implementation_guide.md - All implementations
+  4. MODEL_COMPARISON_MATRIX.md - Decision criteria
+  5. QUICK_REFERENCE.md - Keep open as reference
+
+================================================================================
+THREE PROPOSED MODELS
+================================================================================
+
+PRIORITY 1: LOGARITHMIC (PRIMARY)
+  • Specification: Y ~ Normal(β₀ + β₁·log(x), σ)
+  • Parameters: 2 (β₀, β₁)
+  • Expected R²: 0.83
+  • Complexity: Simple ★☆☆
+  • Interpretability: High ★★★
+  • Computational cost: Low ★☆☆
+  • When to use: Default choice, EDA-supported
+  • Expected success: 80%
+
+PRIORITY 2: POWER LAW (ALTERNATIVE)
+  • Specification: Y ~ Normal(β₀ + β₁·x^β₂, σ)
+  • Parameters: 3 (β₀, β₁, β₂)
+  • Expected R²: 0.85
+  • Complexity: Moderate ★★☆
+  • Interpretability: Medium ★★☆
+  • Computational cost: Medium ★★☆
+  • When to use: If Model 1 shows residual patterns
+  • Expected success: 15%
+
+PRIORITY 3: ASYMPTOTIC (THEORETICAL)
+  • Specification: Y ~ Normal(Y_min + Y_range·x/(K+x), σ)
+  • Parameters: 3 (Y_min, Y_max, K)
+  • Expected R²: 0.82
+  • Complexity: Complex ★★★
+  • Interpretability: High ★★★
+  • Computational cost: High ★★★
+  • When to use: If saturation expected, bounded predictions needed
+  • Expected success: 5%
+
+================================================================================
+RECOMMENDED WORKFLOW
+================================================================================
+
+PHASE 1: Fit Model 1 (Days 1-2)
+  [X] Implement logarithmic model in PyMC
+  [X] Sample posterior (4 chains × 2000 draws)
+  [X] Check convergence (R-hat < 1.01, ESS > 400)
+  [X] Residual diagnostics (normality, patterns)
+  [X] Posterior predictive checks (>90% coverage)
+  [X] LOO-CV computation (Pareto k diagnostics)
+  
+  → If ALL pass: DONE, report Model 1 ✓
+  → If ANY fail: Proceed to Phase 2
+
+PHASE 2: Compare Models (Days 3-4, if needed)
+  [ ] Fit Model 2 (Power Law)
+  [ ] Check convergence and diagnostics
+  [ ] Compare LOO-CV: ΔELPD > 3?
+  [ ] Choose based on fit + parsimony
+  
+  → If Model 2 substantially better: Use it ✓
+  → If comparable: Use Model 1 (simpler) ✓
+  → If both fail: Proceed to Phase 3
+
+PHASE 3: Asymptotic Model (Days 5-6, only if needed)
+  [ ] Fit Model 3 (if theoretical justification)
+  [ ] Extended sampling (may need 4000+ iterations)
+  [ ] Three-way LOO-CV comparison
+  [ ] Select based on LOO + interpretability + domain knowledge
+
+================================================================================
+KEY SUCCESS CRITERIA
+================================================================================
+
+CONVERGENCE:
+  ✓ R-hat < 1.01 (< 1.02 acceptable, < 1.05 minimum)
+  ✓ ESS > 400 per parameter (> 1000 preferred)
+  ✓ No divergent transitions (< 1% acceptable)
+  ✓ Trace plots show good mixing
+
+MODEL ADEQUACY:
+  ✓ Residuals approximately normal (Shapiro p > 0.05)
+  ✓ No systematic patterns in residual plot
+  ✓ Homoscedastic (constant variance)
+  ✓ No autocorrelation (Durbin-Watson ≈ 2)
+
+PREDICTIVE PERFORMANCE:
+  ✓ >90% observations in 95% posterior CI
+  ✓ LOO: <20% points with Pareto k > 0.7
+  ✓ RMSE < 0.25 (better than marginal SD)
+
+SCIENTIFIC PLAUSIBILITY:
+  ✓ Parameters have correct signs (β₁ > 0)
+  ✓ Parameter magnitudes reasonable
+  ✓ Extrapolation behavior sensible
+  ✓ Interpretable to stakeholders
+
+================================================================================
+RED FLAGS (ABANDON MODEL IF)
+================================================================================
+
+COMPUTATIONAL:
+  ✗ Divergent transitions persist (>5% even after tuning)
+  ✗ R-hat > 1.05 (non-convergence)
+  ✗ ESS < 400 (inefficient sampling)
+  ✗ Bimodal posteriors (multiple solutions)
+
+STATISTICAL:
+  ✗ Systematic residual patterns (wrong functional form)
+  ✗ <80% posterior predictive coverage (poor calibration)
+  ✗ >20% observations with Pareto k > 0.7 (influential obs)
+  ✗ Prior ≈ Posterior (data not informative)
+
+SCIENTIFIC:
+  ✗ β₁ ≤ 0 (wrong direction - fundamental model failure)
+  ✗ σ > 0.4 (R² < 0.3, poor fit)
+  ✗ Absurd extrapolations (e.g., Y=10 at x=50)
+  ✗ Parameters make no domain sense
+
+→ Any red flag triggers model revision or pivot to alternative
+
+================================================================================
+CRITICAL DATA LIMITATIONS
+================================================================================
+
+⚠ SPARSE HIGH-X DATA:
+  • Only 3 observations with x > 20 (N=3 out of N=27 = 11%)
+  • High-x region spans 11.5 units (x ∈ [20, 31.5])
+  • Low-x region spans 19 units (x ∈ [1, 20]) with N=24
+
+⚠ EXTRAPOLATION CAUTION:
+  • All predictions beyond x=31.5 highly uncertain
+  • Models 1 & 2 predict unbounded Y growth
+  • Model 3 predicts bounded Y (asymptote at Y_max)
+  • Recommend wide credible intervals and explicit warnings
+
+⚠ MODEST SAMPLE SIZE:
+  • N=27 is modest for complex nonlinear models
+  • Favors parsimonious models (Model 1 > Model 2/3)
+  • Overfitting risk increases with parameters
+
+================================================================================
+IMPLEMENTATION QUICK START
+================================================================================
+
+MINIMAL WORKING EXAMPLE (Model 1):
+
+    import pymc as pm
+    import pandas as pd
+    import arviz as az
+
+    # Load data
+    data = pd.read_csv('/workspace/data/data.csv')
+    x_obs, y_obs = data['x'].values, data['Y'].values
+
+    # Model
+    with pm.Model() as log_model:
+        beta_0 = pm.Normal('beta_0', mu=1.73, sigma=0.5)
+        beta_1 = pm.Normal('beta_1', mu=0.28, sigma=0.15)
+        sigma = pm.Exponential('sigma', lam=5.0)
+        
+        mu = beta_0 + beta_1 * pm.math.log(x_obs)
+        Y_obs = pm.Normal('Y_obs', mu=mu, sigma=sigma, observed=y_obs)
+        
+        trace = pm.sample(2000, tune=1000, chains=4, target_accept=0.95)
+
+    # Diagnostics
+    print(az.summary(trace))
+    az.plot_trace(trace)
+
+→ See implementation_guide.md for complete code with all diagnostics
+
+================================================================================
+FILE SIZES AND LINE COUNTS
+================================================================================
+
+proposed_models.md              31K    1001 lines   ← Full specifications
+implementation_guide.md         22K     789 lines   ← Complete code
+MODEL_COMPARISON_MATRIX.md      12K     410 lines   ← Decision matrix
+README.md                      9.6K     351 lines   ← Overview
+QUICK_REFERENCE.md             7.1K     315 lines   ← Quick lookup
+INDEX.txt                        --     220 lines   ← This file
+
+TOTAL:                          92K    3086 lines
+
+================================================================================
+CONTACT INFORMATION
+================================================================================
+
+Designer:           Designer 1 (Parsimony Focus)
+Date:               2025-10-27
+Philosophy:         Start simple, add complexity only when justified
+Expected outcome:   Logarithmic model (80% probability)
+                    Power Law model (15% probability)
+                    Asymptotic or alternative (5% probability)
+
+================================================================================
+FINAL ADVICE
+================================================================================
+
+"The simplest model that passes all checks is the best model."
+
+  • Start with Model 1 (Logarithmic) - 2 parameters
+  • Validate thoroughly (convergence, residuals, PPC, LOO)
+  • Only add complexity if Model 1 fails checks
+  • Stop when adequate, not perfect
+  • Interpretability matters (N=27 is modest)
+  • Acknowledge limitations (x > 20 extrapolation)
+
+Good luck! 🎯
+
+================================================================================

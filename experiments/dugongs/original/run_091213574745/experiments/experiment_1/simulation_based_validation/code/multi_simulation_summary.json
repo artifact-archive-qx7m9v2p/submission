@@ -1,0 +1,33 @@
+{
+  "validation_pass": true,
+  "n_simulations": 20,
+  "true_parameters": {
+    "beta_0": 2.3,
+    "beta_1": 0.29,
+    "sigma": 0.09
+  },
+  "coverage_rates": {
+    "beta_0": 0.9,
+    "beta_1": 0.9,
+    "sigma": 0.8
+  },
+  "bias": {
+    "beta_0": {
+      "absolute": -0.0084,
+      "relative_pct": -0.36
+    },
+    "beta_1": {
+      "absolute": 0.0013,
+      "relative_pct": 0.47
+    },
+    "sigma": {
+      "absolute": -0.0072,
+      "relative_pct": -7.99
+    }
+  },
+  "standardized_bias": {
+    "beta_0": -0.19,
+    "beta_1": 0.07,
+    "sigma": -0.8
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "loo_diagnostics": {
+    "loo_elpd": 17.111353299820358,
+    "loo_se": 3.0716015079103336,
+    "p_loo": 2.5423699580488552,
+    "pareto_k_good": 27,
+    "pareto_k_ok": 0,
+    "pareto_k_bad": 0,
+    "pareto_k_max": 0.36327906949381367,
+    "pareto_k_max_observation": 25,
+    "loo_rmse": 0.11493445074264322,
+    "loo_mae": 0.09318824261416053
+  },
+  "calibration": {
+    "0.5": {
+      "expected": 0.5,
+      "observed": 0.5185185185185185,
+      "n_in": 14,
+      "n_total": 27
+    },
+    "0.8": {
+      "expected": 0.8,
+      "observed": 0.8148148148148148,
+      "n_in": 22,
+      "n_total": 27
+    },
+    "0.9": {
+      "expected": 0.9,
+      "observed": 0.9259259259259259,
+      "n_in": 25,
+      "n_total": 27
+    },
+    "0.95": {
+      "expected": 0.95,
+      "observed": 1.0,
+      "n_in": 27,
+      "n_total": 27
+    },
+    "0.99": {
+      "expected": 0.99,
+      "observed": 1.0,
+      "n_in": 27,
+      "n_total": 27
+    }
+  },
+  "performance_metrics": {
+    "rmse": 0.1149344507426402,
+    "mae": 0.09318824261415644,
+    "residual_sd": 0.11493424081300518,
+    "r2_bayesian": 0.5653299833569896,
+    "baseline_rmse": 0.2779356368401793,
+    "rmse_improvement_pct": 58.64709828170373
+  },
+  "uncertainty": {
+    "mean_interval_width_95": 0.5179057817894107,
+    "min_interval_width_95": 0.5077097365145242,
+    "max_interval_width_95": 0.5515353612613132,
+    "correlation_width_x": -0.15765533592368222
+  },
+  "parameters": {
+    "alpha": {
+      "mean": 1.7501346979891321,
+      "sd": 0.05792241933289519,
+      "hdi_95_lower": 1.6412620532075755,
+      "hdi_95_upper": 1.8664405904831392
+    },
+    "beta": {
+      "mean": 0.27560183501784985,
+      "sd": 0.025482221082707646,
+      "hdi_95_lower": 0.22475174636908904,
+      "hdi_95_upper": 0.32372383619933276,
+      "prob_positive": 1.0
+    },
+    "sigma": {
+      "mean": 0.1251141048639395,
+      "sd": 0.018590034323840435,
+      "hdi_95_lower": 0.09206973730684041,
+      "hdi_95_upper": 0.16231149605569364
+    }
+  },
+  "effect_sizes": {
+    "doubling_x": 0.19103263489976982,
+    "x1_to_x10": 0.6345966769139055,
+    "x1_to_x31": 0.9508228984199137,
+    "pct_of_y_range": 103.38764980719368
+  }
+}

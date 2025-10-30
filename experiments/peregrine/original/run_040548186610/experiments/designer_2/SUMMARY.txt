@@ -1,0 +1,79 @@
+================================================================================
+DESIGNER 2: NON-PARAMETRIC/FLEXIBLE BAYESIAN MODELS
+Experiment Plan Summary
+================================================================================
+
+PHILOSOPHY: Let data reveal functional form, not impose rigid assumptions
+
+THREE MODELS PROPOSED:
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. GP-NegBin: Gaussian Process + Negative Binomial                 │
+│    - Highest flexibility, no parametric assumptions                 │
+│    - Learns smoothness from data (lengthscale parameter)            │
+│    - Risk: Might overfit with n=40                                  │
+│    - Abandon if: Lengthscale→∞ OR divergences>10% OR LOO-IC poor   │
+│                                                                      │
+│ 2. P-splines: Penalized B-splines + NegBin (EXPECTED WINNER)        │
+│    - Medium flexibility with automatic smoothness penalty           │
+│    - Goldilocks: Not too rigid, not too flexible                    │
+│    - Risk: Boundary artifacts, knot sensitivity                     │
+│    - Abandon if: τ→0 (over-smooth) OR τ→∞ (under-smooth)           │
+│                                                                      │
+│ 3. Semi-parametric: Logistic growth + GP deviations                │
+│    - Combines mechanistic structure with flexibility                │
+│    - Tests if data = simple pattern + random shocks                 │
+│    - Risk: Most complex, may not converge                           │
+│    - Abandon if: Deviations dominate OR computational failure       │
+└─────────────────────────────────────────────────────────────────────┘
+
+FALSIFICATION MINDSET:
+I will ABANDON all flexible models if:
+  → Designer 1's simple quadratic NegBin beats me on LOO-CV
+  → All my models collapse to near-linear functions
+  → Holdout predictions terrible (overfitting)
+  → Computational issues insurmountable
+
+DECISION POINTS:
+  After GP + Splines → Are we beating parametric baseline?
+    YES (LOO-IC >15 better) → Flexibility warranted, continue
+    MARGINAL (5-15 better) → Ensemble approach
+    NO (<5 better) → Adopt Designer 1's models, stop
+
+  After Semi-parametric → Is decomposition useful?
+    Small deviations → Pure parametric sufficient
+    Large deviations → Parametric form wrong
+    
+  Cross-designer → Which perspective wins?
+    Designer 1 wins → Data simpler than thought
+    Designer 2 wins → Non-linearity needs flexibility
+    Designer 3 wins → Temporal correlation dominates
+
+IMPLEMENTATION PRIORITY:
+  1st: P-splines (most likely to work)
+  2nd: GP-NegBin (scientific benchmark)
+  3rd: Semi-parametric (if time allows)
+
+SUCCESS CRITERIA:
+  ✓ At least 1 model converges (R̂<1.01, ESS>400)
+  ✓ Competitive LOO-CV with parametric baseline
+  ✓ Posterior predictive checks pass
+  ✓ Honest about when flexibility isn't needed
+
+RED FLAGS (pivot if seen):
+  ⚠ All flexible components collapse → Use parametric
+  ⚠ High residual autocorrelation → Try Designer 3's temporal models
+  ⚠ Won't converge → Simplify or abandon Bayesian
+  ⚠ Wildly different results across models → Model uncertainty high
+
+DOCUMENTS CREATED:
+  📄 proposed_models.md - Full specs (Stan/PyMC code, priors, falsification)
+  📄 experiment_plan.md - Strategy (decision rules, pivots, backups)
+  📄 model_comparison_matrix.md - Quick reference table
+  📄 README.md - Brief summary
+  📄 SUMMARY.txt - This file
+
+NEXT PHASE: Implementation (fit models, compute LOO-CV, posterior checks)
+
+================================================================================
+"Finding truth, not completing tasks. Ready to pivot when evidence demands."
+================================================================================

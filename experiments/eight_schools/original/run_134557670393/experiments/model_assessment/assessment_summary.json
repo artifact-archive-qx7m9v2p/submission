@@ -1,0 +1,58 @@
+{
+  "model_name": "Bayesian Hierarchical Meta-Analysis",
+  "n_studies": 8,
+  "loo_metrics": {
+    "elpd_loo": -30.785858723180723,
+    "se_elpd": 1.0087388752079136,
+    "p_loo": 1.0855457341679262,
+    "looic": 61.57171744636145,
+    "pareto_k_min": 0.3029492694381382,
+    "pareto_k_max": 0.6324445559986983,
+    "pareto_k_mean": 0.45651529634246596,
+    "pareto_k_median": 0.4441576458481002,
+    "n_k_good": 6,
+    "n_k_ok": 2,
+    "n_k_bad": 0,
+    "n_k_very_bad": 0
+  },
+  "calibration_metrics": {
+    "loo_pit_values": [
+      0.9134224266599256,
+      0.5047244510134851,
+      0.2596386005574106,
+      0.4647139437728771,
+      0.15333328602617124,
+      0.2751438446097283,
+      0.8430997782604169,
+      0.5954312066818934
+    ],
+    "ks_statistic": 0.15456879331810658,
+    "ks_pvalue": 0.9751168097517431,
+    "calibration_assessment": "well_calibrated",
+    "coverage_50_pct": 25.0,
+    "coverage_90_pct": 75.0,
+    "coverage_50_nominal": 50.0,
+    "coverage_90_nominal": 90.0,
+    "coverage_50_deviation": -25.0,
+    "coverage_90_deviation": -15.000000000000002
+  },
+  "absolute_metrics": {
+    "rmse": 8.916547641153977,
+    "mae": 6.972872641446162,
+    "mse": 79.50482183696857,
+    "coverage_50": 0.25,
+    "coverage_90": 0.75,
+    "width_50_mean": 6.969886832665381,
+    "width_90_mean": 18.149748910346478,
+    "naive_rmse": 9.76921184128996,
+    "naive_mae": 7.9375,
+    "rmse_improvement_pct": 8.728075652246215,
+    "mae_improvement_pct": 12.152785619575912
+  },
+  "overall_assessment": {
+    "loo_reliability": "excellent",
+    "calibration": "well_calibrated",
+    "predictive_accuracy": "good",
+    "recommendation": "adequate"
+  }
+}

@@ -1,0 +1,389 @@
+================================================================================
+DESIGNER 1: PARAMETRIC BAYESIAN GLM MODELS - EXECUTIVE SUMMARY
+================================================================================
+
+DATE: 2025-10-29
+FOCUS: Parametric GLM approach with explicit trend functions
+STATUS: Design complete, ready for implementation
+
+================================================================================
+THREE PROPOSED MODELS
+================================================================================
+
+MODEL 1: NEGATIVE BINOMIAL QUADRATIC (START HERE - HIGHEST PRIORITY)
+---------------------------------------------------------------------
+C ~ NegBinomial(mu, phi)
+log(mu) = β₀ + β₁·year + β₂·year²
+
+WHY: Handles overdispersion (Var/Mean=68) + acceleration (6x rate increase)
+REJECT IF: Residual ACF > 0.9 OR coverage < 50%
+EXPECTED: Works reasonably but shows temporal correlation 0.6-0.8
+
+MODEL 2: NEGATIVE BINOMIAL EXPONENTIAL (SIMPLER ALTERNATIVE)
+---------------------------------------------------------------------
+C ~ NegBinomial(mu, phi)
+log(mu) = β₀ + β₁·year
+
+WHY: Test exponential growth hypothesis, more parsimonious
+REJECT IF: LOO-IC worse than Model 1 by > 10 points
+EXPECTED: Slightly worse fit than Model 1 (EDA suggests acceleration)
+
+MODEL 3: QUASI-POISSON WITH RANDOM EFFECTS (FLEXIBLE, USE IF NEEDED)
+---------------------------------------------------------------------
+C ~ Poisson(mu · exp(ε)), ε ~ Normal(0, σ)
+log(mu) = β₀ + β₁·year + β₂·year²
+
+WHY: Allows time-varying dispersion (Q3 period has Var/Mean=13.5 vs others 1.6-2.4)
+REJECT IF: Divergent transitions OR ε shows autocorrelation
+EXPECTED: May overfit with n=40, only use if Models 1/2 inadequate
+
+================================================================================
+KEY FINDINGS FROM EDA THAT DRIVE DESIGN
+================================================================================
+
+1. Extreme overdispersion: Variance/Mean = 68 (Poisson expects 1.0)
+   → Must use negative binomial distribution
+
+2. Strong non-linearity: Quadratic R² = 0.961 vs Linear R² = 0.885
+   → Need polynomial or exponential terms
+
+3. Accelerating growth: 6× rate increase from early to late period
+   → Quadratic likely better than exponential
+
+4. High temporal autocorrelation: lag-1 r = 0.989
+   → THIS IS THE BIGGEST CHALLENGE for parametric GLMs
+   → Will likely show residual autocorrelation 0.6-0.8
+   → May need AR structure or handoff to Designer 2
+
+5. Time-varying variance: Q3 has extreme overdispersion vs other periods
+   → Model 3 addresses this, but may be too complex for n=40
+
+================================================================================
+CRITICAL SUCCESS/FAILURE CRITERIA
+================================================================================
+
+PARAMETRIC GLMs SUCCEED IF:
+---------------------------
+- Coverage: 85-98%
+- Residual ACF(1): < 0.6
+- Clear LOO-IC winner (difference > 5)
+- No systematic residual patterns
+- Out-of-sample RMSE < 35
+
+PARAMETRIC GLMs ADEQUATE IF:
+----------------------------
+- Coverage: 75-85%
+- Residual ACF(1): 0.6-0.8
+- Can be extended (add AR errors, time-varying dispersion)
+
+PARAMETRIC GLMs FAIL IF (any 2 of):
+-----------------------------------
+1. All models show residual ACF(1) > 0.80
+2. All models have coverage < 75%
+3. All models show systematic residual patterns
+4. LOO-IC differences < 3 (equally bad)
+5. Out-of-sample RMSE > 50
+
+→ If failed: Recommend Designer 2's state-space models
+
+================================================================================
+IMPLEMENTATION PRIORITY
+================================================================================
+
+PHASE 1: FITTING (15 min)
+1. Model 1 first (most important)
+2. Model 2 next (compare polynomial vs exponential)
+3. Model 3 only if Models 1/2 show dispersion issues
+
+PHASE 2: DIAGNOSTICS (75 min per model)
+- MCMC: Rhat < 1.01, ESS > 400, no divergences
+- PPC: Coverage 85-98%, overdispersion adequacy
+- Residuals: ACF < 0.5, no patterns vs time/fitted
+- LOO: Pareto k < 0.7, compare models
+
+PHASE 3: VALIDATION (25 min)
+- Fit on 80% data, predict 20%
+- Check RMSE and predictive intervals
+
+PHASE 4: DECISION (45 min)
+- Create comparison table
+- Identify best model
+- Decide: adequate/inadequate/failed?
+
+TOTAL TIME: ~2.5 hours
+
+================================================================================
+MOST LIKELY OUTCOME
+================================================================================
+
+PREDICTION:
+- Model 1 (NB Quadratic) will fit reasonably well
+- Will capture acceleration and overdispersion
+- BUT: Will show residual ACF 0.6-0.8 (temporal correlation issue)
+- Model 2 will be slightly worse (lacks acceleration term)
+- Model 3 may overfit or be unstable
+
+CONCLUSION:
+- Parametric trend is good approximation
+- But temporal correlation (lag-1 = 0.989) cannot be ignored
+- Need hybrid: Parametric trend + AR errors
+- OR: Handoff to Designer 2's state-space models
+
+RECOMMENDATION:
+- Use Model 1 as interpretable baseline
+- Extend with AR(1) errors: log(mu) = trend + AR(1) process
+- OR: Let Designer 2 handle temporal dynamics fully
+
+================================================================================
+FILES IN THIS DIRECTORY
+================================================================================
+
+1. README.md (7 KB)
+   - Overview and navigation
+   - Read this first for orientation
+
+2. proposed_models.md (32 KB, 985 lines)
+   - COMPLETE mathematical specifications
+   - All priors, justifications, falsification criteria
+   - Read for full theoretical details
+
+3. implementation_guide.md (8.8 KB, 342 lines)
+   - Quick reference for implementation
+   - Diagnostic checklist, decision tree
+   - Read for practical guidance
+
+4. stan_templates.txt (13 KB, 483 lines)
+   - Complete Stan code for all 3 models
+   - Python and R wrapper examples
+   - Copy-paste ready
+
+5. SUMMARY.txt (this file)
+   - Executive summary for quick reference
+
+================================================================================
+INTEGRATION WITH OTHER DESIGNERS
+================================================================================
+
+TO DESIGNER 2 (NON-PARAMETRIC / STATE-SPACE):
+----------------------------------------------
+I provide:
+- Residual ACF values (will likely be 0.6-0.8)
+- Baseline parametric performance
+- Evidence that temporal correlation matters
+
+You should:
+- Try AR(p) models to reduce autocorrelation
+- Compare state-space vs parametric+AR
+- Test if GP regression beats parametric trends
+
+TO DESIGNER 3 (HIERARCHICAL / TEMPORAL):
+----------------------------------------
+I provide:
+- Dispersion estimates by time period
+- Evidence for time-varying variance (Q3 vs others)
+- Period-specific diagnostics
+
+You should:
+- Try hierarchical models by period
+- Test changepoint models
+- Compare period-specific effects
+
+================================================================================
+KEY DESIGN PRINCIPLES APPLIED
+================================================================================
+
+1. FALSIFICATION MINDSET
+   - Each model has explicit rejection criteria
+   - Know when to abandon approach
+   - Success = learning what doesn't work
+
+2. MULTIPLE COMPETING HYPOTHESES
+   - Polynomial vs exponential growth
+   - Constant vs flexible dispersion
+   - Test specific scientific questions
+
+3. PRACTICAL CONSTRAINTS
+   - Simple enough for n=40
+   - Complex enough to capture structure
+   - Computationally tractable
+
+4. ESCAPE ROUTES
+   - Clear decision rules for pivoting
+   - Know when to handoff to other designers
+   - Built-in checkpoints
+
+5. SCIENTIFIC PLAUSIBILITY
+   - Priors centered on EDA findings
+   - Parameters have interpretations
+   - Models reflect possible mechanisms
+
+================================================================================
+PRIORS QUICK REFERENCE
+================================================================================
+
+All models use weakly informative priors centered on EDA:
+
+β₀ ~ Normal(4.7, 0.5)    # Intercept: log(109) ≈ 4.7
+β₁ ~ Normal(0.8, 0.3)    # Growth rate: EDA suggested 0.85
+β₂ ~ Normal(0.3, 0.2)    # Acceleration: OLS gave 0.30
+phi ~ Gamma(2, 0.5)      # Dispersion: allows 0.5-20 range
+σ ~ Exponential(1)       # Obs variance: favors small but allows large
+
+JUSTIFICATION:
+- Centered on empirical estimates
+- Wide enough to allow data to speak
+- Not so wide as to be uninformative
+- Regularizing for small sample (n=40)
+
+================================================================================
+RED FLAGS DURING IMPLEMENTATION
+================================================================================
+
+DURING FITTING:
+- Divergent transitions → Increase adapt_delta to 0.95
+- Rhat > 1.01 → Increase iterations or check non-centered param
+- ESS < 400 → May need longer chains
+- Extreme phi values (< 0.1 or > 50) → Model struggling
+
+DURING DIAGNOSTICS:
+- Residual ACF(1) > 0.8 → Temporal correlation dominates
+- Coverage < 70% → Wrong distribution
+- U-shape in residuals vs fitted → Wrong trend function
+- LOO Pareto k > 0.7 for many points → Overfitting
+
+DURING COMPARISON:
+- All LOO-IC within 3 points → Models equally bad
+- Model 3 much worse → Overfitting
+- All fail same way → Wrong model class
+
+================================================================================
+WHAT EACH MODEL TEACHES US
+================================================================================
+
+MODEL 1 SUCCESS → Acceleration is real, constant dispersion OK
+MODEL 1 FAILURE → Need time-varying parameters or different structure
+
+MODEL 2 BETTER THAN MODEL 1 → Exponential sufficient, parsimony wins
+MODEL 2 WORSE THAN MODEL 1 → Acceleration matters, need quadratic
+
+MODEL 3 BETTER THAN MODEL 1 → Time-varying dispersion important
+MODEL 3 WORSE THAN MODEL 1 → Constant dispersion adequate
+
+ALL SHOW HIGH ACF → Temporal correlation dominates, need AR/state-space
+ALL HAVE LOW COVERAGE → Wrong distributional family, try alternatives
+ALL SIMILAR LOO-IC → Parametric forms don't matter, need more flexibility
+
+================================================================================
+EXPECTED PARAMETER ESTIMATES (ROUGH PREDICTIONS)
+================================================================================
+
+Based on EDA:
+
+MODEL 1 (NB QUADRATIC):
+β₀ ≈ 4.7 ± 0.3     (exp(4.7) = 109 counts at year=0)
+β₁ ≈ 0.8 ± 0.2     (positive growth rate)
+β₂ ≈ 0.3 ± 0.15    (positive acceleration)
+phi ≈ 2-5          (overdispersion parameter)
+
+MODEL 2 (NB EXPONENTIAL):
+β₀ ≈ 4.7 ± 0.3
+β₁ ≈ 0.85 ± 0.15   (EDA exponential fit)
+phi ≈ 2-5
+
+MODEL 3 (QUASI-POISSON):
+β₀, β₁, β₂: Similar to Model 1
+σ ≈ 0.3-0.8        (observation-level SD)
+
+If posteriors very different → Data conflicts with EDA or priors wrong
+
+================================================================================
+QUICK START INSTRUCTIONS
+================================================================================
+
+TO IMPLEMENT IMMEDIATELY:
+
+1. Copy Stan code from stan_templates.txt
+   → Save as model1_nb_quadratic.stan
+
+2. Load data:
+   data = pd.read_csv('/workspace/data/data.csv')
+
+3. Fit Model 1:
+   fit1 = model1.sample(data=stan_data, chains=4, iter_warmup=1000, iter_sampling=1000)
+
+4. Check diagnostics:
+   - fit1.diagnose()
+   - Check Rhat, ESS, divergences
+
+5. Run PPC:
+   - Plot y_rep overlays
+   - Compute coverage
+   - Check Var/Mean ratio
+
+6. Plot residual ACF:
+   - Extract Pearson residuals
+   - plot_acf(residuals)
+   - Check if ACF(1) > 0.7
+
+7. Compute LOO:
+   - loo1 = az.loo(idata1)
+
+8. Make decision:
+   - If ACF < 0.6 and coverage > 85%: SUCCESS
+   - If ACF 0.6-0.8 and coverage 75-85%: ADEQUATE, try extensions
+   - If ACF > 0.8 or coverage < 75%: FAILED, try Designer 2 models
+
+================================================================================
+CONTACT INFORMATION
+================================================================================
+
+Designer: Designer 1 (Parametric GLM Focus)
+Focus: Explicit trend functions, standard distributions
+Strength: Interpretability, computational efficiency
+Weakness: Cannot handle complex temporal dynamics
+
+Collaborators:
+- Designer 2: Non-parametric, state-space, AR models
+- Designer 3: Hierarchical, changepoint, period-specific models
+
+Integration point: Model comparison and synthesis
+
+================================================================================
+FINAL THOUGHTS
+================================================================================
+
+SUCCESS IS NOT "MY MODELS WIN"
+
+Success is:
+- Learning what works and what doesn't
+- Providing clear evidence for next steps
+- Knowing when parametric GLMs are insufficient
+- Efficient exploration with clear decision points
+
+My job:
+- Provide interpretable baseline
+- Test specific hypotheses
+- Quantify temporal correlation issue
+- Know when to hand off to others
+
+Expected:
+- Models capture trend and dispersion OK
+- But show temporal correlation remains
+- Point toward hybrid or state-space approaches
+- Provide baseline for comparison
+
+Outcome:
+- Even if "failed", we learn parametric forms insufficient
+- This is valuable information
+- Guides synthesis toward appropriate models
+
+================================================================================
+END OF SUMMARY
+================================================================================
+
+For full details: Read proposed_models.md
+For quick start: Read implementation_guide.md
+For code: Use stan_templates.txt
+
+Status: Ready for implementation
+Next step: Fit Model 1 and run diagnostics

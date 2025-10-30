@@ -1,0 +1,53 @@
+{
+  "result": "PASS_WITH_WARNINGS",
+  "issues": [],
+  "warnings": [
+    "\u03b2\u2080 ranks marginally non-uniform (p=0.0347)",
+    "\u03b2\u2081 ranks marginally non-uniform (p=0.0228)"
+  ],
+  "successful_sims": 50,
+  "failed_sims": 0,
+  "metrics": [
+    {
+      "parameter": "\u03b2\u2080",
+      "bias": -0.0380033360724198,
+      "bias_sd": 0.0256090538376407,
+      "standardized_bias": -0.039642004542243,
+      "coverage": 0.88,
+      "mean_width": 0.654853450232427,
+      "n_sims": 50
+    },
+    {
+      "parameter": "\u03b2\u2081",
+      "bias": 0.0014624573321094,
+      "bias_sd": 0.0294555258368063,
+      "standardized_bias": 0.0032813522499826,
+      "coverage": 0.92,
+      "mean_width": 0.5779170028612174,
+      "n_sims": 50
+    },
+    {
+      "parameter": "\u03c6",
+      "bias": 0.049704530175843,
+      "bias_sd": 0.0595198346542075,
+      "standardized_bias": 0.0431070197563337,
+      "coverage": 0.88,
+      "mean_width": 1.090588335333856,
+      "n_sims": 50
+    }
+  ],
+  "rank_tests": {
+    "beta_0": {
+      "chi2": 31.599999999999994,
+      "p_value": 0.03465205739180033
+    },
+    "beta_1": {
+      "chi2": 33.2,
+      "p_value": 0.022793831478981286
+    },
+    "phi": {
+      "chi2": 29.199999999999996,
+      "p_value": 0.06290362937226235
+    }
+  }
+}

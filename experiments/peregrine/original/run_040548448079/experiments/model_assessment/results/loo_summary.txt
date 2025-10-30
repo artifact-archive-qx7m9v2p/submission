@@ -1,0 +1,17 @@
+LOO Cross-Validation Summary
+================================================================================
+
+ELPD_loo: -185.49 ± 5.26
+p_loo: 0.98
+Actual parameters: 4
+
+Pareto k diagnostics:
+  k < 0.5 (good):       40/40 (100.0%)
+  0.5 ≤ k < 0.7 (ok):   0/40 (0.0%)
+  0.7 ≤ k < 1.0 (bad):  0/40 (0.0%)
+  k ≥ 1.0 (very bad):   0/40 (0.0%)
+  Max k: 0.179
+  Mean k: 0.046
+
+Status: EXCELLENT
+Interpretation: All observations have reliable LOO estimates. Model generalizes well.

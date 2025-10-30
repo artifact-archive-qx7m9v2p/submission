@@ -1,0 +1,41 @@
+{
+  "alpha": {
+    "mean": 1.75,
+    "sd": 0.058,
+    "hdi_3%": 1.642,
+    "hdi_97%": 1.858,
+    "rhat": 1.01,
+    "ess_bulk": 1045.0,
+    "ess_tail": 1866.0,
+    "mcse_mean": 0.002
+  },
+  "beta": {
+    "mean": 0.276,
+    "sd": 0.025,
+    "hdi_3%": 0.228,
+    "hdi_97%": 0.323,
+    "rhat": 1.01,
+    "ess_bulk": 1031.0,
+    "ess_tail": 1794.0,
+    "mcse_mean": 0.001
+  },
+  "sigma": {
+    "mean": 0.125,
+    "sd": 0.019,
+    "hdi_3%": 0.093,
+    "hdi_97%": 0.16,
+    "rhat": 1.0,
+    "ess_bulk": 1308.0,
+    "ess_tail": 2124.0,
+    "mcse_mean": 0.001
+  },
+  "sampling": {
+    "method": "Metropolis-Hastings",
+    "chains": 4,
+    "iter_warmup": 2000,
+    "iter_sampling": 10000,
+    "total_samples": 40000,
+    "sampling_time_seconds": 7.180152,
+    "mean_acceptance_rate": 0.31845833333333334
+  },
+  "convergence_pass": 

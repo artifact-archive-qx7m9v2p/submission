@@ -1,0 +1,27 @@
+{
+  "loo_comparison": {
+    "model1_elpd": -30.52309272965357,
+    "model1_se": 1.1364358569577155,
+    "model1_p_loo": 0.6401302932711275,
+    "model2_elpd": -30.693352030216346,
+    "model2_se": 1.0497973084792238,
+    "model2_p_loo": 0.984577880842,
+    "delta_elpd": -0.17025930056277616,
+    "delta_se": 0.10490628753033321,
+    "ratio": 1.6229656445858538
+  },
+  "calibration": {
+    "model1_ks_stat": null,
+    "model1_ks_pval": null,
+    "model2_ks_stat": null,
+    "model2_ks_pval": null
+  },
+  "parameters": {
+    "model1_theta": 7.403125768451064,
+    "model1_theta_std": 3.999443548938979,
+    "model2_mu": 7.430236766050937,
+    "model2_mu_std": 4.261467623106322,
+    "model2_tau": 3.3581584739297794,
+    "model2_tau_std": 2.5110998369644526
+  }
+}

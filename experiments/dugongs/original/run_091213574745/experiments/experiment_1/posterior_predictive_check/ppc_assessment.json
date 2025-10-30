@@ -1,0 +1,15 @@
+{
+  "n_observations": 27,
+  "n_posterior_samples": 32000,
+  "test_statistics": {
+    "n_extreme": 0,
+    "n_warning": 0,
+    "n_ok": 10,
+    "extreme_stats": []
+  },
+  "predictive_interval_coverage": 1.0,
+  "expected_coverage": 0.95,
+  "coverage_ok": true,
+  "overall_status": "PASS",
+  "message": "Model adequately captures key features of observed data"
+}

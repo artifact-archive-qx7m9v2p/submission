@@ -1,0 +1,25 @@
+{
+  "study_percentiles": [
+    73.525,
+    69.95,
+    79.275,
+    81.25,
+    42.45,
+    58.050000000000004,
+    53.300000000000004,
+    60.050000000000004
+  ],
+  "pooled_percentile": 66.7,
+  "tau_percentile": 15.9,
+  "mu_prior_mean": 0.48302056150458283,
+  "mu_prior_std": 24.92573169927606,
+  "tau_prior_mean": 8.086767409816453,
+  "tau_prior_std": 6.167079230661167,
+  "y_pred_min": -120.84958211199663,
+  "y_pred_max": 129.68823551091538,
+  "decision": "PASS",
+  "fail_conditions": [],
+  "n_good_studies": 6,
+  "n_marginal_studies": 2,
+  "n_bad_studies": 0
+}

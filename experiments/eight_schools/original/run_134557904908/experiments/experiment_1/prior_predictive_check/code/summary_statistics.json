@@ -1,0 +1,53 @@
+{
+  "prior_mean": 0.0,
+  "prior_sd": 20.0,
+  "prior_95_interval": [
+    -39.2,
+    39.2
+  ],
+  "theta_mle": 7.686,
+  "theta_se": 4.072,
+  "theta_mle_prior_percentile": 64.96219460024312,
+  "n_prior_samples": 10000,
+  "pp_coverage_95": 100.0,
+  "mean_abs_z_score": 0.40021181881090506,
+  "max_abs_z_score": 1.1053332872525692,
+  "n_extreme_z": 0,
+  "min_pp_pvalue": 0.2796,
+  "n_pp_pval_lt_05": 0,
+  "n_pp_pval_lt_01": 0,
+  "pp_range_95": [
+    -46.63124647807287,
+    47.14400485056708
+  ],
+  "data_range": [
+    -3.0,
+    28.0
+  ],
+  "sensitivity": {
+    "Tight": {
+      "coverage": 100.0,
+      "mean_abs_z": 0.5922098359136108,
+      "pp_range": [
+        -32.198462679472435,
+        32.07641263128324
+      ]
+    },
+    "Default": {
+      "coverage": 100.0,
+      "mean_abs_z": 0.4031047153030838,
+      "pp_range": [
+        -46.83969215559815,
+        47.014135537983215
+      ]
+    },
+    "Vague": {
+      "coverage": 100.0,
+      "mean_abs_z": 0.18624406059848825,
+      "pp_range": [
+        -100.97797092325004,
+        101.29394872488744
+      ]
+    }
+  }
+}

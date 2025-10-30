@@ -1,0 +1,108 @@
+================================================================================
+PRIOR PREDICTIVE CHECK SUMMARY - EXPERIMENT 2
+Log-Linear Heteroscedastic Model
+================================================================================
+
+DECISION: CONDITIONAL PASS
+Date: 2025-10-27
+Prior Samples: N = 1000
+
+--------------------------------------------------------------------------------
+PARAMETER PRIOR SAMPLES (should match specification)
+--------------------------------------------------------------------------------
+Parameter   | Prior Spec      | Sample Mean | Sample SD  | Range
+------------|-----------------|-------------|------------|-------------------
+beta_0      | N(1.8, 0.5)     | 1.810       | 0.489      | [0.179, 3.726]
+beta_1      | N(0.3, 0.2)     | 0.314       | 0.199      | [-0.288, 0.939]
+gamma_0     | N(-2, 1)        | -1.994      | 0.983      | [-5.020, 1.926]
+gamma_1     | N(-0.05, 0.05)  | -0.051      | 0.051      | [-0.196, 0.112]
+
+Status: ALL PASS (samples match specified distributions)
+
+--------------------------------------------------------------------------------
+PRIOR PREDICTIVE COVERAGE
+--------------------------------------------------------------------------------
+Observed Y range:               [1.77, 2.72]
+Target Y range:                 [0.5, 5.0]
+Generated Y range (overall):    [-14.22, 17.30]
+Generated Y range (mean):       [1.57, 3.11]
+Generated Y range (5-95%):      [0.63, 1.80] to [2.53, 4.68]
+
+Coverage Statistics:
+  - Cover observed minimum:     591/1000 (59.1%)
+  - Cover observed maximum:     645/1000 (64.5%)
+  - Cover BOTH min and max:     299/1000 (29.9%) ✓ EXCEEDS 20% THRESHOLD
+
+Status: PASS (good coverage without being too wide)
+
+--------------------------------------------------------------------------------
+HETEROSCEDASTICITY (VARIANCE STRUCTURE)
+--------------------------------------------------------------------------------
+Observed variance ratio (low-x / high-x):     ~8.8x
+
+Prior variance ratio distribution:
+  - Mean:                       1321.8x  ⚠️ HEAVY TAIL
+  - Median:                     21.1x    ✓ REASONABLE
+  - 5th-95th percentile:        [0.13x, 4762.1x]
+
+Direction of variance change:
+  - Decreasing (gamma_1 < 0):   827/1000 (82.7%) ✓
+  - Increasing (gamma_1 > 0):   173/1000 (17.3%) ⚠️
+
+Status: CONDITIONAL PASS (correct direction majority, but heavy tails)
+
+--------------------------------------------------------------------------------
+MEAN STRUCTURE (LOG-LINEAR)
+--------------------------------------------------------------------------------
+Observed Y change (x=1 to x=31.5):            0.77
+
+Prior mean change distribution:
+  - Mean:                       1.08
+  - 5th-95th percentile:        [-0.05, 2.20]
+
+Status: PASS (observed within prior range)
+
+--------------------------------------------------------------------------------
+COMPUTATIONAL RED FLAGS
+--------------------------------------------------------------------------------
+Negative sigma:                 0/1000 (0.0%)    ✓ EXCELLENT
+Extreme sigma (>10):            0/1000 (0.0%)    ✓ EXCELLENT
+Negative Y values:              16/1000 (1.6%)   ✓ MINIMAL
+Problematic samples:            16/1000 (1.6%)   ✓ ACCEPTABLE
+
+Status: PASS (no computational issues)
+
+--------------------------------------------------------------------------------
+SIMILARITY TO OBSERVED DATA
+--------------------------------------------------------------------------------
+Samples generating "similar" data:  294/1000 (29.4%) ✓ EXCEEDS 20% TARGET
+
+Criteria for similarity:
+  1. Range overlaps 80% of observed range
+  2. Variance decreases with x (ratio > 1.5)
+  3. No extreme values (Y ∈ [-1, 10])
+
+Status: PASS
+
+--------------------------------------------------------------------------------
+OVERALL ASSESSMENT
+--------------------------------------------------------------------------------
+✓ All quantitative thresholds met
+✓ No computational failures
+✓ Model structure appropriate for data
+⚠️ Variance ratio distribution has heavy tails (will be constrained by likelihood)
+
+RECOMMENDATION: Proceed with model fitting
+  - Monitor MCMC diagnostics for divergences
+  - Verify posterior shrinkage from prior
+  - Confirm posterior predictive checks show good fit
+  - Be prepared to tighten gamma priors if fitting issues arise
+
+PRIMARY CONCERN: gamma_1 ~ N(-0.05, 0.05) allows 17% wrong-direction samples
+  and interacts with gamma_0 ~ N(-2, 1) to create occasional extreme variance
+  ratios (>1000x). However, the likelihood will strongly penalize these during
+  fitting, so this is not a blocking issue.
+
+================================================================================
+See findings.md for detailed analysis and plots/ for visualizations
+================================================================================

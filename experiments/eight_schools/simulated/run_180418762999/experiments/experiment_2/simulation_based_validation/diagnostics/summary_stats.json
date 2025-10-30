@@ -1,0 +1,43 @@
+{
+  "n_simulations": 30,
+  "n_successful": 30,
+  "n_failures": 0,
+  "elapsed_time_seconds": 395.090413,
+  "rank_uniformity": {
+    "mu_chi2_stat": 9.333333333333332,
+    "mu_chi2_pval": 0.40709083549058833,
+    "mu_pass": true,
+    "tau_chi2_stat": 8.0,
+    "tau_chi2_pval": 0.5341462169096916,
+    "tau_pass": true
+  },
+  "coverage": {
+    "mu_90": 0.8666666666666667,
+    "mu_95": 0.9666666666666667,
+    "tau_90": 0.9,
+    "tau_95": 0.9666666666666667,
+    "mu_pass": true,
+    "tau_pass": true
+  },
+  "bias": {
+    "mu_mean": -0.9611786722435319,
+    "mu_sd": 5.360608797581574,
+    "tau_mean": -1.7372980216449438,
+    "tau_sd": 3.9799720043462856,
+    "mu_pass": true,
+    "tau_pass": true
+  },
+  "convergence": {
+    "avg_divergences": 0.06666666666666667,
+    "max_divergences": 2.0,
+    "pct_with_divergences": 0.03333333333333333,
+    "avg_mu_rhat": 1.0,
+    "max_mu_rhat": 1.0,
+    "avg_tau_rhat": 1.0003333333333333,
+    "max_tau_rhat": 1.01,
+    "avg_mu_ess": 3259.766666666667,
+    "avg_tau_ess": 1787.6333333333334,
+    "divergences_pass": true,
+    "rhat_pass": false
+  }
+}

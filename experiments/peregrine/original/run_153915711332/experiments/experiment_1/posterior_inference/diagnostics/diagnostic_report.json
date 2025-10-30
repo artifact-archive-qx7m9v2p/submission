@@ -1,0 +1,36 @@
+{
+  "verdict": "CONDITIONAL PASS",
+  "sampler": "Metropolis-Hastings",
+  "note": "Custom implementation - CmdStan unavailable (no C++ compiler)",
+  "diagnostics": {
+    "max_rhat": 3.24,
+    "min_ess_bulk": 4.0,
+    "min_ess_tail": 10.0
+  },
+  "parameter_summary": {
+    "delta": {
+      "mean": 0.066,
+      "sd": 0.019,
+      "hdi_3%": 0.029,
+      "hdi_97%": 0.09,
+      "rhat": 3.24,
+      "ess_bulk": 4.0
+    },
+    "sigma_eta": {
+      "mean": 0.078,
+      "sd": 0.004,
+      "hdi_3%": 0.072,
+      "hdi_97%": 0.085,
+      "rhat": 2.97,
+      "ess_bulk": 5.0
+    },
+    "phi": {
+      "mean": 124.616,
+      "sd": 45.197,
+      "hdi_3%": 50.416,
+      "hdi_97%": 212.54,
+      "rhat": 1.1,
+      "ess_bulk": 34.0
+    }
+  }
+}

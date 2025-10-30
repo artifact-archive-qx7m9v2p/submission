@@ -1,0 +1,24 @@
+CONVERGENCE DIAGNOSTICS
+================================================================================
+
+Sampling Configuration:
+- Chains: 4
+- Iterations per chain: 2000 (1000 warmup + 1000 sampling)
+- Total draws: 4000
+- Target accept: 0.95
+
+Convergence Metrics:
+- Max R-hat: 1.0000 (threshold: < 1.01)
+- Min ESS bulk: 1905 (threshold: > 400)
+- Min ESS tail: 2272 (threshold: > 400)
+- Divergent transitions: 0 (threshold: 0)
+- Mean BFMI: 1.0556 (threshold: > 0.2)
+
+Overall Assessment: PASS
+
+Parameter-Level Diagnostics:
+          mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+beta_0   4.316  0.052   4.213    4.409      0.001    0.001    1953.0    2304.0    1.0
+beta_1   0.866  0.037   0.798    0.934      0.001    0.001    3046.0    2843.0    1.0
+beta_2   0.040  0.042  -0.043    0.113      0.001    0.001    1905.0    2315.0    1.0
+phi     33.038  9.884  15.934   51.323      0.193    0.199    2665.0    2272.0    1.0

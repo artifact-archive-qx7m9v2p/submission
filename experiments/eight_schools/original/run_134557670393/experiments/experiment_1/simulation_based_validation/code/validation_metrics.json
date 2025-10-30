@@ -1,0 +1,43 @@
+{
+  "method": "Grid approximation + importance sampling",
+  "note": "Marginalizes over theta analytically, then samples (mu, tau)",
+  "n_simulations_sbc": 20,
+  "fixed_effect_scenario": {
+    "mu_true": 10.0,
+    "tau_true": 0.01,
+    "mu_mean": 5.336126189540076,
+    "tau_mean": 6.807374430379746,
+    "mu_std": 5.251100080075059,
+    "tau_std": 5.589407821003568,
+    "mu_recovered": true,
+    "tau_near_zero": false
+  },
+  "random_effects_scenario": {
+    "mu_true": 10.0,
+    "tau_true": 5.0,
+    "mu_mean": 7.668044321470801,
+    "tau_mean": 4.177362563291139,
+    "mu_std": 4.604108912999803,
+    "tau_std": 4.248981408152097,
+    "mu_recovered": true,
+    "tau_recovered": true,
+    "theta_recovery_rate": 1.0
+  },
+  "sbc_summary": {
+    "mu_coverage": 0.9,
+    "tau_coverage": 0.95,
+    "theta_coverage_mean": 0.95,
+    "mu_bias": 0.33090032037448774,
+    "tau_bias": -0.6282731051713104
+  },
+  "checks": {
+    "mu_coverage_ok": true,
+    "tau_coverage_ok": true,
+    "theta_coverage_ok": true,
+    "no_large_bias": true,
+    "fixed_effect_test": false,
+    "random_effect_test": true
+  },
+  "overall_pass": true,
+  "verdict": "PASS"
+}

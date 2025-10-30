@@ -1,0 +1,292 @@
+# Model Architecture Diagram
+
+## Data Flow
+
+```
+TIME SERIES COUNT DATA (N=40)
+year: [-1.67, 1.67] (standardized)
+C: [19, 272] (counts)
+│
+├─────────────────┬─────────────────┬─────────────────┐
+│                 │                 │                 │
+MODEL 1           MODEL 2           MODEL 3
+POLYNOMIAL        GAUSSIAN PROCESS  B-SPLINE
+│                 │                 │
+│                 │                 │
+▼                 ▼                 ▼
+
+TREND SPECIFICATION
+────────────────────────────────────────────────
+
+Polynomial:       GP:               Spline:
+β₀ + β₁×x        f ~ GP(m, k)      Σ βⱼ×Bⱼ(x)
+  + β₂×x²        m(x) = β₀+β₁×x    with penalty
+  + β₃×x³        k = σ²×exp(-ρ²d²) on Δ²β
+
+│                 │                 │
+│                 │                 │
+▼                 ▼                 ▼
+
+ADD AUTOCORRELATION
+────────────────────────────────────────────────
+
+ALL MODELS: ε_t ~ AR(1)
+ε_t = ρ×ε_{t-1} + ν_t
+ν_t ~ Normal(0, σ_ν)
+ρ ~ Beta(8, 2)  [E[ρ]=0.8]
+
+│                 │                 │
+│                 │                 │
+▼                 ▼                 ▼
+
+LOG-SCALE MEAN
+────────────────────────────────────────────────
+
+log(μ_t) = trend(year_t) + ε_t
+
+│                 │                 │
+│                 │                 │
+▼                 ▼                 ▼
+
+NEGATIVE BINOMIAL LIKELIHOOD
+────────────────────────────────────────────────
+
+C_t ~ NegBin(μ_t, φ)
+φ ~ Gamma(2, 1)  [E[φ]=2]
+
+│                 │                 │
+│                 │                 │
+▼                 ▼                 ▼
+
+POSTERIOR INFERENCE (Stan/PyMC)
+────────────────────────────────────────────────
+
+- MCMC sampling (4 chains × 2000 iterations)
+- Convergence diagnostics (R-hat, ESS)
+- LOO cross-validation
+
+│                 │                 │
+└─────────────────┴─────────────────┘
+                  │
+                  ▼
+
+         MODEL COMPARISON
+         ────────────────
+
+         1. LOO-ELPD comparison
+         2. Residual diagnostics
+         3. First derivative test
+         4. Leave-future-out CV
+
+                  │
+                  ▼
+
+              DECISION
+              ────────
+
+    ┌─────────────┴─────────────┐
+    │                           │
+    ▼                           ▼
+SMOOTH SUFFICIENT          SMOOTH FAILS
+(LOO ≈ changepoint)       (LOO << changepoint)
+    │                           │
+    ▼                           ▼
+Use best smooth model      Use changepoint model
+(GP/Spline/Poly)          (Designer 1)
+```
+
+## Parameter Flow
+
+```
+PRIORS (from EDA)              LIKELIHOOD              POSTERIOR
+──────────────────             ──────────              ─────────
+
+Intercept:
+β₀ ~ N(4.3, 0.5)        ─┐
+                         │
+Slope(s):                ├─> log(μ) ──> C ~ NegBin ──> Samples
+β₁ ~ N(0.5, 0.5)        │             μ = exp(log μ)
+β₂ ~ N(0, 0.5)          │             φ from prior      │
+β₃ ~ N(0, 0.3)         ─┘                               │
+                                                        │
+GP parameters:                                          │
+ℓ ~ InvGamma(5,5)      ─┐                              │
+σ_f ~ HalfN(0, 0.5)    ├─> f ~ GP ─────────────────────┤
+                       ─┘                               │
+                                                        │
+Spline:                                                 │
+τ ~ HalfN(0, 1)        ─┐                              │
+β ~ MVN(0, τ×D'D)      ├─> Σ β×B ──────────────────────┤
+                       ─┘                               │
+                                                        │
+Autocorrelation:                                        │
+ρ ~ Beta(8, 2)         ─┐                              │
+σ_ν ~ HalfN(0, 0.2)    ├─> AR(1) ──────────────────────┤
+                       ─┘                               │
+                                                        │
+Dispersion:                                             │
+φ ~ Gamma(2, 1)        ───────────────────────────────>│
+                                                        │
+                                                        ▼
+                                                   DIAGNOSTICS
+                                                   ───────────
+                                                   - R-hat
+                                                   - ESS
+                                                   - Divergences
+                                                   - LOO-ELPD
+                                                   - ACF residuals
+```
+
+## Falsification Tests
+
+```
+MODEL FITTED
+    │
+    ├──> Test 1: Convergence
+    │    R-hat < 1.05? ───NO──> FAIL (refit)
+    │            │
+    │           YES
+    │            │
+    ├──> Test 2: LOO Comparison
+    │    vs Changepoint model
+    │    ΔLOO > -20? ───NO──> FAIL (discrete break real)
+    │            │
+    │           YES
+    │            │
+    ├──> Test 3: Residual ACF
+    │    ACF(1) < 0.3? ───NO──> FAIL (autocorr not captured)
+    │            │
+    │           YES
+    │            │
+    ├──> Test 4: First Derivative
+    │    Continuous? ───NO──> FAIL (discontinuity at break)
+    │            │
+    │           YES
+    │            │
+    ├──> Test 5: Parameter Check
+    │    Plausible? ───NO──> FAIL (prior-posterior conflict)
+    │            │
+    │           YES
+    │            │
+    ├──> Test 6: Leave-Future-Out CV
+    │    RMSE competitive? ───NO──> FAIL (can't extrapolate)
+    │            │
+    │           YES
+    │            │
+    └──> PASS ALL TESTS
+         │
+         ▼
+    MODEL VALIDATED
+```
+
+## Decision Tree
+
+```
+                    START
+                      │
+                      ▼
+          Fit all 3 smooth models
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+          ▼                       ▼
+   Any converge?               All fail?
+       NO │                      │ YES
+          │                      │
+          ▼                      ▼
+    Use Designer 1          Discrete break
+    changepoint model       confirmed
+                                │
+       YES │                    │
+          ▼                     │
+    Compute LOO-ELPD            │
+          │                     │
+    ┌─────┴─────┐              │
+    ▼           ▼              │
+Best smooth  Changepoint        │
+LOO-ELPD    LOO-ELPD            │
+    │           │               │
+    └─────┬─────┘               │
+          │                     │
+          ▼                     │
+    ΔLOO = Smooth - Changepoint │
+          │                     │
+    ┌─────┼─────┬──────┐       │
+    │     │     │      │       │
+    ▼     ▼     ▼      ▼       │
+  >-10  -10   -20    <-20      │
+        to           │         │
+        -20          │         │
+    │     │          │         │
+    ▼     ▼          ▼         │
+ SMOOTH BORDER-  DISCRETE      │
+ WORKS  LINE     BREAK         │
+    │     │          │         │
+    └─────┴──────────┴─────────┘
+              │
+              ▼
+     Check residuals
+     Check derivative
+     Check parameters
+              │
+              ▼
+        FINAL DECISION
+```
+
+## Model Complexity Comparison
+
+```
+SIMPLICITY <─────────────────────────────────> FLEXIBILITY
+
+Polynomial          Spline              Gaussian Process
+─────────          ──────              ────────────────
+
+Parameters:        Parameters:         Parameters:
+- 4 coeffs         - K spline coeffs   - 2 mean func
+- 1 dispersion     - 1 smooth param    - 2 GP params
+- 2 AR params      - 1 dispersion      - 1 dispersion
+                   - 2 AR params       - 2 AR params
+Total: 7           Total: K+4          Total: 7
+
+Computation:       Computation:        Computation:
+O(N)              O(N×K)              O(N³)
+
+Fit time:          Fit time:           Fit time:
+~5 minutes        ~10 minutes         ~15 minutes
+
+Interpretability:  Interpretability:   Interpretability:
+HIGH              MEDIUM              LOW
+
+Risk:              Risk:               Risk:
+Underfit          Knot sensitivity    Overfit
+```
+
+## Expected Performance
+
+```
+                LOO-ELPD (Expected)
+         ────────────────────────────
+                      │
+Changepoint ──────────┤ (Best)
+                      │
+GP ──────────────────┐│
+                     ││
+Spline ─────────────┐││
+                    │││
+Polynomial ────────┐│││
+                   ││││
+                   ││││
+      -200   -150  -100   -50
+                   ▲│││
+                   │││└─> Polynomial: ~-120
+                   ││└──> Spline: ~-110
+                   │└───> GP: ~-105
+                   └────> Changepoint: ~-95
+
+      ΔLOO from changepoint:
+      - Polynomial: -25 (FAIL)
+      - Spline: -15 (BORDERLINE)
+      - GP: -10 (BORDERLINE)
+
+      Conclusion: Discrete break real
+```

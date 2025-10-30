@@ -1,0 +1,21 @@
+{
+  "model": "enthusiastic",
+  "mu": {
+    "mean": 10.404008387318616,
+    "sd": 3.9571417715978097,
+    "ci_lower": 2.7466155831978947,
+    "ci_upper": 18.30344979755688
+  },
+  "tau": {
+    "mean": 0.6660379452943304,
+    "sd": 1.7694309838908593,
+    "ci_lower": 7.065283972792388e-13,
+    "ci_upper": 6.646447704379328
+  },
+  "convergence": {
+    "max_rhat": 1.8,
+    "min_ess_bulk": 6.0,
+    "min_ess_tail": 25.0,
+    "converged": false
+  }
+}

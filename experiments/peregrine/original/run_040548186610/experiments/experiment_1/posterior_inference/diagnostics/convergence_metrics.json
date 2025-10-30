@@ -1,0 +1,10 @@
+{
+  "r_hat_max": 1.0,
+  "r_hat_all_below_1.01": true,
+  "ess_bulk_min": 2106.0,
+  "ess_tail_min": 2360.0,
+  "ess_bulk_all_above_400": true,
+  "ess_tail_all_above_400": true,
+  "divergent_transitions": 0,
+  "divergence_rate": 0.0
+}

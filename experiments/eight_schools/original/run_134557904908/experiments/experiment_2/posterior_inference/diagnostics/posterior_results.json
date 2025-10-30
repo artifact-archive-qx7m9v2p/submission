@@ -1,0 +1,17 @@
+{
+  "converged": true,
+  "max_rhat": 1.0,
+  "min_ess_bulk": 5920.0,
+  "min_ess_tail": 4081.0,
+  "n_divergences": 0,
+  "mu_mean": 7.430236766050937,
+  "mu_sd": 4.261467623106322,
+  "tau_mean": 3.3581584739297794,
+  "tau_median": 2.866692352483595,
+  "I_sq_mean": 8.31182328189992,
+  "I_sq_median": 4.717037627218952,
+  "p_tau_lt_1": 0.18375,
+  "p_tau_lt_5": 0.76925,
+  "p_I_sq_lt_25": 0.92375,
+  "interpretation": "Low heterogeneity detected (I\u00b2 < 25%)"
+}

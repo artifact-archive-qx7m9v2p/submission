@@ -1,0 +1,49 @@
+{
+  "prior_sensitivity": {
+    "prior_ess": 39798.5,
+    "prior_ess_pct": 99.5,
+    "interpretation": "Good - data dominates inference"
+  },
+  "influential_point_x31_5": {
+    "alpha_change_pct": -0.99,
+    "beta_change_pct": 4.33,
+    "sigma_change_pct": -3.76,
+    "falsification_criterion": "PASS"
+  },
+  "gap_region": {
+    "dense_width": 0.5262,
+    "gap_width": 0.5191,
+    "ratio": 0.99,
+    "interpretation": "Moderate - no substantial increase"
+  },
+  "extrapolation": [
+    {
+      "x": 35,
+      "mean": 2.725,
+      "ci_lower": 2.439,
+      "ci_upper": 2.988,
+      "width": 0.549
+    },
+    {
+      "x": 40,
+      "mean": 2.759,
+      "ci_lower": 2.496,
+      "ci_upper": 3.03,
+      "width": 0.534
+    },
+    {
+      "x": 50,
+      "mean": 2.825,
+      "ci_lower": 2.561,
+      "ci_upper": 3.091,
+      "width": 0.53
+    },
+    {
+      "x": 100,
+      "mean": 3.015,
+      "ci_lower": 2.742,
+      "ci_upper": 3.33,
+      "width": 0.588
+    }
+  ]
+}

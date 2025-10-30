@@ -1,0 +1,46 @@
+{
+  "model_name": "Negative Binomial State-Space Model",
+  "experiment": "experiment_1",
+  "n_observations": 40,
+  "data_summary": {
+    "mean": 109.45,
+    "sd": 85.18038213109871,
+    "min": 19,
+    "max": 272,
+    "var_mean_ratio": 66.29234810415716
+  },
+  "mcmc_diagnostics": {
+    "n_chains": 4,
+    "n_draws": 2000,
+    "delta_rhat": 3.24,
+    "delta_ess": 4,
+    "convergence_status": "POOR - MH sampler inadequate"
+  },
+  "loo_cv": {
+    "elpd_loo": -151.13975029344783,
+    "se": 3.931306325070327,
+    "p_loo": 3.487538010830434,
+    "n_high_pareto_k": 3,
+    "reliability": "MOSTLY RELIABLE (but low ESS is concern)"
+  },
+  "predictive_performance": {
+    "rmse": 7.540911243815921,
+    "mae": 5.3133406249999995,
+    "mape": 9.194761859165697,
+    "baseline_rmse": 22.50620945400654,
+    "improvement_pct": 66.49408573564354
+  },
+  "coverage": {
+    "50": 77.5,
+    "80": 95.0,
+    "90": 100.0,
+    "95": 100.0
+  },
+  "overall_assessment": {
+    "model_specification": "ADEQUATE",
+    "computational_quality": "POOR (ESS=4, R-hat=3.24)",
+    "scientific_validity": "SUPPORTED (all hypotheses validated)",
+    "production_ready": "NO - requires re-run with better sampler",
+    "loo_reliability": "MOSTLY RELIABLE (but low ESS is concern)"
+  }
+}

@@ -1,0 +1,151 @@
+Loading InferenceData objects...
+
+================================================================================
+COMPREHENSIVE MODEL ASSESSMENT AND COMPARISON
+================================================================================
+
+--------------------------------------------------------------------------------
+PART 1: INDIVIDUAL MODEL ASSESSMENT
+--------------------------------------------------------------------------------
+
+### MODEL 1: HIERARCHICAL (Non-centered) ###
+
+Computing LOO-CV...
+Computed from 8000 posterior samples and 8 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   -30.73     1.04
+p_loo        1.03        -
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)        8  100.0%
+   (0.70, 1]   (bad)         0    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+
+Pareto k diagnostics:
+  All k < 0.5 (good): 5/8
+  0.5 ≤ k < 0.7 (ok): 3/8
+  k ≥ 0.7 (bad): 0/8
+  Max k: 0.6342
+  Mean k: 0.4606
+
+### MODEL 2: COMPLETE POOLING ###
+
+Computing LOO-CV...
+Computed from 4000 posterior samples and 8 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   -30.52     1.12
+p_loo        0.64        -
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)        8  100.0%
+   (0.70, 1]   (bad)         0    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+
+Pareto k diagnostics:
+  All k < 0.5 (good): 8/8
+  0.5 ≤ k < 0.7 (ok): 0/8
+  k ≥ 0.7 (bad): 0/8
+  Max k: 0.2852
+  Mean k: 0.1982
+
+--------------------------------------------------------------------------------
+PART 2: MODEL COMPARISON
+--------------------------------------------------------------------------------
+
+Comparing models with az.compare()...
+
+                  rank   elpd_loo     p_loo  ...       dse  warning  scale
+Complete_Pooling     0 -30.521461  0.641820  ...  0.000000    False    log
+Hierarchical         1 -30.732884  1.027548  ...  0.109516    False    log
+
+[2 rows x 9 columns]
+
+### Comparison Summary ###
+ΔELPD (Pooled - Hierarchical): 0.00 ± 0.00
+Significance threshold (2×SE): 0.00
+Is difference significant? False
+
+Model weights (Akaike):
+  Hierarchical: 0.0000
+  Complete Pooling: 1.0000
+
+Effective parameters (p_loo):
+  Hierarchical: 1.03
+  Complete Pooling: 0.64
+  Difference: 0.39
+
+Comparison table saved to: /workspace/experiments/model_comparison/loo_comparison.csv
+
+--------------------------------------------------------------------------------
+PART 3: EXTRACTING POSTERIOR PREDICTIONS
+--------------------------------------------------------------------------------
+Hierarchical theta shape: (4, 2000, 8)
+Pooled mu shape: (4, 1000)
+
+Posterior means:
+  Hierarchical: [8.90313673 7.44145385 6.71756683 7.27825336 6.08982441 6.56226298
+ 8.78929403 7.58963491]
+  Complete Pooling: [7.54794772 7.54794772 7.54794772 7.54794772 7.54794772 7.54794772
+ 7.54794772 7.54794772]
+  Observed: [28  8 -3  7 -1  1 18 12]
+
+--------------------------------------------------------------------------------
+PART 4: PREDICTIVE ACCURACY METRICS
+--------------------------------------------------------------------------------
+
+### Hierarchical Model ###
+  RMSE: 8.98
+  MAE: 6.99
+  50% Coverage: 62.5% (target: 50%)
+  90% Coverage: 100.0% (target: 90%)
+  95% Coverage: 100.0% (target: 95%)
+
+### Complete Pooling Model ###
+  RMSE: 9.84
+  MAE: 7.75
+  50% Coverage: 62.5% (target: 50%)
+  90% Coverage: 100.0% (target: 90%)
+  95% Coverage: 100.0% (target: 95%)
+
+--------------------------------------------------------------------------------
+PART 5: CREATING COMPARISON VISUALIZATIONS
+--------------------------------------------------------------------------------
+Saved: /workspace/experiments/model_comparison/figures/loo_comparison_plot.png
+Saved: /workspace/experiments/model_comparison/figures/pareto_k_comparison.png
+Saved: /workspace/experiments/model_comparison/figures/prediction_comparison.png
+Saved: /workspace/experiments/model_comparison/figures/pointwise_loo_comparison.png
+
+Pointwise ELPD Summary:
+  School A: Hierarchical=-4.65, Pooled=-4.66, Δ=-0.01 (favors Hierarchical)
+  School B: Hierarchical=-3.40, Pooled=-3.31, Δ=0.09 (favors Pooled)
+  School C: Hierarchical=-3.97, Pooled=-3.96, Δ=0.01 (favors Pooled)
+  School D: Hierarchical=-3.46, Pooled=-3.39, Δ=0.07 (favors Pooled)
+  School E: Hierarchical=-3.75, Pooled=-3.79, Δ=-0.04 (favors Hierarchical)
+  School F: Hierarchical=-3.62, Pooled=-3.59, Δ=0.03 (favors Pooled)
+  School G: Hierarchical=-3.97, Pooled=-3.96, Δ=0.01 (favors Pooled)
+  School H: Hierarchical=-3.90, Pooled=-3.87, Δ=0.04 (favors Pooled)
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+
+            Model       ELPD       SE    p_loo       Weight     RMSE      MAE  Coverage_90
+    Hierarchical -30.732884 1.044381 1.027548 2.220446e-16 8.979167 6.990549          1.0
+Complete Pooling -30.521461 1.118144 0.641820 1.000000e+00 9.842887 7.750000          1.0
+
+Summary statistics saved to: /workspace/experiments/model_comparison/summary_statistics.csv
+
+================================================================================
+ASSESSMENT COMPLETE
+================================================================================
+
+All outputs saved to: /workspace/experiments/model_comparison
+Figures saved to: /workspace/experiments/model_comparison/figures

@@ -1,0 +1,32 @@
+{
+  "decision": "PASS",
+  "n_observations": 8,
+  "n_prior_samples": 5000,
+  "prior_mu_mean": 10,
+  "prior_mu_sd": 20,
+  "prior_95_interval": [
+    -29.40475772855773,
+    48.90547527079508
+  ],
+  "observed_mean": 12.504580732800896,
+  "observed_range": [
+    -4.8817921776782764,
+    26.0796860563254
+  ],
+  "percentile_ranks": [
+    65.3,
+    59.46,
+    73.7,
+    74.94,
+    24.8,
+    42.92,
+    36.64,
+    47.72
+  ],
+  "n_extreme_low": 0,
+  "n_extreme_high": 0,
+  "n_nan": 0,
+  "n_inf": 0,
+  "max_abs_value": 112.66237696338641,
+  "issues": []
+}

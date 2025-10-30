@@ -1,0 +1,43 @@
+================================================================================
+PREDICTIVE PERFORMANCE METRICS
+Model: NB-Linear Baseline (Experiment 1)
+================================================================================
+
+OVERALL PERFORMANCE (n=40)
+--------------------------------------------------------------------------------
+Using posterior mean as point prediction:
+  RMSE (Root Mean Square Error):         22.45
+  MAE  (Mean Absolute Error):            14.97
+  MAPE (Mean Absolute % Error):           17.9%
+
+Using posterior median as point prediction:
+  RMSE:     22.34
+  MAE:      14.84
+  MAPE:      17.5%
+
+For comparison to observed data:
+  Observed mean:    109.40
+  Observed SD:       86.67
+  RMSE/SD ratio:     0.259
+
+INTERPRETATION
+--------------------------------------------------------------------------------
+✓ EXCELLENT: RMSE < 30% of observed SD
+
+On average, predictions are off by 15.0 counts (MAE).
+Relative error is 17.9% of observed values (MAPE).
+
+PERFORMANCE BY TIME PERIOD
+--------------------------------------------------------------------------------
+Period                      N    RMSE     MAE    MAPE
+--------------------------------------------------------------------------------
+Early (year < -0.5)         14    9.19    7.87   27.5%
+Middle (-0.5 ≤ year ≤ 0.5)  12   11.91   10.08   14.1%
+Late (year > 0.5)           14   35.13   26.26   11.7%
+
+PERIOD COMPARISON
+--------------------------------------------------------------------------------
+⚠ Early period has higher relative errors (>50% worse)
+  Model struggles with low-count regime
+
+================================================================================

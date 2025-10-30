@@ -1,0 +1,12 @@
+{
+  "n_studies": 8,
+  "n_posterior_samples": 4000,
+  "n_outliers": 0,
+  "outlier_studies": [],
+  "falsification_criterion_met": false,
+  "verdict": "EXCELLENT",
+  "extreme_test_statistics": [],
+  "global_mean_pval": 0.857,
+  "global_sd_pval": 0.5335000000000001,
+  "global_range_pval": 0.5489999999999999
+}

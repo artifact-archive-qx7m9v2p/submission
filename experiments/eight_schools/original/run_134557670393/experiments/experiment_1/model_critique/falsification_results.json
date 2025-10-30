@@ -1,0 +1,77 @@
+{
+  "decision": "ACCEPT",
+  "falsification_tests": {
+    "criterion_1_ppc_failure": {
+      "passed": true,
+      "outliers": 0,
+      "threshold": 1
+    },
+    "criterion_2_loo_instability": {
+      "passed": true,
+      "max_delta_mu": 2.0861689378177077,
+      "threshold": 5.0,
+      "most_influential_study": 5
+    },
+    "criterion_3_convergence": {
+      "passed": true,
+      "max_rhat": 1.0,
+      "min_ess_bulk": 2047.0,
+      "min_ess_tail": 2341.0,
+      "n_divergences": 0
+    },
+    "criterion_4_extreme_shrinkage": {
+      "passed": true,
+      "n_extreme": 0,
+      "extreme_studies": []
+    }
+  },
+  "revision_checks": {
+    "prior_posterior_conflict": {
+      "passed": true,
+      "p_tau_gt_10_prior": 0.14758361765043326,
+      "p_tau_gt_10_posterior": 0.0425
+    },
+    "unidentifiability": {
+      "passed": true,
+      "tau_density_cv": 1.3940095712313854
+    }
+  },
+  "loo_diagnostics": {
+    "elpd_loo": -30.785858723180723,
+    "p_loo": 1.0855457341679262,
+    "n_bad_pareto_k": 0,
+    "pareto_k_values": [
+      0.3029492694381382,
+      0.47720623125342343,
+      0.41110906044277695,
+      0.6078855999892953,
+      0.6324445559986983,
+      0.37859862636103453,
+      0.36111872444862664,
+      0.48081030280773424
+    ]
+  },
+  "loo_influence": {
+    "mu_full": 7.749165834583564,
+    "mu_loo": [
+      6.023453328217807,
+      7.7058051872970985,
+      8.549083259318998,
+      7.871031600515192,
+      9.835334772401271,
+      8.81455748955127,
+      5.763363275738138,
+      7.492551289681462
+    ],
+    "delta_mu": [
+      -1.725712506365757,
+      -0.04336064728646516,
+      0.7999174247354341,
+      0.12186576593162801,
+      2.0861689378177077,
+      1.0653916549677058,
+      -1.9858025588454256,
+      -0.256614544902102
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+================================================================================
+CONVERGENCE DIAGNOSTICS REPORT
+Experiment 1: Fixed Changepoint Negative Binomial Regression
+================================================================================
+
+SAMPLING CONFIGURATION
+--------------------------------------------------------------------------------
+Chains: 4
+Draws per chain: 2000
+Total draws: 8000
+Parameters: beta_0, beta_1, beta_2, alpha
+
+CONVERGENCE CRITERIA
+--------------------------------------------------------------------------------
+1. R-hat: 1.000000 (target: < 1.01) - PASS
+2. ESS bulk: 2330 (target: > 400) - PASS
+3. ESS tail: 2906 (target: > 400) - PASS
+4. Divergences: 0.00% (target: < 1%) - PASS
+5. MCSE/SD: 0.0170 (target: < 0.05) - PASS
+6. BFMI: 0.9983 (target: > 0.3) - PASS
+
+PARAMETER-LEVEL DIAGNOSTICS
+--------------------------------------------------------------------------------
+         mean     sd  ess_bulk  ess_tail  r_hat
+beta_0  4.050  0.150    2475.0    3112.0    1.0
+beta_1  0.486  0.153    2579.0    3196.0    1.0
+beta_2  0.556  0.229    2330.0    2906.0    1.0
+alpha   5.412  1.184    3679.0    4003.0    1.0
+
+OVERALL VERDICT
+--------------------------------------------------------------------------------
+✓ ALL CONVERGENCE CRITERIA MET
+The posterior inference is reliable and can be used for scientific conclusions.

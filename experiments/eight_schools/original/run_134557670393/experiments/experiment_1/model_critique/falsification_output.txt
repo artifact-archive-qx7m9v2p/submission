@@ -1,0 +1,165 @@
+================================================================================
+COMPREHENSIVE FALSIFICATION TESTS: EXPERIMENT 1
+================================================================================
+
+Data: 8 studies
+Observed effects: [28  8 -3  7 -1  1 18 12]
+Standard errors: [15 10 16 11  9 11 10 18]
+
+================================================================================
+CRITERION 1: POSTERIOR PREDICTIVE FAILURE
+================================================================================
+Rule: REJECT if >1 study outside 95% posterior predictive interval
+
+Result: 0 of 8 studies outside 95% PPI
+Threshold: REJECT if > 1
+Verdict: PASS ✓
+
+================================================================================
+CRITERION 2: LEAVE-ONE-OUT INSTABILITY
+================================================================================
+Rule: REJECT if max |E[mu | data_{-i}] - E[mu | data]| > 5 units
+
+E[mu | full data] = 7.749
+
+Leave-one-out analysis:
+  Study 1: E[mu | data_{-1}] =  6.023, Δmu = -1.726
+  Study 2: E[mu | data_{-2}] =  7.706, Δmu = -0.043
+  Study 3: E[mu | data_{-3}] =  8.549, Δmu = +0.800
+  Study 4: E[mu | data_{-4}] =  7.871, Δmu = +0.122
+  Study 5: E[mu | data_{-5}] =  9.835, Δmu = +2.086
+  Study 6: E[mu | data_{-6}] =  8.815, Δmu = +1.065
+  Study 7: E[mu | data_{-7}] =  5.763, Δmu = -1.986
+  Study 8: E[mu | data_{-8}] =  7.493, Δmu = -0.257
+
+Max |Δmu| = 2.086 (Study 5)
+Threshold: REJECT if > 5
+Verdict: PASS ✓
+
+================================================================================
+CRITERION 3: CONVERGENCE FAILURE
+================================================================================
+Rule: REJECT if R-hat > 1.05 OR ESS < 400 OR divergences > 1%
+/workspace/experiments/experiment_1/model_critique/falsification_tests.py:138: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  n_samples = idata.posterior.dims['draw'] * idata.posterior.dims['chain']
+
+Max R-hat: 1.0000 (threshold: < 1.05)
+Min ESS bulk: 2047 (threshold: > 400)
+Min ESS tail: 2341 (threshold: > 400)
+Divergences: 0 (0.00%, threshold: < 1%)
+
+R-hat check: PASS
+ESS check: PASS
+Divergence check: PASS
+Verdict: PASS ✓
+
+================================================================================
+CRITERION 4: EXTREME SHRINKAGE ASYMMETRY
+================================================================================
+Rule: REJECT if any |E[theta_i] - y_i| > 3*sigma_i
+
+Shrinkage analysis:
+Study    y_obs    E[theta]   Difference   3*sigma    Status    
+----------------------------------------------------------------------
+1        28.00    9.25       -18.75       45.00      OK        
+2        8.00     7.69       -0.31        30.00      OK        
+3        -3.00    6.98       +9.98        48.00      OK        
+4        7.00     7.59       +0.59        33.00      OK        
+5        -1.00    6.40       +7.40        27.00      OK        
+6        1.00     6.92       +5.92        33.00      OK        
+7        18.00    9.09       -8.91        30.00      OK        
+8        12.00    8.07       -3.93        54.00      OK        
+
+Extreme shrinkage detected: 0 studies
+Verdict: PASS ✓
+
+================================================================================
+REVISION CRITERION: PRIOR-POSTERIOR CONFLICT
+================================================================================
+Rule: REVISE if P(tau > 10 | data) > 0.5 with prior P(tau > 10) < 0.05
+
+Prior P(tau > 10) = 0.1476
+Posterior P(tau > 10) = 0.0425
+Ratio: 0.29x increase
+
+Conflict detected: NO (OK)
+
+================================================================================
+REVISION CRITERION: UNIDENTIFIABILITY
+================================================================================
+Rule: REVISE if tau posterior essentially uniform
+
+Tau posterior density CV: 1.394
+(Low CV < 0.3 suggests uniform/flat posterior)
+Verdict: Well-identified (OK) ✓
+
+================================================================================
+ADDITIONAL DIAGNOSTIC: LOO-CV (Pareto k)
+================================================================================
+
+ELPD LOO: -30.79 ± 1.01
+p_loo (effective parameters): 1.09
+
+Pareto k values:
+  Study 1: k = 0.303 (Good)
+  Study 2: k = 0.477 (Good)
+  Study 3: k = 0.411 (Good)
+  Study 4: k = 0.608 (OK)
+  Study 5: k = 0.632 (OK)
+  Study 6: k = 0.379 (Good)
+  Study 7: k = 0.361 (Good)
+  Study 8: k = 0.481 (Good)
+
+Studies with k > 0.7: 0
+Model adequacy: GOOD
+
+================================================================================
+OVERALL FALSIFICATION SUMMARY
+================================================================================
+
+FALSIFICATION TESTS (REJECT if any fail):
+  Criterion 1 (PPC failure)           ✓ PASS
+  Criterion 2 (LOO instability)       ✓ PASS
+  Criterion 3 (Convergence)           ✓ PASS
+  Criterion 4 (Extreme shrinkage)     ✓ PASS
+
+All falsification criteria passed: True
+
+REVISION CHECKS:
+  Prior-posterior conflict            ✓ OK
+  Unidentifiability                   ✓ OK
+
+================================================================================
+FINAL DECISION
+================================================================================
+
+✅ DECISION: ACCEPT MODEL
+
+Reason: All falsification criteria passed, no revision needed.
+
+The Bayesian hierarchical meta-analysis model is adequate for
+scientific inference. The model successfully:
+  - Captures all observed data within predictive distributions
+  - Shows stable inference under leave-one-out
+  - Achieved perfect convergence
+  - Exhibits appropriate shrinkage patterns
+  - Properly quantifies uncertainty about heterogeneity
+
+Results saved to: /workspace/experiments/experiment_1/model_critique/falsification_results.json
+
+================================================================================
+CREATING DIAGNOSTIC PLOTS
+================================================================================
+✓ Saved: plots/loo_influence.png
+✓ Saved: plots/shrinkage_diagnostics.png
+✓ Saved: plots/prior_posterior_tau.png
+Traceback (most recent call last):
+  File "/workspace/experiments/experiment_1/model_critique/falsification_tests.py", line 501, in <module>
+    az.plot_khat(loo, ax=ax, show_bins=True, bin_format=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/backend-v2/.venv/lib/python3.13/site-packages/arviz/plots/khatplot.py", line 235, in plot_khat
+    axes = plot(**plot_khat_kwargs)
+  File "/app/backend-v2/.venv/lib/python3.13/site-packages/arviz/plots/backends/matplotlib/khatplot.py", line 172, in plot_khat
+    bin_format.format(count, count / n_data_points * 100),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'format'

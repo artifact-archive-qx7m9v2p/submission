@@ -1,0 +1,25 @@
+================================================================================
+CONVERGENCE DIAGNOSTICS - EXPERIMENT 1
+================================================================================
+
+Model: Negative Binomial Linear Model
+PPL: PyMC (Stan compilation requires make which is not available)
+Data: 40 observations
+Sampling: 4 chains x 1000 iterations (after 1000 warmup)
+
+Parameter Summary:
+--------------------------------------------------------------------------------
+          mean      sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+beta_0   4.352   0.035   4.283    4.415      0.001    0.001    3504.0    2531.0    1.0
+beta_1   0.872   0.036   0.804    0.940      0.001    0.001    3187.0    2784.0    1.0
+phi     35.640  10.845  17.663   56.219      0.196    0.204    3211.0    2619.0    1.0
+
+Convergence Assessment:
+--------------------------------------------------------------------------------
+R-hat < 1.01: PASS
+ESS bulk > 400: PASS
+ESS tail > 400: PASS
+Divergent transitions: 0/4000 (0.00%)
+Divergences < 1%: PASS
+
+OVERALL: CONVERGENCE SUCCESS

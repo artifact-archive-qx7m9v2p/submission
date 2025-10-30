@@ -1,0 +1,10 @@
+Metric,Value,Status
+Decreasing functions (β<0),3.1%,PASS
+Negative intercept (α<0),0.0%,PASS
+Large noise (σ>0.5),1.4%,PASS
+Impossible values (Y<0),0.2%,PASS
+Very large values (Y>5),0.1%,PASS
+Extreme values (Y>10),0.0%,PASS
+Covers min(Y_obs),57.6%,WARN
+Covers max(Y_obs),64.5%,WARN
+Covers full range,26.9%,WARN

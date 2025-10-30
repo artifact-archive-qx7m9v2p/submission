@@ -1,0 +1,89 @@
+WARNING (pytensor.configdefaults): g++ not detected!  PyTensor will be unable to compile C-implementations and will default to Python. Performance may be severely degraded. To remove this warning, set PyTensor flags cxx to an empty string.
+
+======================================================================
+LATENT AR(1) NEGATIVE BINOMIAL MODEL - EXPERIMENT 3
+======================================================================
+
+Loading data...
+  N = 40 observations
+  Year range: [-1.67, 1.67]
+  Count range: [19, 272]
+
+Building model...
+  Model: Latent AR(1) Negative Binomial
+  Parameters: beta_0, beta_1, beta_2, rho, sigma_eta, phi
+  Parameterization: non-centered
+
+======================================================================
+PROBE SAMPLING: 4 chains × 500 iterations
+======================================================================
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [beta_0, beta_1, beta_2, rho, sigma_eta, phi, epsilon_raw_0, epsilon_raw]
+                                                                                
+                              Step      Grad      Sampli…                       
+  Progre…   Draws   Diverg…   size      evals     Speed     Elapsed   Remaini…  
+ ────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━   500     2         0.098     63        1.33      0:06:14   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   500     0         0.181     31        1.38      0:06:02   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   500     0         0.212     31        1.22      0:06:48   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   500     1         0.170     31        1.37      0:06:05   0:00:00   
+                                                  draws/s                       
+                                                                                
+Sampling 4 chains for 250 tune and 250 draw iterations (1_000 + 1_000 draws total) took 408 seconds.
+There were 3 divergences after tuning. Increase `target_accept` or reparameterize.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+
+Probe Results:
+  Divergences: 3
+  Max R-hat: 1.0148
+  Probe successful - proceeding to full sampling
+
+======================================================================
+FULL SAMPLING: 4 chains × 3000 iterations (target_accept=0.95)
+======================================================================
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [beta_0, beta_1, beta_2, rho, sigma_eta, phi, epsilon_raw_0, epsilon_raw]
+                                                                                
+                              Step      Grad      Sampli…                       
+  Progre…   Draws   Diverg…   size      evals     Speed     Elapsed   Remaini…  
+ ────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━   3000    3         0.153     31        1.97      0:25:23   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   3000    0         0.141     31        2.11      0:23:40   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   3000    2         0.127     31        2.17      0:23:04   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   3000    5         0.098     31        2.21      0:22:36   0:00:00   
+                                                  draws/s                       
+                                                                                
+Sampling 4 chains for 1_500 tune and 1_500 draw iterations (6_000 + 6_000 draws total) took 1524 seconds.
+There were 10 divergences after tuning. Increase `target_accept` or reparameterize.
+
+======================================================================
+CONVERGENCE DIAGNOSTICS
+======================================================================
+
+Convergence Metrics:
+  Max R-hat: 1.0000
+  Min ESS (bulk): 1754
+  Min ESS (tail): 1117
+  Divergences: 10 (0.2%)
+
+✓ CONVERGENCE CRITERIA MET
+
+======================================================================
+SAVING OUTPUTS
+======================================================================
+  Saved: /workspace/experiments/experiment_3/posterior_inference/diagnostics/posterior_inference.netcdf
+  Saved: /workspace/experiments/experiment_3/posterior_inference/diagnostics/summary_table.csv
+  Saved: /workspace/experiments/experiment_3/posterior_inference/diagnostics/convergence_metrics.json
+
+======================================================================
+FITTING COMPLETE
+======================================================================

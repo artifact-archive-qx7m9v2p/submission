@@ -1,0 +1,42 @@
+{
+  "beta_0": {
+    "chi2_stat": 50.0,
+    "chi2_pvalue": 0.43343669725576084,
+    "ks_stat": 0.88025,
+    "ks_pvalue": 7.391782507783311e-19,
+    "rank_mean": 551.5,
+    "rank_expected": 4000.0,
+    "rank_std": 256.09285425407717,
+    "rank_expected_std": 2309.401076758503
+  },
+  "beta_1": {
+    "chi2_stat": 45.0,
+    "chi2_pvalue": 0.6359803139552492,
+    "ks_stat": 0.8885,
+    "ks_pvalue": 1.7675789704345712e-19,
+    "rank_mean": 522.1,
+    "rank_expected": 4000.0,
+    "rank_std": 258.884124658118,
+    "rank_expected_std": 2309.401076758503
+  },
+  "beta_2": {
+    "chi2_stat": 45.0,
+    "chi2_pvalue": 0.6359803139552492,
+    "ks_stat": 0.879125,
+    "ks_pvalue": 8.917408529962016e-19,
+    "rank_mean": 423.8,
+    "rank_expected": 4000.0,
+    "rank_std": 302.53042822169147,
+    "rank_expected_std": 2309.401076758503
+  },
+  "phi": {
+    "chi2_stat": 40.0,
+    "chi2_pvalue": 0.8167770748275297,
+    "ks_stat": 0.875,
+    "ks_pvalue": 1.7495224697427146e-18,
+    "rank_mean": 542.7,
+    "rank_expected": 4000.0,
+    "rank_std": 276.84690715267163,
+    "rank_expected_std": 2309.401076758503
+  }
+}

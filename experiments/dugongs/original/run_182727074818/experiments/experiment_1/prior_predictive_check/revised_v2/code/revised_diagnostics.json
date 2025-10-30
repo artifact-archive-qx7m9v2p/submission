@@ -1,0 +1,89 @@
+{
+  "n_samples": 1000,
+  "revision_notes": {
+    "beta_prior": "TIGHTENED: Normal(0.3, 0.3) -> Normal(0.3, 0.2)",
+    "sigma_prior": "CHANGED: Half-Cauchy(0, 0.2) -> Half-Normal(0, 0.10)"
+  },
+  "data_context": {
+    "n_obs": 27,
+    "x_range": [
+      1.0,
+      31.5
+    ],
+    "y_range": [
+      1.77,
+      2.72
+    ],
+    "y_mean": 2.33,
+    "y_sd": 0.27
+  },
+  "prior_parameter_summaries": {
+    "alpha (intercept)": {
+      "mean": 2.0096660279111624,
+      "sd": 0.48936310387367715,
+      "median": 2.012650306117444,
+      "q025": 1.079232997318426,
+      "q975": 2.955399676390643
+    },
+    "beta (slope)": {
+      "mean": 0.31416724744983116,
+      "sd": 0.19939110505892604,
+      "median": 0.3126154264658092,
+      "q025": -0.07335050267747546,
+      "q975": 0.7123058220403133
+    },
+    "c (log shift)": {
+      "mean": 1.0165678618819272,
+      "sd": 0.735555881353697,
+      "median": 0.8595415561656021,
+      "q025": 0.11411355831088389,
+      "q975": 2.8107779964666118
+    },
+    "nu (df)": {
+      "mean": 19.537482404314154,
+      "sd": 13.333586680309297,
+      "median": 16.46813080563726,
+      "q025": 2.081479676871523,
+      "q975": 50.084926828664535
+    },
+    "sigma (scale)": {
+      "mean": 0.08513731438599068,
+      "sd": 0.06360386873494478,
+      "median": 0.0712182409335094,
+      "q025": 0.003400210106258502,
+      "q975": 0.23385124383252395
+    }
+  },
+  "prior_predictive_summaries": {
+    "y_range_min": -12557.905066871455,
+    "y_range_max": 155.07378632176628,
+    "mean_y_sim_avg": 2.3280461429562203,
+    "mean_y_sim_sd": 14.698687490118957,
+    "sd_y_sim_avg": 2.8882741781060433,
+    "sd_y_sim_sd": 75.3421917189224
+  },
+  "plausibility_checks": {
+    "predictions_in_range_0.5_4.5_pct": 92.60000000000001,
+    "monotonically_increasing_pct": 93.89999999999999,
+    "observed_data_coverage_pct": 100.0,
+    "extrapolation_reasonable_pct": 96.5,
+    "extreme_low_pct": 0.3,
+    "extreme_high_pct": 0.3,
+    "mean_within_2sd_pct": 46.7
+  },
+  "decision_criteria": {
+    "check_1_pass": true,
+    "check_2_pass": true,
+    "check_3_pass": true,
+    "check_4_pass": true,
+    "check_5_pass": true,
+    "check_6_pass": true,
+    "check_7_pass": false
+  },
+  "improvement_over_original": {
+    "check_1_improvement_pct": 26.700000000000003,
+    "check_2_improvement_pct": 7.799999999999997,
+    "check_5_improvement_pct": 11.799999999999999,
+    "check_7_improvement_pct": 7.400000000000006
+  }
+}

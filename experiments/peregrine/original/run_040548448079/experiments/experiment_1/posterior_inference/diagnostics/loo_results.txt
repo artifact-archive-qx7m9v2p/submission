@@ -1,0 +1,27 @@
+================================================================================
+LEAVE-ONE-OUT CROSS-VALIDATION (LOO-CV)
+================================================================================
+
+Computed from 8000 posterior samples and 40 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -185.49     5.26
+p_loo        0.98        -
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)       40  100.0%
+   (0.70, 1]   (bad)         0    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+
+PARETO K DIAGNOSTICS
+--------------------------------------------------------------------------------
+Total observations: 40
+k > 0.7 (problematic): 0 (0.0%)
+k > 0.5 (concerning): 0
+Max k: 0.179
+Mean k: 0.046
+
+✓ Pareto k diagnostic acceptable

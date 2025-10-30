@@ -1,0 +1,42 @@
+================================================================================
+CALIBRATION ASSESSMENT
+Model: NB-Linear Baseline (Experiment 1)
+================================================================================
+
+PREDICTIVE INTERVAL COVERAGE
+--------------------------------------------------------------------------------
+Nominal  Empirical  Covered/Total  Deviation
+--------------------------------------------------------------------------------
+  50.0%      50.0%    20/ 40      +0.000  ✓
+  60.0%      60.0%    24/ 40      +0.000  ✓
+  70.0%      70.0%    28/ 40      +0.000  ✓
+  80.0%      85.0%    34/ 40      +0.050  ✓
+  90.0%      95.0%    38/ 40      +0.050  ✓
+  95.0%     100.0%    40/ 40      +0.050  ✓
+  99.0%     100.0%    40/ 40      +0.010  ✓
+
+INTERPRETATION
+--------------------------------------------------------------------------------
+✓ WELL-CALIBRATED: Average deviation < 3%
+  Predictive intervals have appropriate coverage
+
+Average deviation: +0.023
+Max absolute deviation: 0.050
+
+PROBABILITY INTEGRAL TRANSFORM (PIT)
+--------------------------------------------------------------------------------
+If model is well-calibrated, PIT values should be uniform on [0,1].
+
+PIT statistics:
+  Mean:   0.504 (ideal: 0.5)
+  Median: 0.516 (ideal: 0.5)
+  SD:     0.285 (ideal: 0.289)
+  Min:    0.062
+  Max:    0.979
+
+Kolmogorov-Smirnov test for uniformity:
+  KS statistic: 0.0620
+  p-value:      0.9954
+  ✓ PASS: PIT values consistent with uniform distribution (p>0.05)
+
+================================================================================

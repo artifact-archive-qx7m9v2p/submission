@@ -1,0 +1,4 @@
+parameter,r_hat,ess_bulk,divergences,divergence_pct
+mu,1.0,7449.0,0,0.0
+tau,1.0,3876.0,0,0.0
+theta_max,1.0,7724.0,0,0.0

@@ -1,0 +1,101 @@
+{
+  "round": 2,
+  "n_samples": 1000,
+  "n_time": 40,
+  "priors": {
+    "delta": "Normal(0.05, 0.02)",
+    "sigma_eta": "Exponential(20.0) [mean=0.050]",
+    "phi": "Exponential(0.05) [mean=20.0]",
+    "eta_1": "Normal(3.91, 1.0)"
+  },
+  "parameter_summaries": {
+    "delta": {
+      "mean": 0.049808866886360895,
+      "sd": 0.02027658729601836,
+      "ci_95": [
+        0.010576892851325667,
+        0.0891495444369657
+      ]
+    },
+    "sigma_eta": {
+      "mean": 0.04958091689836726,
+      "median": 0.035545682342131416,
+      "ci_95": [
+        0.0013067505687574144,
+        0.17093963671537665
+      ],
+      "max": 0.29690823219065293
+    },
+    "phi": {
+      "mean": 19.897077155600297,
+      "median": 14.356270575740876,
+      "ci_95": [
+        0.5948189533928178,
+        70.38211127973943
+      ],
+      "max": 141.70446434194395
+    }
+  },
+  "prior_predictive_summaries": {
+    "mean_counts": {
+      "mean": 312.99805000000003,
+      "median": 164.55,
+      "ci_95": [
+        18.947499999999998,
+        1579.2587499999997
+      ],
+      "observed": 109.45
+    },
+    "max_counts": {
+      "median": 495.0,
+      "ci_95": [
+        49.0,
+        6696.974999999999
+      ],
+      "extreme_max": 38261.0,
+      "observed": 272
+    },
+    "growth_factors": {
+      "median": 7.075894343228837,
+      "ci_95": [
+        1.0700562253700017,
+        40.03986531731378
+      ],
+      "observed": 8.45
+    }
+  },
+  "red_flags": {
+    "counts_gt_1000": {
+      "count": 2483,
+      "percent": 6.2075
+    },
+    "counts_gt_10000": {
+      "count": 32,
+      "percent": 0.08
+    },
+    "growth_gt_50x": {
+      "count": 15,
+      "percent": 1.5
+    },
+    "growth_gt_100x": {
+      "count": 2,
+      "percent": 0.2
+    },
+    "phi_lt_0.1": {
+      "count": 4,
+      "percent": 0.4
+    }
+  },
+  "coverage": {
+    "obs_mean_percentile": 36.8,
+    "obs_max_percentile": 32.5
+  },
+  "comparison_to_round1": {
+    "round1_mean_of_means": 418.8,
+    "round2_mean_of_means": 312.99805000000003,
+    "improvement_pct": 25.263120821394452,
+    "round1_extreme_pct": 0.4,
+    "round2_extreme_pct": 0.08,
+    "reduction_pct": 80.0
+  }
+}

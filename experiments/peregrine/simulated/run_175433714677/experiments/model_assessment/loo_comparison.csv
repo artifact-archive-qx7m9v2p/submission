@@ -1,0 +1,3 @@
+Model,ELPD,SE,p_loo,Pareto_k_gt_0.5,Pareto_k_gt_0.7,n_params,Decision,Reason
+Model_1_Linear,-174.61062143944886,4.802914032515727,1.5141776994165355,0,0,3,REJECTED,Residual curvature (coef=-5.22)
+Model_2_Quadratic,-175.0560263812614,5.213353698777053,2.124954319704841,0,0,4,REJECTED,"β₂ non-significant, no improvement"

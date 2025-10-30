@@ -1,0 +1,483 @@
+# Stan Model Templates for Parametric GLMs
+# Designer 1 - Parametric Focus
+# Ready to copy-paste into .stan files
+
+================================================================================
+MODEL 1: NEGATIVE BINOMIAL WITH QUADRATIC TREND
+================================================================================
+
+// File: model1_nb_quadratic.stan
+
+data {
+  int<lower=0> N;           // Number of observations
+  array[N] int<lower=0> y;  // Count observations
+  vector[N] year;           // Standardized year
+}
+
+transformed data {
+  vector[N] year_sq = year .* year;  // Precompute squared term
+}
+
+parameters {
+  real beta_0;              // Intercept
+  real beta_1;              // Linear term
+  real beta_2;              // Quadratic term
+  real<lower=0> phi;        // Dispersion parameter
+}
+
+transformed parameters {
+  vector[N] log_mu = beta_0 + beta_1 * year + beta_2 * year_sq;
+  vector[N] mu = exp(log_mu);
+}
+
+model {
+  // Priors (weakly informative, centered on EDA findings)
+  beta_0 ~ normal(4.7, 0.5);    // log(109) ≈ 4.7
+  beta_1 ~ normal(0.8, 0.3);    // Positive growth expected
+  beta_2 ~ normal(0.3, 0.2);    // Acceleration term
+  phi ~ gamma(2, 0.5);          // Allows overdispersion
+
+  // Likelihood
+  y ~ neg_binomial_2(mu, phi);
+}
+
+generated quantities {
+  array[N] int y_rep;       // Posterior predictive samples
+  vector[N] log_lik;        // For LOO-CV
+  vector[N] pearson_resid;  // Pearson residuals
+
+  for (n in 1:N) {
+    y_rep[n] = neg_binomial_2_rng(mu[n], phi);
+    log_lik[n] = neg_binomial_2_lpmf(y[n] | mu[n], phi);
+
+    // Pearson residual
+    real var_y = mu[n] + mu[n]^2 / phi;
+    pearson_resid[n] = (y[n] - mu[n]) / sqrt(var_y);
+  }
+}
+
+================================================================================
+MODEL 2: NEGATIVE BINOMIAL WITH EXPONENTIAL TREND
+================================================================================
+
+// File: model2_nb_exponential.stan
+
+data {
+  int<lower=0> N;
+  array[N] int<lower=0> y;
+  vector[N] year;
+}
+
+parameters {
+  real beta_0;              // Intercept (log scale)
+  real beta_1;              // Growth rate
+  real<lower=0> phi;        // Dispersion
+}
+
+transformed parameters {
+  vector[N] log_mu = beta_0 + beta_1 * year;
+  vector[N] mu = exp(log_mu);
+}
+
+model {
+  // Priors
+  beta_0 ~ normal(4.7, 0.5);
+  beta_1 ~ normal(0.85, 0.2);   // EDA exponential fit: 0.85
+  phi ~ gamma(2, 0.5);
+
+  // Likelihood
+  y ~ neg_binomial_2(mu, phi);
+}
+
+generated quantities {
+  array[N] int y_rep;
+  vector[N] log_lik;
+  vector[N] pearson_resid;
+  real growth_multiplier = exp(beta_1);  // Interpretable quantity
+  real doubling_time = log(2.0) / beta_1;  // Time to double
+
+  for (n in 1:N) {
+    y_rep[n] = neg_binomial_2_rng(mu[n], phi);
+    log_lik[n] = neg_binomial_2_lpmf(y[n] | mu[n], phi);
+
+    real var_y = mu[n] + mu[n]^2 / phi;
+    pearson_resid[n] = (y[n] - mu[n]) / sqrt(var_y);
+  }
+}
+
+================================================================================
+MODEL 3: QUASI-POISSON WITH OBSERVATION-LEVEL RANDOM EFFECTS
+================================================================================
+
+// File: model3_quasi_poisson_re.stan
+
+data {
+  int<lower=0> N;
+  array[N] int<lower=0> y;
+  vector[N] year;
+}
+
+transformed data {
+  vector[N] year_sq = year .* year;
+}
+
+parameters {
+  real beta_0;
+  real beta_1;
+  real beta_2;
+  real<lower=0> sigma_obs;       // Observation-level SD
+  vector[N] epsilon_raw;          // Non-centered parameterization
+}
+
+transformed parameters {
+  vector[N] epsilon = sigma_obs * epsilon_raw;  // Observation-level effects
+  vector[N] log_mu_trend = beta_0 + beta_1 * year + beta_2 * year_sq;
+  vector[N] log_lambda = log_mu_trend + epsilon;
+  vector[N] lambda = exp(log_lambda);
+}
+
+model {
+  // Priors
+  beta_0 ~ normal(4.7, 0.5);
+  beta_1 ~ normal(0.8, 0.3);
+  beta_2 ~ normal(0.3, 0.2);
+  sigma_obs ~ exponential(1);    // Weakly informative, favors small values
+
+  // Random effects (non-centered)
+  epsilon_raw ~ normal(0, 1);
+
+  // Likelihood
+  y ~ poisson(lambda);
+}
+
+generated quantities {
+  array[N] int y_rep;
+  vector[N] log_lik;
+  vector[N] pearson_resid;
+
+  for (n in 1:N) {
+    // For predictions, sample new random effect
+    real epsilon_new = normal_rng(0, sigma_obs);
+    real lambda_pred = exp(log_mu_trend[n] + epsilon_new);
+    y_rep[n] = poisson_rng(lambda_pred);
+
+    log_lik[n] = poisson_lpmf(y[n] | lambda[n]);
+    pearson_resid[n] = (y[n] - lambda[n]) / sqrt(lambda[n]);
+  }
+}
+
+================================================================================
+ALTERNATIVE: MODEL 3 WITH CENTERED PARAMETERIZATION
+(Use if non-centered version has convergence issues)
+================================================================================
+
+// File: model3_quasi_poisson_re_centered.stan
+
+data {
+  int<lower=0> N;
+  array[N] int<lower=0> y;
+  vector[N] year;
+}
+
+transformed data {
+  vector[N] year_sq = year .* year;
+}
+
+parameters {
+  real beta_0;
+  real beta_1;
+  real beta_2;
+  real<lower=0> sigma_obs;
+  vector[N] epsilon;  // Centered parameterization
+}
+
+transformed parameters {
+  vector[N] log_mu_trend = beta_0 + beta_1 * year + beta_2 * year_sq;
+  vector[N] log_lambda = log_mu_trend + epsilon;
+  vector[N] lambda = exp(log_lambda);
+}
+
+model {
+  beta_0 ~ normal(4.7, 0.5);
+  beta_1 ~ normal(0.8, 0.3);
+  beta_2 ~ normal(0.3, 0.2);
+  sigma_obs ~ exponential(1);
+
+  epsilon ~ normal(0, sigma_obs);  // Centered parameterization
+
+  y ~ poisson(lambda);
+}
+
+generated quantities {
+  array[N] int y_rep;
+  vector[N] log_lik;
+
+  for (n in 1:N) {
+    real epsilon_new = normal_rng(0, sigma_obs);
+    real lambda_pred = exp(log_mu_trend[n] + epsilon_new);
+    y_rep[n] = poisson_rng(lambda_pred);
+    log_lik[n] = poisson_lpmf(y[n] | lambda[n]);
+  }
+}
+
+================================================================================
+PYTHON WRAPPER EXAMPLE (using cmdstanpy)
+================================================================================
+
+import cmdstanpy
+import pandas as pd
+import numpy as np
+import arviz as az
+import matplotlib.pyplot as plt
+
+# Load data
+data = pd.read_csv('/workspace/data/data.csv')
+
+# Prepare data for Stan
+stan_data = {
+    'N': len(data),
+    'y': data['C'].values,
+    'year': data['year'].values
+}
+
+# Compile model
+model1 = cmdstanpy.CmdStanModel(stan_file='model1_nb_quadratic.stan')
+
+# Fit model
+fit1 = model1.sample(
+    data=stan_data,
+    chains=4,
+    iter_warmup=1000,
+    iter_sampling=1000,
+    seed=42,
+    show_progress=True
+)
+
+# Check diagnostics
+print(fit1.diagnose())
+
+# Convert to ArviZ for analysis
+idata1 = az.from_cmdstanpy(fit1)
+
+# Posterior summary
+print(az.summary(idata1, var_names=['beta_0', 'beta_1', 'beta_2', 'phi']))
+
+# Posterior predictive check
+az.plot_ppc(idata1, num_pp_samples=100)
+plt.savefig('ppc_model1.png', dpi=300)
+
+# Compute LOO
+loo1 = az.loo(idata1)
+print(loo1)
+
+# Check residual autocorrelation
+pearson_resid = fit1.stan_variable('pearson_resid').mean(axis=0)
+from statsmodels.graphics.tsaplots import plot_acf
+plot_acf(pearson_resid, lags=10)
+plt.savefig('residual_acf_model1.png', dpi=300)
+
+# Posterior predictive coverage
+y_rep = fit1.stan_variable('y_rep')
+lower = np.percentile(y_rep, 2.5, axis=0)
+upper = np.percentile(y_rep, 97.5, axis=0)
+coverage = np.mean((data['C'].values >= lower) & (data['C'].values <= upper))
+print(f"Posterior predictive coverage: {coverage:.1%}")
+
+# Overdispersion check
+y_rep_mean = y_rep.mean()
+y_rep_var = y_rep.var()
+obs_mean = data['C'].mean()
+obs_var = data['C'].var()
+print(f"Observed Var/Mean: {obs_var/obs_mean:.2f}")
+print(f"Predicted Var/Mean: {y_rep_var/y_rep_mean:.2f}")
+
+================================================================================
+R WRAPPER EXAMPLE (using rstan)
+================================================================================
+
+library(rstan)
+library(loo)
+library(bayesplot)
+
+# Set options
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+
+# Load data
+data <- read.csv('/workspace/data/data.csv')
+
+# Prepare data for Stan
+stan_data <- list(
+  N = nrow(data),
+  y = data$C,
+  year = data$year
+)
+
+# Fit model
+fit1 <- stan(
+  file = 'model1_nb_quadratic.stan',
+  data = stan_data,
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 42
+)
+
+# Check diagnostics
+print(fit1, pars = c('beta_0', 'beta_1', 'beta_2', 'phi'))
+check_hmc_diagnostics(fit1)
+
+# Posterior predictive check
+y_rep <- extract(fit1)$y_rep
+ppc_dens_overlay(data$C, y_rep[1:100, ])
+
+# LOO
+log_lik <- extract_log_lik(fit1)
+loo1 <- loo(log_lik)
+print(loo1)
+
+# Residual ACF
+pearson_resid <- colMeans(extract(fit1)$pearson_resid)
+acf(pearson_resid, main = "ACF of Pearson Residuals")
+
+# Coverage
+y_rep_lower <- apply(y_rep, 2, quantile, 0.025)
+y_rep_upper <- apply(y_rep, 2, quantile, 0.975)
+coverage <- mean(data$C >= y_rep_lower & data$C <= y_rep_upper)
+cat(sprintf("Coverage: %.1f%%\n", coverage * 100))
+
+================================================================================
+PRIOR PREDICTIVE CHECK CODE
+================================================================================
+
+# Python
+def prior_predictive_check(stan_data, n_sim=1000):
+    """Generate data from prior only (no observations)"""
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # Sample from priors
+    beta_0 = np.random.normal(4.7, 0.5, n_sim)
+    beta_1 = np.random.normal(0.8, 0.3, n_sim)
+    beta_2 = np.random.normal(0.3, 0.2, n_sim)
+    phi = np.random.gamma(2, 1/0.5, n_sim)
+
+    year = stan_data['year']
+    year_sq = year ** 2
+
+    # Generate predicted counts
+    plt.figure(figsize=(10, 6))
+    for i in range(min(100, n_sim)):
+        log_mu = beta_0[i] + beta_1[i] * year + beta_2[i] * year_sq
+        mu = np.exp(log_mu)
+        plt.plot(year, mu, alpha=0.1, color='blue')
+
+    # Overlay observed data
+    plt.scatter(year, stan_data['y'], color='red', s=50,
+                label='Observed', zorder=10)
+    plt.xlabel('Year (standardized)')
+    plt.ylabel('Count')
+    plt.title('Prior Predictive Check: Model 1')
+    plt.legend()
+    plt.ylim(0, 500)
+    plt.savefig('prior_predictive_model1.png', dpi=300)
+
+    # Check if priors are reasonable
+    log_mu_mean = beta_0.mean() + beta_1.mean() * year + beta_2.mean() * year_sq
+    mu_mean = np.exp(log_mu_mean)
+    print(f"Prior mean prediction range: {mu_mean.min():.1f} to {mu_mean.max():.1f}")
+    print(f"Observed data range: {stan_data['y'].min()} to {stan_data['y'].max()}")
+
+================================================================================
+MODEL COMPARISON CODE
+================================================================================
+
+# Python (using ArviZ)
+import arviz as az
+
+# After fitting all models
+models = {
+    'Model 1: NB Quadratic': idata1,
+    'Model 2: NB Exponential': idata2,
+    'Model 3: Quasi-Poisson': idata3
+}
+
+# Compare LOO-IC
+comparison = az.compare(models)
+print(comparison)
+
+# Visual comparison
+az.plot_compare(comparison)
+plt.savefig('model_comparison_loo.png', dpi=300)
+
+# Create summary table
+import pandas as pd
+summary = []
+for name, idata in models.items():
+    loo = az.loo(idata)
+
+    # Posterior predictive coverage
+    y_rep = idata.posterior_predictive['y_rep'].values
+    y_rep = y_rep.reshape(-1, len(stan_data['y']))
+    lower = np.percentile(y_rep, 2.5, axis=0)
+    upper = np.percentile(y_rep, 97.5, axis=0)
+    coverage = np.mean((stan_data['y'] >= lower) & (stan_data['y'] <= upper))
+
+    # Residual ACF
+    # (compute separately for each model)
+
+    summary.append({
+        'Model': name,
+        'LOO-IC': loo.loo_i.sum(),
+        'Coverage (%)': coverage * 100,
+        'p_loo': loo.p_loo,
+        'Warning': 'Yes' if (loo.pareto_k > 0.7).any() else 'No'
+    })
+
+summary_df = pd.DataFrame(summary)
+print(summary_df)
+summary_df.to_csv('model_comparison.csv', index=False)
+
+================================================================================
+NOTES ON USAGE
+================================================================================
+
+1. SAVE THESE FILES:
+   - model1_nb_quadratic.stan
+   - model2_nb_exponential.stan
+   - model3_quasi_poisson_re.stan
+
+2. RUN IN ORDER:
+   a) Model 1 first (baseline)
+   b) Model 2 next (simpler alternative)
+   c) Model 3 only if Models 1/2 show dispersion issues
+
+3. FOR EACH MODEL:
+   - Check MCMC diagnostics (Rhat, ESS, divergences)
+   - Run posterior predictive checks
+   - Compute LOO-IC
+   - Plot residual ACF
+   - Check coverage
+
+4. COMPARE MODELS:
+   - LOO-IC differences > 4 are meaningful
+   - Check which model has best coverage
+   - Check which has lowest residual ACF
+
+5. MAKE DECISION:
+   - If Model 1 or 2 works well: Use as baseline
+   - If all show high residual ACF (>0.7): Recommend temporal models
+   - If all have poor coverage (<75%): Recommend flexible models
+
+6. COMPUTATIONAL TIPS:
+   - Start with 1000 warmup + 1000 sampling iterations
+   - If divergences occur, increase adapt_delta to 0.95
+   - If slow, try increasing max_treedepth to 12
+   - Model 3 may need longer warmup (1500-2000)
+
+7. SAVING RESULTS:
+   - Save fitted objects: fit1.save_csvfiles(dir='results/')
+   - Save plots: Use consistent naming scheme
+   - Save diagnostics: Create markdown report
+
+================================================================================

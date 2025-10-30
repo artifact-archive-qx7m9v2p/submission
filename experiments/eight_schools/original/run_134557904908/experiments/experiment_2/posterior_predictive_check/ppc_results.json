@@ -1,0 +1,17 @@
+{
+  "loo_elpd": -30.693352030216346,
+  "loo_se": 1.0497973084792238,
+  "loo_p": 0.984577880842,
+  "max_pareto_k": 0.551116475690267,
+  "n_high_k": 0,
+  "ks_statistic": 0.239625,
+  "ks_p_value": 0.663534691502193,
+  "pit_uniform": true,
+  "coverage_50": 62.5,
+  "coverage_68": 87.5,
+  "coverage_90": 100.0,
+  "coverage_95": 100.0,
+  "elpd_diff": 0.17025930056277616,
+  "se_diff": 1.0497973084792238,
+  "models_similar": true
+}

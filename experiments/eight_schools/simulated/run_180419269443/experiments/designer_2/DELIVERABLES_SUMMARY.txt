@@ -1,0 +1,313 @@
+================================================================================
+DESIGNER 2: ROBUST BAYESIAN MODELS - COMPLETE DELIVERABLES
+================================================================================
+
+Mission: Design adversarial Bayesian models with explicit falsification criteria
+Focus: Distributional robustness and sensitivity to assumptions
+Status: DESIGN PHASE COMPLETE ✓
+
+================================================================================
+FILE STRUCTURE (7 files, 92 KB, 2,805 lines)
+================================================================================
+
+/workspace/experiments/designer_2/
+│
+├── INDEX.md (11 KB)                         ← START HERE
+│   └── Complete overview of all deliverables
+│
+├── SUMMARY.md (9.6 KB)                      ← QUICK REFERENCE
+│   └── Decision tree, thresholds, interpretation guide
+│
+├── proposed_models.md (28 KB)               ← PRIMARY DESIGN DOC
+│   ├── Model 1: t-Distribution (heavy-tailed)
+│   ├── Model 2: Mixture (subpopulations)
+│   ├── Model 3: Dirichlet Process (non-parametric)
+│   ├── Falsification criteria for each
+│   ├── Stress tests to break models
+│   └── Comparison to classical approaches
+│
+├── README.md (12 KB)                        ← DETAILED DOCUMENTATION
+│   ├── Philosophy and approach
+│   ├── Implementation phases
+│   ├── Comparison to Designer 1
+│   └── References and resources
+│
+├── MODEL_COMPARISON_STRATEGY.md (15 KB)    ← QUANTITATIVE GUIDE
+│   ├── Decision flowchart with thresholds
+│   ├── LOO-CV comparison framework
+│   ├── Posterior predictive check protocol
+│   ├── Expected results matrix
+│   └── Reporting templates
+│
+├── model_1_t_distribution.stan (2.2 KB)    ← IMPLEMENTATION (Stan)
+│   ├── Heavy-tailed hierarchical model
+│   ├── Non-centered parameterization
+│   ├── Degrees of freedom (nu) parameter
+│   └── Generated quantities for diagnostics
+│
+├── model_2_mixture.py (7.9 KB)             ← IMPLEMENTATION (PyMC)
+│   ├── Two-component mixture model
+│   ├── Ordering constraint for identifiability
+│   ├── Collapse detection functions
+│   └── LOO-CV and PPC utilities
+│
+└── model_3_dirichlet_process.py (11 KB)   ← IMPLEMENTATION (PyMC)
+    ├── Stick-breaking construction
+    ├── Data-driven cluster count (K_eff)
+    ├── Concentration parameter estimation
+    └── Comprehensive diagnostics
+
+================================================================================
+THREE MODEL CLASSES (Distinct, Not Just Parameter Variations)
+================================================================================
+
+MODEL 1: Heavy-Tailed Hierarchical (t-Distribution)
+────────────────────────────────────────────────────
+Mathematical:  y_i ~ Student_t(nu, theta_i, sigma_i)
+               theta_i ~ Normal(mu, tau)
+
+When to use:   - Concern about outliers
+               - Uncertainty about data quality
+               - Want automatic robust estimation
+
+Falsification: - If nu > 50 → Normal adequate, use Designer 1's model
+               - If nu < 3 → Over-explaining, check data
+               - If LOO worse than normal → Not helping
+
+Expected:      nu ≈ 30-50 (near-normal, given I²=2.9%)
+
+────────────────────────────────────────────────────
+
+MODEL 2: Mixture Model (Heterogeneous Heterogeneity)
+────────────────────────────────────────────────────
+Mathematical:  theta_i ~ pi*Normal(mu_1, tau_1) + (1-pi)*Normal(mu_2, tau_2)
+
+When to use:   - Suspicion of subpopulations
+               - Study 5's negative effect signals different group
+               - Want to test homogeneity directly
+
+Falsification: - If pi → 0 or 1 → Single cluster, use hierarchical
+               - If mu_1 ≈ mu_2 → Not distinguishable
+               - If label switching unsolvable → ID problem
+
+Expected:      pi < 0.1 or > 0.9 (collapse to single cluster)
+
+────────────────────────────────────────────────────
+
+MODEL 3: Dirichlet Process (Non-Parametric)
+────────────────────────────────────────────────────
+Mathematical:  theta_i ~ G, where G ~ DP(alpha, G_0)
+
+When to use:   - Fundamental uncertainty about structure
+               - Don't want to fix cluster count
+               - Minimal distributional assumptions
+
+Falsification: - If K_eff = 1 → Use hierarchical normal
+               - If K_eff = J → No pooling needed
+               - If LOO no better → Too complex
+
+Expected:      K_eff ≈ 1-2 (simple structure)
+
+================================================================================
+DECISION TREE (Implementation Order)
+================================================================================
+
+START → Fit Model 1 (t-distribution)
+        │
+        ├─ nu > 50? → STOP: Use Designer 1's normal hierarchical
+        │
+        ├─ 20 < nu < 50? → REPORT: Model 1 as primary
+        │
+        └─ nu < 20? → Continue to Model 2
+                      │
+                      ├─ pi → 0 or 1? → STOP: Single cluster
+                      │
+                      ├─ Genuine mixture? → REPORT: Model 2
+                      │
+                      └─ Suggests >2 clusters? → Try Model 3
+                                                  │
+                                                  ├─ K_eff ≈ 1? → Hierarchical
+                                                  ├─ K_eff ≈ 2? → Validate M2
+                                                  └─ K_eff > 3? → Question pooling
+
+================================================================================
+KEY FALSIFICATION CRITERIA (What Makes Me Abandon Each Model)
+================================================================================
+
+Model 1 (t):     - nu < 3 or > 100 (unrealistic)
+                 - Divergences >5% after tuning
+                 - LOO worse than normal
+                 - Posterior predictive failures
+
+Model 2 (Mix):   - Label switching despite constraints
+                 - pi posterior uniform [0,1] (unidentified)
+                 - Nonsensical cluster assignments
+                 - LOO worse than hierarchical
+
+Model 3 (DP):    - Each study separate cluster (K=J)
+                 - Concentration at extremes (alpha → 0 or ∞)
+                 - Unstable across chains
+                 - No better than simpler models
+
+GLOBAL ABORT:    - All models show same pathology
+                 - Computational issues across all
+                 - PPC fails for all models
+                 - Extreme sensitivity (>50% change)
+                 - Models give contradictory conclusions
+
+================================================================================
+EXPECTED OUTCOMES (Given EDA: I²=2.9%, no outliers)
+================================================================================
+
+Model              Expected Parameter    Expected mu    LOO Rank
+─────────────────────────────────────────────────────────────────
+Hierarchical Normal      -              11.0-11.5      1 or 2
+Model 1 (t)           nu = 35-45        11.0-11.5      1 or 2
+Model 2 (Mixture)     pi < 0.1 or >0.9  11.0-11.5      3
+Model 3 (DP)          K_eff = 1.0-1.5   11.0-11.5      4
+
+Interpretation: Expect simple models to win given low heterogeneity
+
+What Would Surprise Me:
+- nu < 15 → Unexpectedly heavy tails
+- 0.2 < pi < 0.8 → Hidden subpopulations
+- K_eff > 3 → Complex heterogeneity
+- Any mu outside [9, 13] → Major shift from EDA
+
+================================================================================
+COMPARISON TO DESIGNER 1
+================================================================================
+
+Aspect              Designer 1              Designer 2 (This)
+────────────────────────────────────────────────────────────────
+Philosophy          Classical foundations   Adversarial robustness
+Models              Normal hierarchical     t, Mixture, DP
+                    Common effect           
+Assumptions         Normality               Minimal
+Complexity          Simple-moderate         Moderate-complex
+Focus               Baseline estimation     Robustness testing
+Best when           Data well-behaved       Uncertain assumptions
+Risk                Miss outliers/subgroups Overfit small data
+
+Complementarity: Designer 1 establishes baseline, Designer 2 tests robustness
+Expected: Agreement if data homogeneous, D2 reveals structure if complex
+
+================================================================================
+IMPLEMENTATION READINESS
+================================================================================
+
+Stan Model (Model 1):
+✓ Non-centered parameterization
+✓ Proper priors (nu ~ Gamma(2, 0.1))
+✓ Generated quantities (log_lik, y_rep, predictions)
+✓ Derived quantities (I², prediction intervals)
+
+PyMC Models (2 & 3):
+✓ Ordering constraints (Model 2)
+✓ Stick-breaking construction (Model 3)
+✓ Diagnostic functions
+✓ Example usage with data loading
+✓ LOO-CV and PPC utilities
+
+Documentation:
+✓ Mathematical specifications complete
+✓ Falsification criteria explicit
+✓ Decision thresholds quantitative
+✓ Sensitivity analyses planned
+✓ Comparison framework defined
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+
+Design Success:
+✓ Three distinct model classes proposed
+✓ Falsification criteria explicit for each
+✓ Decision points quantitative
+✓ Stress tests designed
+✓ Honest about limitations
+
+Implementation Success (To Be Evaluated):
+□ Model 1 converges and is evaluated
+□ LOO-CV comparisons performed
+□ Posterior predictive checks conducted
+□ Sensitivity analyses run
+□ Comparison with Designer 1 completed
+□ Final recommendation justified with evidence
+
+================================================================================
+READING GUIDE
+================================================================================
+
+Want to understand approach?
+→ Start with: SUMMARY.md (10 min)
+→ Then read: proposed_models.md (30 min)
+
+Want to implement?
+→ Start with: MODEL_COMPARISON_STRATEGY.md
+→ Then use: model_1_t_distribution.stan
+
+Want to compare with Designer 1?
+→ See: proposed_models.md (Section: Comparison to Classical Normal)
+→ And: README.md (Section: Comparison to Designer 1)
+
+Want quick reference during implementation?
+→ Keep open: SUMMARY.md (decision tree)
+→ And: MODEL_COMPARISON_STRATEGY.md (thresholds)
+
+================================================================================
+PHILOSOPHY: FALSIFICATION OVER CONFIRMATION
+================================================================================
+
+Core Principle: Finding truth > Completing tasks
+
+Success Scenarios:
+✓ Discover assumptions wrong early → Pivot quickly
+✓ All models agree → Confidence in simplicity
+✓ Models reveal structure → Important finding
+✓ Models fail → Honest reporting, more data needed
+
+Failure Scenarios:
+✗ Fit models without checking assumptions
+✗ Ignore evidence contradicting approach
+✗ Report without sensitivity analyses
+✗ Claim certainty where none exists
+
+Remember: Falsification is progress. Pivoting is learning. Uncertainty is honest.
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+Implementation Team:
+1. Review INDEX.md and SUMMARY.md (15 min)
+2. Read proposed_models.md for theory (30 min)
+3. Set up Stan and PyMC environments
+4. Fit Model 1 (Week 1)
+5. Follow decision tree based on results
+6. Compare with Designer 1 (Week 4)
+7. Write synthesis with full uncertainty quantification
+
+Evaluation Criteria:
+- Convergence diagnostics (R-hat < 1.01, ESS > 400)
+- Predictive performance (LOO-CV)
+- Posterior predictive calibration (p: 0.05-0.95)
+- Sensitivity to priors/data (<10% change)
+- Agreement with Designer 1 on mu estimate
+
+================================================================================
+CONTACT INFORMATION
+================================================================================
+
+Designer:     Model Designer 2 (Independent)
+Focus:        Robust modeling and distributional assumptions
+Directory:    /workspace/experiments/designer_2/
+Data source:  /workspace/data/data.csv
+EDA report:   /workspace/eda/eda_report.md
+Parallel:     Designer 1 (classical models in separate directory)
+
+Date:         2025-10-28
+Status:       Design phase complete, ready for implementation
+Deliverables: 7 files, 92 KB, 2,805 lines
+
+================================================================================

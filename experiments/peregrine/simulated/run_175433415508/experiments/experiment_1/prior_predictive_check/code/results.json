@@ -1,0 +1,88 @@
+{
+  "n_prior_draws": 100,
+  "decision": "PASS",
+  "parameter_samples": {
+    "beta_0": {
+      "mean": 4.66,
+      "sd": 1.0,
+      "range": [
+        1.46,
+        6.66
+      ]
+    },
+    "beta_1": {
+      "mean": 1.06,
+      "sd": 0.51,
+      "range": [
+        -0.13,
+        2.4
+      ],
+      "n_negative": 1
+    },
+    "phi": {
+      "mean": 19.43,
+      "sd": 12.81,
+      "range": [
+        1.41,
+        56.32
+      ]
+    }
+  },
+  "prior_predictive_stats": {
+    "count_mean": {
+      "mean": 353.5,
+      "range": [
+        4.8,
+        3219.9
+      ]
+    },
+    "count_var": {
+      "mean": 940004.9,
+      "range": [
+        8.5,
+        30203557.1
+      ]
+    },
+    "count_min": {
+      "mean": 25.6,
+      "range": [
+        0,
+        204
+      ]
+    },
+    "count_max": {
+      "mean": 1842.7,
+      "range": [
+        12,
+        23593
+      ]
+    },
+    "growth_factor": {
+      "mean": 158.55,
+      "range": [
+        0.65,
+        3007.38
+      ]
+    }
+  },
+  "range_checks": {
+    "pct_in_0_1000": 93.4,
+    "pct_in_0_5000": 99.2,
+    "pct_above_10000": 0.3
+  },
+  "observed_data": {
+    "mean": 109.4,
+    "variance": 7512.0,
+    "min": 21,
+    "max": 269
+  },
+  "criteria": {
+    "no_negative_counts": true,
+    "counts_in_reasonable_range": true,
+    "no_extreme_outliers": true,
+    "growth_mostly_positive": true,
+    "mean_covers_observed": true,
+    "max_covers_observed": true
+  },
+  "overall_pass": true
+}

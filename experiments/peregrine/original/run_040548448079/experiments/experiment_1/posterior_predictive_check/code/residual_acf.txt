@@ -1,0 +1,1 @@
+Residual ACF(1): 0.5186

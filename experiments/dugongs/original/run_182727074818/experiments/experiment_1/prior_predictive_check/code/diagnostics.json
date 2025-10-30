@@ -1,0 +1,79 @@
+{
+  "n_samples": 1000,
+  "data_context": {
+    "n_obs": 27,
+    "x_range": [
+      1.0,
+      31.5
+    ],
+    "y_range": [
+      1.77,
+      2.72
+    ],
+    "y_mean": 2.33,
+    "y_sd": 0.27
+  },
+  "prior_parameter_summaries": {
+    "alpha (intercept)": {
+      "mean": 2.0096660279111624,
+      "sd": 0.48936310387367715,
+      "median": 2.012650306117444,
+      "q025": 1.079232997318426,
+      "q975": 2.955399676390643
+    },
+    "beta (slope)": {
+      "mean": 0.32125087117474677,
+      "sd": 0.29908665758838904,
+      "median": 0.3189231396987138,
+      "q025": -0.2600257540162131,
+      "q975": 0.9184587330604698
+    },
+    "c (log shift)": {
+      "mean": 1.0165678618819272,
+      "sd": 0.735555881353697,
+      "median": 0.8595415561656021,
+      "q025": 0.11411355831088389,
+      "q975": 2.8107779964666118
+    },
+    "nu (df)": {
+      "mean": 19.537482404314154,
+      "sd": 13.333586680309297,
+      "median": 16.46813080563726,
+      "q025": 2.081479676871523,
+      "q975": 50.084926828664535
+    },
+    "sigma (scale)": {
+      "mean": 0.7787334346356074,
+      "sd": 4.452877083426393,
+      "median": 0.1894264408395852,
+      "q025": 0.009736235714969873,
+      "q975": 4.374253869409191
+    }
+  },
+  "prior_predictive_summaries": {
+    "y_range_min": -161737.0867229369,
+    "y_range_max": 4718.747370626482,
+    "mean_y_sim_avg": -2.7809190744658547,
+    "mean_y_sim_sd": 186.9765767267959,
+    "sd_y_sim_avg": 32.624490109885514,
+    "sd_y_sim_sd": 966.4286819408437
+  },
+  "plausibility_checks": {
+    "predictions_in_range_0.5_4.5_pct": 65.9,
+    "monotonically_increasing_pct": 86.1,
+    "observed_data_coverage_pct": 100.0,
+    "extrapolation_reasonable_pct": 90.2,
+    "extreme_low_pct": 12.1,
+    "extreme_high_pct": 4.0,
+    "mean_within_2sd_pct": 39.300000000000004
+  },
+  "decision_criteria": {
+    "check_1_pass": false,
+    "check_2_pass": false,
+    "check_3_pass": true,
+    "check_4_pass": true,
+    "check_5_pass": false,
+    "check_6_pass": true,
+    "check_7_pass": false
+  }
+}

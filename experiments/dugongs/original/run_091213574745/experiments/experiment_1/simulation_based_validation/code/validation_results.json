@@ -1,0 +1,17 @@
+{
+  "validation_pass": false,
+  "true_parameters": {
+    "beta_0": 2.3,
+    "beta_1": 0.29,
+    "sigma": 0.09
+  },
+  "recovery_results": {
+    "beta_0": {
+      "true": 2.3,
+      "mle": 2.3628646799044315,
+      "mean": 2.362885596284255,
+      "median": 2.361818830076046,
+      "sd": 0.02764704706603531,
+      "ci_lower": 2.3135428540728853,
+      "ci_upper": 2.4211453919491372,
+      "in_ci": 

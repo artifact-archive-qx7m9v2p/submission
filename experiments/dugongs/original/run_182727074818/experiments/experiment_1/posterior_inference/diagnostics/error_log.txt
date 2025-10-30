@@ -1,0 +1,10 @@
+Error during HMC sampling (PyMC):
+['observed_data'] group(s) already exists.
+
+Traceback (most recent call last):
+  File "/workspace/experiments/experiment_1/posterior_inference/code/fit_model_pymc.py", line 192, in <module>
+    idata.add_groups(observed_data={'Y': Y_data})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/agent-home/.local/lib/python3.13/site-packages/arviz/data/inference_data.py", line 1571, in add_groups
+    raise ValueError(f"{repeated_groups} group(s) already exists.")
+ValueError: ['observed_data'] group(s) already exists.

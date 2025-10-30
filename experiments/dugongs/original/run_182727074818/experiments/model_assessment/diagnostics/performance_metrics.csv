@@ -1,0 +1,16 @@
+Metric,Value,Interpretation
+ELPD_LOO,23.705240267901694,Expected log predictive density
+ELPD_SE,3.0886438189008265,Standard error of ELPD
+p_LOO,2.605547376668955,Effective number of parameters
+RMSE,0.08834888745082987,Root mean square error
+MAE,0.06988813274277164,Mean absolute error
+R²,0.8925435305651386,Variance explained
+Relative_RMSE,0.037851792465445996,RMSE relative to mean(y)
+Relative_MAE,0.029942551317912316,MAE relative to mean(y)
+50%_Coverage,0.5555555555555556,50% credible interval coverage
+90%_Coverage,0.9629629629629629,90% credible interval coverage
+95%_Coverage,1.0,95% credible interval coverage
+RMSE_Null,0.2695161543878113,Null model RMSE
+MAE_Null,0.2169547325102881,Null model MAE
+RMSE_Improvement,0.6721944639960127,RMSE reduction vs null
+MAE_Improvement,0.6778676734352522,MAE reduction vs null

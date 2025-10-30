@@ -1,0 +1,14 @@
+metric,value
+ELPD LOO,-32.05217513277623
+LOO SE,1.4335112450048484
+p_loo,1.1704037996213152
+Mean Pareto k,0.20207351652696331
+Max Pareto k,0.3728666971840671
+Bad Pareto k (>= 0.7),0
+p-value (mean),0.345
+p-value (SD),0.60775
+p-value (min),0.611875
+p-value (max),0.566125
+KS p-value,0.8770814752385945
+90% coverage,1.0
+Overall Status,ADEQUATE

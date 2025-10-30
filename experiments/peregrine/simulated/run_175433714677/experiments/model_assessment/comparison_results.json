@@ -1,0 +1,71 @@
+{
+  "model_comparison": {
+    "delta_elpd": 0.445404941812539,
+    "delta_se": 0.9300665372551123,
+    "interpretation": "Models are equivalent (Model 1 slightly favored)",
+    "comparison_table": {
+      "rank": {
+        "Model_1_Linear": 0,
+        "Model_2_Quadratic": 1
+      },
+      "elpd_loo": {
+        "Model_1_Linear": -174.61062143944886,
+        "Model_2_Quadratic": -175.0560263812614
+      },
+      "p_loo": {
+        "Model_1_Linear": 1.5141776994165355,
+        "Model_2_Quadratic": 2.124954319704841
+      },
+      "elpd_diff": {
+        "Model_1_Linear": 0.0,
+        "Model_2_Quadratic": 0.445404941812539
+      },
+      "weight": {
+        "Model_1_Linear": 1.0,
+        "Model_2_Quadratic": 0.0
+      },
+      "se": {
+        "Model_1_Linear": 4.802914032515727,
+        "Model_2_Quadratic": 5.213353698777053
+      },
+      "dse": {
+        "Model_1_Linear": 0.0,
+        "Model_2_Quadratic": 0.9300665372551123
+      },
+      "warning": {
+        "Model_1_Linear": false,
+        "Model_2_Quadratic": false
+      },
+      "scale": {
+        "Model_1_Linear": "log",
+        "Model_2_Quadratic": "log"
+      }
+    }
+  },
+  "model_1": {
+    "elpd_loo": -174.61062143944886,
+    "se": 4.802914032515727,
+    "p_loo": 1.5141776994165355,
+    "pareto_k_stats": {
+      "n_high_k_0.7": 0,
+      "n_high_k_0.5": 0,
+      "max_k": 0.29294204547058283,
+      "mean_k": 0.06404850961439962
+    },
+    "decision": "REJECTED",
+    "reason": "Systematic residual curvature (coef=-5.22), 4.17\u00d7 MAE degradation"
+  },
+  "model_2": {
+    "elpd_loo": -175.0560263812614,
+    "se": 5.213353698777053,
+    "p_loo": 2.124954319704841,
+    "pareto_k_stats": {
+      "n_high_k_0.7": 0,
+      "n_high_k_0.5": 0,
+      "max_k": 0.39029793371905025,
+      "mean_k": 0.1268521799453942
+    },
+    "decision": "REJECTED",
+    "reason": "\u03b2\u2082 non-significant (95% CI includes 0), no improvement over Model 1"
+  }
+}

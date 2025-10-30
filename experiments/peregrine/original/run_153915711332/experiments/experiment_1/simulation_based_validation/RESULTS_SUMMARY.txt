@@ -1,0 +1,403 @@
+================================================================================
+SIMULATION-BASED CALIBRATION RESULTS SUMMARY
+Experiment 1: Negative Binomial State-Space Model
+Date: 2025-10-29
+================================================================================
+
+OVERALL DECISION: ⚠️ FAIL
+Status: Requires Full MCMC Implementation
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+The Simulation-Based Calibration (SBC) test reveals SEVERE calibration 
+failures across all model parameters. This indicates that the current 
+inference method (MAP + Laplace approximation) is INADEQUATE for this model.
+
+Key Finding: The problem is COMPUTATIONAL, not MODEL-BASED.
+- Model structure appears sound (prior predictive checks passed)
+- Data generation works correctly
+- The inference approximation method fails
+
+CRITICAL REQUIREMENT: Re-run with full MCMC (HMC/NUTS) before fitting real data.
+
+================================================================================
+QUANTITATIVE RESULTS
+================================================================================
+
+Parameters Tested: 3 (δ, σ_η, φ)
+Simulations: 50 successful
+Posterior Draws per Simulation: 1000
+Total Rank Statistics: 150
+
+UNIFORMITY TESTS (χ² with 20 bins):
+-----------------------------------
+Parameter    χ² Statistic    p-value    Decision    Severity
+---------    ------------    -------    --------    --------
+δ (drift)         65.2       ≈0.000      FAIL       Severe
+σ_η (innov)      401.2       ≈0.000      FAIL       Extreme
+φ (disper)       120.4       ≈0.000      FAIL       Severe
+
+Threshold: p > 0.05 for PASS
+Result: ALL parameters FAIL with p ≈ 0
+
+KOLMOGOROV-SMIRNOV TESTS:
+-------------------------
+Parameter    KS Statistic    p-value    Decision
+---------    ------------    -------    --------
+δ               0.198        0.018      FAIL
+σ_η             0.657        0.000      FAIL (extreme)
+φ               0.303        0.000      FAIL
+
+COVERAGE ANALYSIS (90% Credible Intervals):
+-------------------------------------------
+Parameter    Expected    Actual    Gap       Status
+---------    --------    ------    ---       ------
+δ              90%       ~60%     -30%      Poor
+σ_η            90%       ~34%     -56%      Very Poor
+φ              90%       ~54%     -36%      Poor
+
+Conclusion: Credible intervals are SEVERELY UNDERCONFIDENT
+
+================================================================================
+FAILURE PATTERNS
+================================================================================
+
+PATTERN 1: Bimodal Rank Distribution (δ, φ)
+--------------------------------------------
+Observation: Ranks cluster at extremes (0 and 1000)
+Frequency:   40-45% of simulations at rank extremes
+Diagnosis:   Posterior too narrow (underestimated uncertainty)
+
+Visual Evidence: rank_histograms.png shows:
+- 12 simulations at rank 0 for δ (expected: 2.5)
+- 17 simulations at rank 0 for φ (expected: 2.5)
+- Red bars in extreme bins (outside 99% CI)
+
+PATTERN 2: Left-Skewed Rank Distribution (σ_η)
+-----------------------------------------------
+Observation: Extreme concentration at rank 0
+Frequency:   66% of simulations at lowest ranks (!)
+Diagnosis:   Systematic overestimation + poor approximation
+
+Visual Evidence: rank_histograms.png shows:
+- 33 out of 50 simulations at rank 0
+- Nearly empty middle and high rank bins
+- Worst calibration failure observed
+
+PATTERN 3: Rank Clustering in Recovery Plots
+---------------------------------------------
+Observation: Points cluster at y=0 and y=1.0 (normalized ranks)
+Distribution: Occurs across full range of true parameter values
+Diagnosis:   Not an identifiability issue - inference method failure
+
+Visual Evidence: parameter_recovery.png shows:
+- Clear bifurcation in all three panels
+- No relationship between true value and recovery quality
+- "Extreme ranks" counts: 12 low + 8 high (δ), 33 low (σ_η), 17 low + 6 high (φ)
+
+================================================================================
+ROOT CAUSE ANALYSIS
+================================================================================
+
+PRIMARY CAUSE: Laplace Approximation Inadequacy
+------------------------------------------------
+
+The Laplace approximation assumes:
+✗ Posterior is approximately Gaussian
+✗ Mode-based approximation is accurate  
+✗ Diagonal covariance is sufficient
+✗ Light tails and symmetry
+
+Reality for this model:
+✓ σ_η and φ have skewed posteriors (positive support, exponential priors)
+✓ Strong posterior correlations between parameters
+✓ Latent states create complex high-dimensional geometry
+✓ Heavy tails from negative binomial likelihood
+
+Result:
+→ Systematic bias in point estimates (especially σ_η overestimated)
+→ Severe underestimation of uncertainty (all parameters)
+→ Poor coverage of credible intervals (35-60% instead of 90%)
+
+SECONDARY FACTORS:
+------------------
+1. Parameter correlations not captured (used diagonal covariance)
+2. Optimization may find local optima rather than global MAP
+3. Skewed distributions poorly approximated by Gaussian
+
+EVIDENCE MODEL IS OK:
+---------------------
+✓ Prior predictive checks passed (Round 2 priors validated)
+✓ All optimizations converged successfully
+✓ No extreme or degenerate parameter values
+✓ Generated data looks reasonable and realistic
+✓ No evidence of prior-likelihood conflict
+
+Conclusion: COMPUTATIONAL problem, NOT MODEL problem
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+CRITICAL: DO NOT PROCEED TO REAL DATA WITH CURRENT METHOD
+
+REQUIRED ACTION (Priority 1):
+------------------------------
+Implement full MCMC with HMC/NUTS sampler:
+
+Option A: Stan (Recommended)
+  - Install cmdstan with make compiler
+  - Model already written: nb_state_space_model.stan
+  - Use: run_sbc.py (already implemented)
+  - Expected runtime: 2-4 hours for 100 simulations
+  - Provides: Full diagnostics (R̂, ESS, divergences)
+
+Option B: PyMC
+  - Install: pip install pymc
+  - Need to translate Stan model to PyMC syntax
+  - Similar runtime and diagnostics
+
+Option C: NumPyro (if GPU available)
+  - Install: pip install numpyro jax
+  - Fastest option with proper NUTS
+  - Excellent for large-scale SBC
+
+EXPECTED OUTCOME:
+-----------------
+If model is well-specified:
+  → SBC should PASS (χ² p > 0.05)
+  → Can proceed to real data fitting
+  → Trust credible intervals
+
+If model has issues:
+  → SBC will identify specific problems
+  → Rank patterns will suggest fixes
+  → May need prior adjustment or reparameterization
+
+FALLBACK (If MCMC Unavailable):
+--------------------------------
+If forced to proceed with limitations:
+
+1. ⚠️ Use MAP estimates for EXPLORATORY ANALYSIS ONLY
+2. ⚠️ Apply large uncertainty buffers (3× reported SEs)
+3. ⚠️ DO NOT make strong inferential claims
+4. ⚠️ DO NOT trust credible intervals (they're too narrow)
+5. ⚠️ Clearly document limitation in all outputs
+6. ⚠️ Consider results as "hypothesis generating" not "confirmatory"
+
+================================================================================
+FILES AND LOCATIONS
+================================================================================
+
+Base Directory: /workspace/experiments/experiment_1/simulation_based_validation/
+
+REPORTS:
+--------
+recovery_metrics.md      - MAIN REPORT (comprehensive analysis)
+README.md                - Quick reference guide
+RESULTS_SUMMARY.txt      - This file (executive summary)
+
+CODE:
+-----
+code/nb_state_space_model.stan    - Stan model (ready for MCMC)
+code/run_sbc.py                   - Full MCMC SBC (requires Stan)
+code/run_sbc_demo.py              - Used for current results (approx method)
+code/run_sbc_numpy.py             - Custom MCMC (slow, no dependencies)
+code/run_sbc_fast.py              - Alternative approximation
+code/visualize_sbc.py             - Full visualization suite
+code/visualize_sbc_simple.py      - Used for current plots
+
+DATA:
+-----
+diagnostics/sbc_results.csv       - Raw results (50 × 3 = 150 rank statistics)
+diagnostics/sbc_summary.json      - Statistical test results
+
+VISUALIZATIONS:
+---------------
+plots/rank_histograms.png         - Shows non-uniform ranks (PRIMARY EVIDENCE)
+plots/ecdf_comparison.png         - ECDF vs uniform with KS test
+plots/parameter_recovery.png      - True vs recovered values
+
+All plots show CLEAR evidence of calibration failure.
+
+================================================================================
+VISUAL EVIDENCE HIGHLIGHTS
+================================================================================
+
+1. RANK HISTOGRAMS (rank_histograms.png):
+   - Expected: Uniform blue dashed line
+   - Observed: Extreme bimodal (δ, φ) or left-skewed (σ_η)
+   - Red bars: Values outside 99% confidence interval
+   - Result: Dramatic deviations, impossible to miss
+
+2. ECDF PLOTS (ecdf_comparison.png):
+   - Expected: Blue line follows red diagonal
+   - Observed: Massive deviations from diagonal
+   - σ_η: Jumps to 0.65 immediately (catastrophic)
+   - KS statistics all highly significant
+
+3. RECOVERY PLOTS (parameter_recovery.png):
+   - Expected: Points scattered uniformly in 0.25-0.75 band
+   - Observed: Points cluster at y=0 and y=1
+   - Yellow boxes show extreme rank counts
+   - Clear visual evidence of poor recovery
+
+================================================================================
+TECHNICAL DETAILS
+================================================================================
+
+SBC METHODOLOGY:
+----------------
+1. Draw true parameters θ* from prior
+2. Generate data y|θ*
+3. Fit model to get posterior samples {θ_1, ..., θ_L}
+4. Compute rank: r = #{θ_i < θ*}
+5. Repeat N times
+6. Test if ranks ~ Uniform(0, L)
+
+If well-calibrated: ranks are uniform
+If miscalibrated: ranks deviate from uniform
+  - Bimodal ranks → posterior too narrow
+  - Skewed ranks → systematic bias
+
+IMPLEMENTATION USED:
+--------------------
+Method: MAP + diagonal Laplace approximation
+Optimizer: Nelder-Mead (scipy.optimize)
+Simulations: 50
+Draws per simulation: 1000
+Runtime: ~3 minutes
+Status: FAST but INACCURATE
+
+WHAT WE LEARNED:
+----------------
+✓ Model can generate data (forward simulation works)
+✓ Optimization converges (100% convergence rate)
+✓ Parameters are in reasonable ranges
+✗ Posterior approximation is poor
+✗ Uncertainty is systematically underestimated
+✗ Bias exists (especially for σ_η)
+
+================================================================================
+COMPARISON TO VALIDATION CRITERIA
+================================================================================
+
+From metadata.md falsification criteria:
+
+Criterion                          Threshold    Observed    Status
+---------                          ---------    --------    ------
+σ_η → 0 (degenerate)              < 0.01       0.02-0.15   PASS
+σ_η ~ obs SD (no benefit)         -            -           N/A
+Convergence                       > 90%        100%        PASS
+Divergences                       < 20%        0%          N/A
+
+Note: These assess the MODEL, not the INFERENCE METHOD.
+The model appears sound; the implementation needs improvement.
+
+SBC-specific criteria:
+
+Criterion                          Threshold    Observed    Status
+---------                          ---------    --------    ------
+Rank uniformity (χ² test)         p > 0.05     p ≈ 0.00    FAIL
+Coverage (90% CIs)                85-95%       34-60%      FAIL
+ESS (if MCMC)                     > 400        N/A         N/A
+R̂ (if MCMC)                       < 1.01       N/A         N/A
+
+Overall: METHOD FAILS validation
+
+================================================================================
+IMPLICATIONS
+================================================================================
+
+FOR THIS ANALYSIS:
+------------------
+→ Cannot proceed to real data with current method
+→ Results would be unreliable and misleading
+→ Credible intervals would be dangerously narrow
+→ Point estimates may be biased (especially σ_η)
+
+FOR THE MODEL:
+--------------
+→ Model structure is likely sound
+→ Priors appear reasonable (based on prior predictive)
+→ May need full MCMC to reveal any deeper issues
+→ No evidence of fundamental misspecification
+
+FOR FUTURE WORK:
+----------------
+→ Establish computational environment with Stan/PyMC
+→ Budget 2-4 hours for proper SBC
+→ Expect either PASS or specific guidance for fixes
+→ Don't skip validation steps!
+
+BROADER LESSON:
+---------------
+"If it can't recover known truth, it won't find unknown truth"
+
+This is exactly why SBC exists - we caught a critical inference 
+failure BEFORE wasting time on real data analysis. The computational 
+investment in proper validation pays off.
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+IMMEDIATE:
+----------
+1. Set up Stan/PyMC in appropriate environment
+2. Run code/run_sbc.py with full MCMC
+3. Check rank uniformity tests
+4. Verify R̂ < 1.01, ESS > 400, divergences < 1%
+
+IF SBC PASSES:
+--------------
+→ Proceed to real data fitting
+→ Use same MCMC settings
+→ Trust posterior inferences
+→ Continue to posterior predictive checks
+
+IF SBC STILL FAILS:
+-------------------
+→ Examine rank patterns for specific issues
+→ Consider model modifications:
+  - Non-centered parameterization (already planned)
+  - Different priors for σ_η (e.g., log-normal)
+  - Gamma prior for φ instead of exponential
+→ Check for identifiability issues
+→ Simplify model if necessary
+
+TIMELINE:
+---------
+With proper setup: 1 day
+  - Install: 30 min
+  - Run SBC: 2-4 hours  
+  - Analyze results: 1-2 hours
+  - Decision & documentation: 1 hour
+
+Worth the investment to ensure reliable inference!
+
+================================================================================
+CONCLUSION
+================================================================================
+
+SBC has successfully identified a critical computational issue before 
+real data analysis. This is the validation system working as designed.
+
+The model structure appears sound, but the inference method (MAP + Laplace) 
+is demonstrably inadequate. Full MCMC with HMC/NUTS is required.
+
+DO NOT SKIP THIS STEP. The time investment in proper MCMC is far less 
+than the cost of unreliable inference on real data.
+
+Status: BLOCKED pending proper MCMC implementation
+Decision: FAIL (computational method)
+Action: Re-run with Stan/PyMC before proceeding
+
+================================================================================
+REPORT PREPARED BY: Model Validation Specialist (Claude Agent)
+DATE: 2025-10-29
+EXPERIMENT: 1 (Negative Binomial State-Space Model)
+VERSION: Final
+================================================================================

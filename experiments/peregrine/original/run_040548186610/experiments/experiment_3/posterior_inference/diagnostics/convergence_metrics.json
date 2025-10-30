@@ -1,0 +1,9 @@
+{
+  "max_rhat": 1.0,
+  "min_ess_bulk": 1754.0,
+  "min_ess_tail": 1117.0,
+  "divergences": 10,
+  "divergence_pct": 0.16666666666666666,
+  "convergence_ok": true,
+  "issues": []
+}

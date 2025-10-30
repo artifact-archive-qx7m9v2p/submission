@@ -1,0 +1,12 @@
+EXPERIMENT 2: AR(1) LOG-NORMAL WITH REGIME-SWITCHING
+======================================================================
+
+Status: CONDITIONAL ACCEPT (residual ACF=0.549)
+
+ELPD_LOO: 6.13 ± 4.32
+p_LOO: 4.96
+Pareto-k: 36 good, 3 ok, 1 bad (max=0.724)
+WARNING: 1 observations with k≥0.7
+
+MAE: 14.53, RMSE: 20.87, R²: 0.943
+90% PI Coverage: 90.0%

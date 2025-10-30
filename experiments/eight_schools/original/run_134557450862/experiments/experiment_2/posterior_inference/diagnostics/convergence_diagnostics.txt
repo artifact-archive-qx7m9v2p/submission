@@ -1,0 +1,51 @@
+============================================================
+COMPLETE POOLING MODEL - CONVERGENCE DIAGNOSTICS
+============================================================
+
+Model: y_i ~ Normal(mu, sigma_i), mu ~ Normal(0, 25)
+Data: 8 schools
+Parameters: 1 (mu)
+
+Sampling Configuration:
+  Chains: 4
+  Iterations: 2000 (1000 warmup + 1000 sampling)
+  Total samples: 4000
+
+------------------------------------------------------------
+CONVERGENCE METRICS
+------------------------------------------------------------
+
+R-hat: 1.0000 (target: < 1.01) - PASS
+ESS bulk: 1854 (target: > 400) - PASS
+ESS tail: 2488 (target: > 400) - PASS
+MCSE: 0.0940
+Divergent transitions: 0
+
+------------------------------------------------------------
+POSTERIOR INFERENCE
+------------------------------------------------------------
+
+mu: 7.55 ± 4.00
+95% HDI: [0.07, 15.45]
+
+Classical pooled estimate:
+mu: 7.69 ± 4.07
+
+------------------------------------------------------------
+LOO CROSS-VALIDATION
+------------------------------------------------------------
+
+ELPD: -30.52 ± 1.12
+p_eff: 0.64
+
+Comparison with Experiment 1:
+  Exp 1 (No Pooling): -30.73 ± 1.04
+  Exp 2 (Complete Pooling): -30.52 ± 1.12
+  Difference: 0.21
+
+------------------------------------------------------------
+OVERALL STATUS
+------------------------------------------------------------
+
+CONVERGENCE: EXCELLENT
+All diagnostics passed. Model is ready for inference.

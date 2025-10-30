@@ -1,0 +1,2 @@
+,mean,sd,hdi_3%,hdi_97%,mcse_mean,mcse_sd,ess_bulk,ess_tail,r_hat
+mu,10.043,4.048,2.713,17.729,0.075,0.046,2942.0,3731.0,1.0

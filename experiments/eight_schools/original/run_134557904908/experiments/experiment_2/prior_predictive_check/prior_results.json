@@ -1,0 +1,16 @@
+{
+  "decision": "PASS (with note)",
+  "reasoning": "Data plausible but consider prior sensitivity in interpretation",
+  "n_extreme": 0,
+  "tau_sensitivity": 3.2977018803213602,
+  "percentile_ranks": [
+    85.8,
+    62.980000000000004,
+    45.0,
+    61.56,
+    48.44,
+    51.62,
+    78.12,
+    66.06
+  ]
+}

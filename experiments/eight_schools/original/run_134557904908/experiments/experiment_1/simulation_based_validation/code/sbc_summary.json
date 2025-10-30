@@ -1,0 +1,53 @@
+{
+  "n_simulations": 500,
+  "n_successful": 500,
+  "method": "analytical_conjugate_posterior",
+  "rank_statistics": {
+    "chi2_stat": 29.84,
+    "chi2_pval": 0.0539,
+    "ks_stat": 0.043,
+    "ks_pval": 0.3048
+  },
+  "coverage": {
+    "coverage_50": 54.0,
+    "coverage_90": 89.8,
+    "coverage_95": 94.4
+  },
+  "bias": {
+    "mean_bias": -0.2156,
+    "bias_sd": 3.9427,
+    "t_pval": 0.2221
+  },
+  "correlation": {
+    "correlation": 0.9818,
+    "r_squared": 0.9638,
+    "slope": 0.9553,
+    "intercept": -0.1851
+  },
+  "uncertainty": {
+    "posterior_sd": 3.9892,
+    "empirical_sd": 3.9427,
+    "analytical_sd": 3.9901,
+    "sd_ratio": 1.0118,
+    "sd_difference": 0.000828,
+    "z_mean": 0.0529,
+    "z_sd": 0.9869,
+    "shapiro_pval": 0.1142
+  },
+  "checks": {
+    "Rank uniformity (\u03c7\u00b2)": true,
+    "Rank uniformity (KS)": true,
+    "Coverage (50%)": true,
+    "Coverage (90%)": true,
+    "Coverage (95%)": true,
+    "Low bias": true,
+    "High correlation": true,
+    "No shrinkage": true,
+    "SD calibration": true,
+    "Sampling accuracy": true,
+    "Z-score mean": true,
+    "Z-score SD": true,
+    "Z-score normality": true
+  },
+  "overall_pass": true
+}

@@ -1,0 +1,10 @@
+metric,value
+elpd_loo,-32.05217513277623
+se_elpd,1.4335112450048484
+p_loo,1.1704037996213152
+pareto_k_max,0.3728666971840671
+pareto_k_mean,0.20207351652696331
+k_good,8
+k_ok,0
+k_bad,0
+reliability,EXCELLENT

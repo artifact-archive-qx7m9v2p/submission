@@ -1,0 +1,37 @@
+{
+  "n_draws": 1000,
+  "beta_0_range": [
+    1.328,
+    3.456
+  ],
+  "beta_1_range": [
+    -0.151,
+    0.769
+  ],
+  "sigma_range": [
+    0.0,
+    0.681
+  ],
+  "sigma_mean": 0.099,
+  "sigma_median": 0.069,
+  "observed_rmse": 0.087,
+  "y_min_range": [
+    1.19,
+    3.504
+  ],
+  "y_max_range": [
+    1.851,
+    5.534
+  ],
+  "pct_violations": 0.0,
+  "pct_negative": 2.3,
+  "pct_large_sigma": 0.0,
+  "prior_r2_mean": 0.5,
+  "prior_r2_99th": 1.0,
+  "check1_pass": true,
+  "check2_pass": true,
+  "check3_pass": true,
+  "check4_pass": true,
+  "check5_pass": true,
+  "overall_pass": true
+}

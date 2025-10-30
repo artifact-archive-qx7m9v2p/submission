@@ -1,0 +1,194 @@
+================================================================================
+EXPERIMENT 3: LATENT AR(1) NEGATIVE BINOMIAL - POSTERIOR PREDICTIVE CHECK
+================================================================================
+
+DATE: 2025-10-29
+MODEL: Latent AR(1) Negative Binomial (α_t = β₀ + β₁·year + β₂·year² + ε_t, ε_t ~ AR(1))
+DATA: 40 observations, count range [19, 272]
+
+================================================================================
+CRITICAL FINDING: AR(1) MODEL FAILED
+================================================================================
+
+The Latent AR(1) model FAILED to resolve temporal autocorrelation from Exp 1:
+
+                          EXPERIMENT 1    EXPERIMENT 3    CHANGE
+                          (Baseline)      (AR(1))
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PRIMARY METRICS (Must improve):
+  Residual ACF(1)         0.686           0.690          +0.004 ✗
+  Coverage (95%)          100.0%          100.0%         +0.0%  ✗
+  
+SECONDARY METRICS:
+  Coverage (80%)          95.0%           97.5%          +2.5%  ✗ (worse)
+  Coverage (50%)          67.5%           75.0%          +7.5%  ✗ (worse)
+  Extreme p-values        7               5              -2     ✓ (minor)
+  R²                      0.883           0.861          -0.022 ✗ (worse)
+  Residual SD             34.44           39.81          +5.37  ✗ (worse)
+  ACF(1) p-value          0.000           0.000          0.000  ✗
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OVERALL FIT QUALITY: POOR (unchanged from Exp 1)
+SUCCESS vs EXP 1: FAILED (0% improvement on critical metrics)
+
+================================================================================
+WHY DID AR(1) FAIL?
+================================================================================
+
+The model successfully estimated:
+  • ρ = 0.84 [0.69, 0.98]  - Strong AR coefficient
+  • σ_η = 0.09 [0.01, 0.16] - Small innovation SD
+  • Perfect convergence (R̂=1.000, ESS>1100)
+
+But this DID NOT translate to observation-level temporal correlation:
+
+  PROBLEM: AR(1) on log-scale latent state ≠ AR(1) on count-scale observations
+  
+  Model structure:
+    α_t = β₀ + β₁·year + β₂·year² + ε_t
+    ε_t = ρ·ε_{t-1} + η_t     [AR(1) on log scale]
+    μ_t = exp(α_t)             [Nonlinear transformation]
+    C_t ~ NegBinom(μ_t, φ)     [Observation noise]
+  
+  Result: Even with ρ=0.84 on latent state, observation ACF only ~0.75
+          in replications vs 0.944 in observed data.
+
+The nonlinear exp() link and NegBinom observation noise DESTROY the latent
+AR(1) correlation structure. The model is structurally unable to match the
+observed temporal dynamics.
+
+================================================================================
+KEY VISUAL EVIDENCE
+================================================================================
+
+1. acf_comparison_exp1_vs_exp3.png
+   Shows Exp 1 and Exp 3 have IDENTICAL residual ACF patterns
+   Both far above target threshold (0.3)
+   Proof that AR(1) produced ZERO improvement
+
+2. ppc_dashboard.png (Panel G: Residual ACF)
+   ACF(1) = 0.690 unchanged from Exp 1 baseline (0.686)
+   
+3. ppc_dashboard.png (Panel K: ACF(1) Test Statistic)
+   Observed ACF(1) = 0.944 still in extreme tail (p=0.000)
+   Model cannot generate this level of autocorrelation
+
+4. residual_diagnostics.png (Panel B: Residuals vs Time)
+   Strong U-shaped temporal pattern PERSISTS
+   Same systematic wave pattern as Experiment 1
+
+5. residual_diagnostics.png (Panel C: Residual ACF)
+   All lags essentially unchanged from Experiment 1
+   No reduction in temporal autocorrelation
+
+================================================================================
+WHAT THIS MEANS
+================================================================================
+
+✗ Latent-scale temporal models DO NOT work for this data
+✗ Adding AR(1) to log(μ) does not produce AR correlation in counts
+✗ The model architecture is fundamentally mismatched
+✗ Higher-order latent AR (AR(2), AR(3)) will have same problem
+✗ 3 extra parameters added with ZERO benefit
+
+================================================================================
+NEXT STEPS - DO NOT PURSUE
+================================================================================
+
+• Higher-order latent AR (AR(2), AR(3)) - Same structural problem
+• ARMA/random walk on latent state - Won't translate to observations
+• Different priors on this architecture - Architecture is wrong, not priors
+• More complex latent state models - Nonlinear link breaks correlation
+
+================================================================================
+NEXT STEPS - SHOULD PURSUE
+================================================================================
+
+1. OBSERVATION-LEVEL TEMPORAL MODELS (HIGHEST PRIORITY)
+   Model correlation directly on count scale:
+   
+   C_t | C_{t-1} ~ NegBinom(μ_t, φ)
+   log(μ_t) = β₀ + β₁·year + β₂·year² + γ·log(C_{t-1} + 1)
+   
+   This directly models count-on-count dependence through nonlinearity.
+
+2. IMPROVED MEAN FUNCTION
+   U-shaped residual patterns suggest mean function misspecification:
+   
+   • Exponential growth: log(μ_t) = β₀ + β₁·exp(β₂·year)
+   • Logistic growth: S-shaped curve
+   • Changepoint models: Different dynamics in different periods
+   • Splines: Flexible smooth function
+   
+   Better mean might eliminate spurious autocorrelation.
+
+3. NON-STATIONARY MODELS
+   • Time-varying parameters (β_t evolves)
+   • Changepoint detection
+   • Dynamic linear models
+
+4. DIFFERENT TEMPORAL SCALE
+   • Multi-step lags (dependence on C_{t-2}, C_{t-3})
+   • Different observation intervals
+
+================================================================================
+SUCCESS CRITERIA FOR NEXT MODELS
+================================================================================
+
+PRIMARY (Must achieve):
+  ✓ Residual ACF(1) < 0.3 (target: < 0.2)
+  ✓ Coverage 90-98% (not 100%)
+  ✓ ACF(1) Bayesian p-value in 0.1-0.9 range
+
+SECONDARY (Should achieve):
+  ✓ No systematic temporal patterns in residuals
+  ✓ ≤ 2 extreme p-values
+  ✓ R² improvement over Exp 1
+  ✓ Flat residual ACF within confidence bands
+
+================================================================================
+CONCLUSION
+================================================================================
+
+The Latent AR(1) model represents an INFORMATIVE FAILURE:
+
+  • It rules out a class of models (latent temporal correlation)
+  • It reveals the mechanism (nonlinear link breaks correlation structure)
+  • It points toward solutions (observation-level models, better mean functions)
+  • It demonstrates that convergence ≠ good fit (PPC essential!)
+
+This negative result is valuable. We now know:
+  ✓ Latent AR(1) insufficient
+  ✓ Need observation-level correlation or better mean function
+  ✓ ACF(1) = 0.944 requires direct count-on-count dependence
+
+OVERALL ASSESSMENT: POOR FIT - Architecture fundamentally mismatched to data
+
+RECOMMENDATION: Pursue observation-level conditional AR as Experiment 4
+
+================================================================================
+FILES GENERATED
+================================================================================
+
+Code:
+  • code/posterior_predictive_checks.py (780 lines, comprehensive PPC)
+  • code/ppc_results.npz (numerical results)
+
+Plots:
+  • plots/ppc_dashboard.png (12-panel overview, shows all failures)
+  • plots/acf_comparison_exp1_vs_exp3.png (CRITICAL: proves no improvement)
+  • plots/coverage_detailed.png (shows 100% coverage unchanged)
+  • plots/residual_diagnostics.png (shows temporal patterns persist)
+  • plots/test_statistics.png (shows ACF(1) still extreme)
+
+Documentation:
+  • ppc_findings.md (comprehensive analysis, 25+ pages)
+  • SUMMARY.txt (this file)
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Analyst: Claude (Model Validation Specialist)
+Date: 2025-10-29
+Status: ✓ Complete - Critical failure documented, path forward clear

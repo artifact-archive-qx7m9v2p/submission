@@ -1,0 +1,9 @@
+{
+  "n_simulations": 100,
+  "n_successful": 100,
+  "success_rate": 100.0,
+  "convergence_rate": 100.0,
+  "mean_rhat": 1.014309223157018,
+  "mean_ess": 199.9458917527723,
+  "mean_acceptance": 0.43457875
+}

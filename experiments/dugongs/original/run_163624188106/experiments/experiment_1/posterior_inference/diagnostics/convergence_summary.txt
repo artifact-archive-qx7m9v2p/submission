@@ -1,0 +1,21 @@
+CONVERGENCE DIAGNOSTICS
+======================================================================
+
+Divergent transitions: 0
+Max treedepth hits: 1
+
+PARAMETER SUMMARY
+----------------------------------------------------------------------
+        mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+alpha  0.580  0.019   0.542    0.616      0.001      0.0    1246.0    1392.0    1.0
+beta   0.126  0.009   0.111    0.143      0.000      0.0    1261.0    1347.0    1.0
+sigma  0.041  0.006   0.031    0.053      0.000      0.0    1498.0    1586.0    1.0
+
+CONVERGENCE CRITERIA
+----------------------------------------------------------------------
+Max R_hat: 1.0000 (target: < 1.01)
+Min ESS_bulk: 1246.0 (target: > 400)
+Min ESS_tail: 1347.0 (target: > 400)
+Divergences: 0 (target: < 10)
+
+CONVERGENCE STATUS: PASS

@@ -1,0 +1,44 @@
+CMDSTAN COMPILATION ERROR
+=========================
+
+Date: 2025-10-29
+Environment: Docker container without build tools
+
+Error Summary:
+--------------
+CmdStanPy is installed and CmdStan binaries are present, but the build toolchain is not available:
+- No 'make' command
+- No C++ compiler (g++, gcc, clang)
+- Cannot compile .stan files to executables
+
+Attempted Solutions:
+--------------------
+1. CmdStanModel.compile() - Failed: make command not found
+2. Manual stanc compilation - SUCCESS: Generated .hpp file
+3. Manual C++ compilation - Failed: No C++ compiler
+4. PyMC fallback - Failed: PyMC not installed
+5. NumPyro fallback - Failed: NumPyro not installed
+6. emcee fallback - Failed: emcee not installed
+
+Available Tools:
+----------------
+- CmdStanPy 1.3.0 (library only, cannot compile)
+- stanc (Stan→C++ translator) - Working
+- ArviZ (for diagnostics)
+- NumPy, SciPy, pandas
+
+Status:
+-------
+Cannot run HMC/NUTS sampling without either:
+  A) Working C++ compiler and make (for CmdStan)
+  B) Pure Python PPL (PyMC, NumPyro, emcee)
+
+Recommendation:
+---------------
+This environment lacks the required PPL infrastructure for Bayesian MCMC.
+Need to either:
+1. Install build tools (make, g++) in container
+2. Install PyMC or NumPyro
+3. Use a different execution environment
+
+The Stan model itself is valid (syntax checked successfully).

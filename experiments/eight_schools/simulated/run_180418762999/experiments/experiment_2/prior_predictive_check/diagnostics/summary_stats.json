@@ -1,0 +1,57 @@
+{
+  "decision": "PASS",
+  "n_observations": 8,
+  "n_prior_samples": 5000,
+  "hyperpriors": {
+    "mu_mean": 10,
+    "mu_sd": 20,
+    "tau_sd": 10,
+    "mu_95_interval": [
+      -29.40475772855773,
+      48.90547527079508
+    ],
+    "tau_median": 6.83741591392982,
+    "tau_95_interval": [
+      0.30471080012537793,
+      22.42007683585318
+    ]
+  },
+  "observed_data": {
+    "mean": 12.504580732800896,
+    "range": [
+      -4.8817921776782764,
+      26.0796860563254
+    ]
+  },
+  "group_parameters": {
+    "theta_mean": 10.125293424503981,
+    "theta_95_interval": [
+      -34.10157640929191,
+      53.77394681687627
+    ],
+    "within_sample_sd_mean": 7.267684824466839,
+    "within_sample_sd_median": 5.781627869262369
+  },
+  "prior_predictive": {
+    "percentile_ranks": [
+      64.8,
+      57.660000000000004,
+      71.28,
+      73.66,
+      26.02,
+      42.82,
+      38.08,
+      47.86
+    ],
+    "n_extreme_low": 0,
+    "n_extreme_high": 0,
+    "mean": 10.192760117905092,
+    "std": 25.945281552998452
+  },
+  "computational": {
+    "n_nan": 0,
+    "n_inf": 0,
+    "max_abs_value": 147.81076752570112
+  },
+  "issues": []
+}

@@ -1,0 +1,25 @@
+{
+  "var_mean_obs": 68.66581352833637,
+  "var_mean_pred_mean": 84.48899168004165,
+  "var_mean_pred_std": 20.108042727012815,
+  "var_mean_pred_ci": [
+    54.764163261520714,
+    130.92058849066734
+  ],
+  "coverage_90": 100.0,
+  "mean_residual": -0.15862500000000032,
+  "median_residual": -1.314999999999996,
+  "rmse": 21.813196643889686,
+  "mae": 14.530325,
+  "mae_early": 6.3443000000000005,
+  "mae_late": 26.485900000000004,
+  "mae_ratio": 4.174755292152011,
+  "quad_curvature": -5.217069356082497,
+  "checks": {
+    "Var/Mean in [50, 90]": false,
+    "Coverage > 80%": true,
+    "Late/Early MAE < 2": false,
+    "No strong curvature": false
+  },
+  "overall": "FAIL"
+}

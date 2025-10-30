@@ -1,0 +1,150 @@
+================================================================================
+PARAMETRIC BAYESIAN REGRESSION MODELS - DESIGNER #1
+================================================================================
+
+MODEL COMPARISON MATRIX
+-----------------------
+
+Model Class          | Hypothesis          | Parameters | Complexity | Priority
+--------------------|---------------------|------------|------------|----------
+1. Logarithmic      | Diminishing returns | 4          | Low        | PRIMARY
+   Y = α + β·log(x+c)                                                
+   - Best R² from EDA (0.888)
+   - Smooth, unbounded growth
+   - FAIL IF: Residuals show pattern, ΔWAIC < -6 vs segmented
+
+2. Rational         | Bounded saturation  | 5          | High       | SECONDARY
+   Y = Y_min + (Y_max-Y_min)·x^h/(K^h+x^h)
+   - Mechanistic asymptote
+   - Flexible via Hill coefficient h
+   - FAIL IF: Y_max non-identified, divergences >1%, |ρ(K,h)| > 0.9
+
+3. Piecewise Linear | Regime change at x≈7| 5          | Medium     | TERTIARY
+   Y = α + β₁·x  (x≤τ),  α + β₁·τ + β₂·(x-τ)  (x>τ)
+   - Tests EDA's 66% RSS improvement
+   - Discrete transition hypothesis
+   - FAIL IF: tau non-identified (SD>3), β₁≈β₂, ΔWAIC < -4 vs log
+
+================================================================================
+
+KEY FALSIFICATION CRITERIA (Any model failing these is REJECTED)
+-----------------------------------------------------------------
+
+UNIVERSAL:
+- Rhat > 1.01 → Convergence failure
+- ESS < 400 → Poor sampling efficiency  
+- Systematic residual patterns → Mis-specification
+- Posterior = Prior → Data didn't inform model
+- Prior sensitivity extreme → Data too weak
+
+MODEL-SPECIFIC:
+Log Model:     Residual U-shape, c→0, segmented ΔWAIC>6
+Rational:      Y_max non-identified, divergences persist, h at boundary
+Piecewise:     tau flat posterior, β₁≈β₂, tau at data boundary
+
+================================================================================
+
+DECISION TREE
+-------------
+
+START: Fit all 3 models in parallel
+  |
+  v
+CHECKPOINT 1: Compare WAIC/LOO
+  |
+  ├─ All within 2 points → MODEL AVERAGING, proceed cautiously
+  ├─ Clear winner (Δ>6)  → Focus on winner for sensitivity
+  └─ All terrible        → PIVOT to non-parametric (GP/spline)
+  |
+  v
+CHECKPOINT 2: Falsification tests
+  |
+  ├─ All fail   → PIVOT to different model class
+  ├─ 2+ survive → Continue with both, consider averaging
+  └─ 1 survives → That's our model (but stay skeptical)
+  |
+  v
+CHECKPOINT 3: Sensitivity analysis
+  |
+  ├─ Prior sensitive   → Report high uncertainty
+  ├─ Outlier sensitive → Try robust likelihood (Student-t)
+  └─ Subset sensitive  → Heterogeneity exists, consider mixture
+  |
+  v
+FINAL: Report results with honest uncertainty quantification
+
+================================================================================
+
+ESCAPE ROUTES (If all parametric models fail)
+----------------------------------------------
+
+Plan B: Non-parametric
+  - Gaussian Process regression
+  - Bayesian splines (B-splines)
+  - BART (Bayesian Additive Regression Trees)
+
+Plan C: Different likelihood
+  - Student-t (robust to outliers)
+  - Beta regression (bounded Y)
+  - Mixture of normals (subpopulations)
+
+Plan D: Different error structure
+  - Heteroscedastic: σᵢ = σ·xᵢ^γ
+  - Autocorrelated: AR(1) if x ordered
+  - Errors-in-variables if x has measurement error
+
+================================================================================
+
+PRIORS PHILOSOPHY
+-----------------
+
+Strategy: WEAKLY INFORMATIVE (not flat, not tight)
+  - Regularize toward plausibility
+  - Calibrated to data scale
+  - Allow surprise
+  - Computational pragmatism
+
+Example (Logarithmic model):
+  α ~ Normal(2.3, 0.5)         # Center on Y mean, wide enough
+  β ~ Normal(0.3, 0.3)         # Positive slope, match OLS roughly  
+  c ~ Gamma(2, 2)              # Avoid negative, mean=1
+  σ ~ Exponential(1/0.15)      # Mean=0.15 < SD(Y)=0.27
+
+Sensitivity test: Double/halve all SDs
+  - If posterior stable → Good (data dominates)
+  - If posterior changes drastically → Red flag (weak data)
+
+================================================================================
+
+SUCCESS DEFINITION
+------------------
+
+Scientific:  Understand relationship deeply, identify limitations clearly
+Methodological: Rigorous workflow, proper diagnostics, honest falsification
+Practical:   Reliable predictions [1,31.5], appropriate uncertainty
+
+CORE PRINCIPLE: Truth over completion
+  "3 models tried, none adequate, here's why" > "Model X is great!" (when not)
+
+================================================================================
+
+CONFIDENCE PREDICTIONS
+----------------------
+
+Most Likely (50%):  Log model wins by ΔWAIC=3-5, explains ~85-90% variance
+Optimistic (25%):   Clear winner (Δ>8), all checks pass, found right model!
+Pessimistic (25%):  All similar WAIC, all show issues, need different approach
+
+================================================================================
+
+IMPLEMENTATION TIMELINE
+-----------------------
+
+Week 1: Code models in Stan, test on simulated data, fit to real data
+Week 2: Diagnostics, posterior predictive checks, WAIC/LOO, falsification
+Week 3: Sensitivity (prior, outlier, subset)
+Week 4: Synthesize, report, implement backups if needed
+
+STOPPING RULE: If Week 2 shows all models fail → PIVOT immediately
+
+================================================================================

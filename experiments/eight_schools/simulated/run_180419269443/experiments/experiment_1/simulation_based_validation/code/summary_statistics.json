@@ -1,0 +1,17 @@
+{
+  "n_simulations": 100,
+  "mu_coverage": 0.94,
+  "tau_coverage": 0.95,
+  "theta_coverage": 0.935,
+  "mu_bias": -0.8557993152054476,
+  "tau_bias": -0.10999773286612535,
+  "mu_rel_bias_pct": -4.324101557449435,
+  "tau_rel_bias_pct": -1.3962336703408966,
+  "mu_rmse": 5.642241458172739,
+  "tau_rmse": 4.402896835790104,
+  "mean_acceptance_rate": 0.15465999999999996,
+  "mean_ess_mu": 415.09166728382615,
+  "mean_ess_tau": 54.961681850323195,
+  "decision": "PASS",
+  "fail_conditions": []
+}

@@ -1,0 +1,181 @@
+================================================================================
+PRIOR PREDICTIVE CHECK - EXPERIMENT 2: FILE INVENTORY
+================================================================================
+
+All files are located in:
+/workspace/experiments/experiment_2/prior_predictive_check/
+
+================================================================================
+DOCUMENTATION FILES (Read These)
+================================================================================
+
+1. Quick Start:
+   /workspace/experiments/experiment_2/prior_predictive_check/README.md
+
+2. Full Analysis:
+   /workspace/experiments/experiment_2/prior_predictive_check/findings.md
+
+3. Implementation Guide:
+   /workspace/experiments/experiment_2/prior_predictive_check/RECOMMENDED_PRIOR_CHANGES.md
+
+4. This Inventory:
+   /workspace/experiments/experiment_2/prior_predictive_check/FILE_INVENTORY.txt
+
+================================================================================
+CODE FILES
+================================================================================
+
+1. Main Prior Predictive Check:
+   /workspace/experiments/experiment_2/prior_predictive_check/code/prior_predictive_check.py
+
+   - Implements AR(1) sequential generation
+   - Generates 1000 prior predictive datasets
+   - Computes all diagnostic statistics
+   - Creates 6 diagnostic plots
+   - Runtime: ~2 minutes
+
+2. Summary Plot Generator:
+   /workspace/experiments/experiment_2/prior_predictive_check/code/create_summary_plot.py
+
+   - Creates visual summary of critical issues
+   - Shows current vs proposed priors
+   - Runtime: <10 seconds
+
+================================================================================
+VISUALIZATION FILES
+================================================================================
+
+Directory: /workspace/experiments/experiment_2/prior_predictive_check/plots/
+
+1. SUMMARY (START HERE):
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/summary_critical_issues.png
+   - 3-panel view: phi issue, sigma issue, impact on predictions
+   - Size: 1.6 MB
+
+2. MOST CRITICAL DIAGNOSTIC:
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/prior_autocorrelation_diagnostic.png
+   - ACF distribution vs observed
+   - phi vs ACF relationship
+   - Size: 154 KB
+   - KEY FINDING: Observed ACF not covered by prior
+
+3. COVERAGE DIAGNOSTIC:
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/prior_predictive_coverage.png
+   - Prior predictive intervals (50%, 90%, 95%)
+   - Observed data overlay
+   - Size: 128 KB
+   - KEY FINDING: Extreme upper bounds (12,000+)
+
+4. PARAMETER PRIORS:
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/parameter_plausibility.png
+   - 7 panels: alpha, beta_1, beta_2, phi, sigma_1, sigma_2, sigma_3
+   - Size: 144 KB
+   - Shows uniform phi and wide sigma distributions
+
+5. TRAJECTORY SAMPLES:
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/prior_trajectories.png
+   - 50 random prior predictive paths
+   - Size: 974 KB (larger due to many lines)
+   - KEY FINDING: AR structure creates smoothness, but with wild excursions
+
+6. REGIME DIAGNOSTICS:
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/regime_variance_diagnostic.png
+   - 4 panels: sigma distributions, largest regime, variance by regime, example
+   - Size: 213 KB
+   - Shows regime structure is reasonable
+
+7. SCALE COMPARISON:
+   /workspace/experiments/experiment_2/prior_predictive_check/plots/log_scale_diagnostic.png
+   - Side-by-side: count scale vs log scale
+   - Size: 158 KB
+   - KEY FINDING: Log-scale looks good, count scale has extreme tail
+
+================================================================================
+KEY STATISTICS FROM ANALYSIS
+================================================================================
+
+Domain Violations:
+  Negative counts:           0.00%  (PASS)
+  Extreme high (>1000):      5.80%  (FAIL)
+  Extreme low (<1):          1.15%  (borderline)
+  NaN/Inf:                   0.00%  (PASS)
+
+Plausibility:
+  In observed range [21, 269]:    0.0%
+  In plausible range [10, 500]:   2.8%  (FAIL - should be >50%)
+
+Autocorrelation:
+  Observed ACF lag-1:        0.961
+  Prior ACF median:         -0.059
+  Prior ACF 90% CI:         [-0.860, 0.772]
+  Covers observed:          NO (CRITICAL FAIL)
+
+Predictions:
+  Median:                    76
+  Mean:                      14,594  (heavily right-skewed!)
+  Min:                       0.0
+  Max:                       348,453,273  (absurd!)
+
+================================================================================
+RECOMMENDED PRIOR CHANGES (Copy-Paste Ready)
+================================================================================
+
+# PyMC implementation
+phi_raw = pm.Beta('phi_raw', alpha=20, beta=2)
+phi = pm.Deterministic('phi', 0.95 * phi_raw)
+
+sigma_1 = pm.HalfNormal('sigma_1', sigma=0.5)  # Changed from 1.0
+sigma_2 = pm.HalfNormal('sigma_2', sigma=0.5)  # Changed from 1.0
+sigma_3 = pm.HalfNormal('sigma_3', sigma=0.5)  # Changed from 1.0
+
+beta_1 = pm.Normal('beta_1', mu=0.86, sigma=0.15)  # Changed from 0.2
+
+# Keep unchanged:
+# alpha ~ Normal(4.3, 0.5)
+# beta_2 ~ Normal(0, 0.3)
+
+================================================================================
+DECISION RATIONALE
+================================================================================
+
+FAIL because:
+1. Prior ACF does not cover observed 0.961 (critical prior-data mismatch)
+2. 5.8% of predictions are absurdly large (>1000, max 348M)
+3. Only 2.8% of draws produce plausible data (should be >50%)
+
+These issues will cause:
+- Poor MCMC convergence (divergences, high R-hat)
+- Biased inference (prior-data conflict)
+- Misleading predictions (dominated by prior tail)
+
+Fix is straightforward: tighten phi and sigma priors
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Read: RECOMMENDED_PRIOR_CHANGES.md for exact implementation
+2. Update: Model specification with new priors
+3. Re-run: prior_predictive_check.py
+4. Verify: ACF coverage improved, max predictions <2000
+5. Then: Proceed to simulation validation
+
+DO NOT skip this step and proceed directly to fitting!
+
+================================================================================
+CONTACT / REFERENCE
+================================================================================
+
+Model Specification:
+  /workspace/experiments/experiment_2/metadata.md
+
+Data:
+  /workspace/data/data.csv
+
+Related:
+  Experiment 1 (failed): /workspace/experiments/experiment_1/
+
+Generated by: Claude (Bayesian Model Validator)
+Date: 2025-10-30
+
+================================================================================

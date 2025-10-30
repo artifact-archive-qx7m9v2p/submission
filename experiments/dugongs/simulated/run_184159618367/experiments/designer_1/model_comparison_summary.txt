@@ -1,0 +1,202 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║              BAYESIAN MODEL DESIGN: THREE COMPETING HYPOTHESES             ║
+║                        Designer 1 - Parametric Models                      ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ MODEL 1: ASYMPTOTIC EXPONENTIAL (Smooth Saturation)                       │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Equation:     Y = α - β * exp(-γ * x)                                     │
+│ Parameters:   α (asymptote), β (amplitude), γ (rate), σ (residual SD)     │
+│ Hypothesis:   System approaches equilibrium asymptotically                │
+│ Mechanism:    Exponential decay of rate (enzyme kinetics, learning)       │
+│                                                                            │
+│ Expected R²:  0.85-0.90                                                    │
+│ Convergence:  Easy (2000-4000 iterations)                                 │
+│                                                                            │
+│ WILL ABANDON IF:                                                           │
+│  • Prior-posterior conflict (>3 SD shift)                                 │
+│  • Systematic residual patterns vs x                                      │
+│  • LOO-R² < 0.80                                                          │
+│  • Asymptote posterior includes >10% mass above max(Y)+0.3               │
+│  • Rate parameter γ near 0 (<0.05) or very large (>1.0)                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ MODEL 2: PIECEWISE LINEAR (Sharp Threshold)                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Equation:     Y = β₀ + β₁*x           (x ≤ τ)                            │
+│               Y = β₀ + β₁*τ + β₂*(x-τ)  (x > τ)                          │
+│ Parameters:   β₀ (intercept), β₁ (slope 1), β₂ (slope 2), τ (breakpoint) │
+│ Hypothesis:   System operates in two distinct regimes                     │
+│ Mechanism:    Discrete threshold/phase transition                         │
+│                                                                            │
+│ Expected R²:  0.88-0.92                                                    │
+│ Convergence:  Moderate (3000-5000 iterations, discrete breakpoint)        │
+│                                                                            │
+│ WILL ABANDON IF:                                                           │
+│  • Breakpoint uncertainty >50% of x range (no clear threshold)            │
+│  • P(β₁ > β₂) < 0.95 (slopes not significantly different)                │
+│  • Breakpoint posterior at data boundary (τ<3 or τ>25)                   │
+│  • Discontinuity artifacts in residuals near τ                            │
+│  • LOO-R² < 0.85 despite best EDA fit                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ MODEL 3: POWER LAW (Scale-Free Diminishing Returns)                       │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Equation:     Y = α * x^β     (or log(Y) = log(α) + β*log(x))           │
+│ Parameters:   α (scaling), β (exponent/elasticity), σ (log-scale SD)     │
+│ Hypothesis:   Constant elasticity across all scales                       │
+│ Mechanism:    Allometric scaling, power law utilities                     │
+│                                                                            │
+│ Expected R²:  0.78-0.83                                                    │
+│ Convergence:  Fast (<2000 iterations, linear in log-log space)            │
+│                                                                            │
+│ WILL ABANDON IF:                                                           │
+│  • Log-log residuals show clear curvature (non-linear)                   │
+│  • Systematic under-prediction for x>20 (doesn't saturate fast enough)   │
+│  • Exponent near boundary (β<0.05 or β>0.5)                              │
+│  • LOO-R² < 0.75 (>10 point gap from Models 1-2)                         │
+│  • Scale-free assumption fails (different elasticity in regimes)         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ KEY SCIENTIFIC DIFFERENCES                                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ SATURATION MECHANISM:                                                      │
+│  Model 1: Smooth exponential approach to asymptote                        │
+│  Model 2: Sharp switch at threshold τ ≈ 9.5                              │
+│  Model 3: Implicit via β<1 (never fully saturates)                       │
+│                                                                            │
+│ TRANSITION SHARPNESS:                                                      │
+│  Model 1: Gradual over ~10 x-units                                        │
+│  Model 2: Instantaneous at τ (non-differentiable)                         │
+│  Model 3: Constant deceleration everywhere                                │
+│                                                                            │
+│ EXTRAPOLATION:                                                             │
+│  Model 1: Bounded above by α (safe)                                       │
+│  Model 2: Flat plateau at β₀+β₁*τ+β₂*(x-τ) (safe)                        │
+│  Model 3: Unbounded growth (UNSAFE for x>>31.5)                          │
+│                                                                            │
+│ INTERPRETABILITY:                                                          │
+│  Model 1: ★★★★★ (asymptote, rate, half-saturation point)                │
+│  Model 2: ★★★★☆ (threshold location, regime slopes)                      │
+│  Model 3: ★★★☆☆ (elasticity is clear but scaling less intuitive)        │
+│                                                                            │
+│ IDENTIFIABILITY:                                                           │
+│  Model 1: ★★★★☆ (may have α-β correlation)                               │
+│  Model 2: ★★★☆☆ (τ may be weakly identified if transition smooth)       │
+│  Model 3: ★★★★★ (linear in log-log space, best identified)              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ MODEL COMPARISON STRATEGY                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ PHASE 1: Individual Validation                                            │
+│  → Prior predictive checks (reasonable data generation?)                  │
+│  → MCMC diagnostics (convergence, ESS, R-hat)                            │
+│  → Posterior predictive checks (capture patterns?)                        │
+│  → Check falsification criteria (abandon if met)                          │
+│                                                                            │
+│ PHASE 2: Head-to-Head Comparison (only models that pass Phase 1)          │
+│  → LOO-CV: Compare ELPD ± SE                                              │
+│  → Pareto-k diagnostics: Influential observations?                        │
+│  → Visual overlay: How do predictions differ?                             │
+│  → Interpretability: Which tells better scientific story?                 │
+│                                                                            │
+│ PHASE 3: Model Selection                                                   │
+│  → If |ΔELPD| > 2×SE:  Choose highest ELPD                               │
+│  → If |ΔELPD| < 2×SE:  Choose simpler/more interpretable                 │
+│  → Consider model averaging if statistically equivalent                   │
+│                                                                            │
+│ DECISION RULES:                                                            │
+│  • Model 1 vs 2: If equivalent, prefer Model 1 (smoother, better extrap) │
+│  • Model 1 vs 3: If Model 3 high-x residuals poor, Model 1 wins          │
+│  • Model 2 vs 3: If τ uncertainty large, Model 3 may be preferred        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STRESS TESTS (designed to break models)                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ TEST 1: High-x Extrapolation (x=50, 100)                                  │
+│  Models 1-2 should saturate/plateau                                       │
+│  Model 3 will show unbounded growth → FAILS                               │
+│                                                                            │
+│ TEST 2: Low-x Interpolation (x=0.1, 0.5)                                  │
+│  Model 1: Well-defined Y ≈ α - β                                          │
+│  Model 2: Linear extrapolation (may be implausible)                       │
+│  Model 3: Power law explodes as x→0 → FAILS                               │
+│                                                                            │
+│ TEST 3: Replicate Consistency (6 replicated x-values)                     │
+│  Posterior predictive variance should match observed within-group var     │
+│  Calibration check for uncertainty quantification                         │
+│                                                                            │
+│ TEST 4: Leave-One-Out by Regime                                           │
+│  Remove x<5 or x>15 data, check parameter stability                       │
+│  Should shift <1 SD from full-data posterior                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ GLOBAL RED FLAGS (abandon entire approach if...)                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ ⚠ ALL three models fail falsification criteria                           │
+│    → Suggests fundamental misunderstanding of data                        │
+│    → Pivot to: heteroscedastic, mixture, GP, state-space models          │
+│                                                                            │
+│ ⚠ Posterior predictive coverage <85% for all models                       │
+│    → Systematic failures remain despite different mechanisms              │
+│    → Consider Student-t likelihood, robust models                         │
+│                                                                            │
+│ ⚠ Many influential points (>5 with Pareto-k > 0.7)                       │
+│    → Models overfitting specific observations                             │
+│    → Need more robust model class                                         │
+│                                                                            │
+│ ⚠ Parameters have implausible values across all models                    │
+│    → α < max(Y) in Model 1                                                │
+│    → β > 1 in Model 3 (accelerating returns)                             │
+│    → Models fighting the data                                             │
+│                                                                            │
+│ ⚠ Prior-posterior conflict across all models                              │
+│    → Data strongly contradicts all reasonable priors                      │
+│    → Either data is wrong or I misunderstood the problem                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ EXPECTED OUTCOME                                                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ MOST LIKELY (70% confidence):                                              │
+│  → Model 1 (Asymptotic) and Model 2 (Piecewise) statistically equivalent │
+│  → Model 1 preferred for interpretability and extrapolation               │
+│  → Model 3 fails due to poor high-x fit                                   │
+│  → Conclusion: Smooth saturation mechanism                                │
+│                                                                            │
+│ ALTERNATIVE (25% confidence):                                              │
+│  → Model 2 decisively wins (ΔELPD > 6)                                    │
+│  → Breakpoint clearly at τ ≈ 9.5 ± 1                                     │
+│  → Strong evidence for threshold mechanism                                │
+│  → Scientific implication: investigate what happens at x≈9.5              │
+│                                                                            │
+│ UNLIKELY (5% confidence):                                                  │
+│  → Model 3 wins with R²>0.85                                              │
+│  → Would require log-log linearity extending to high x                    │
+│  → Visual plateau would be artifact of perception                         │
+│  → Contradicts EDA findings                                               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║ KEY PHILOSOPHY: Truth-seeking over task-completion                        ║
+║                                                                            ║
+║ Success = Finding the right model, not defending my initial proposals     ║
+║ Pivoting based on evidence is GOOD, not failure                           ║
+║ Uncertainty is honest, not weakness                                       ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Designer: Bayesian Model Designer 1
+Date: 2025-10-27
+Status: Ready for implementation

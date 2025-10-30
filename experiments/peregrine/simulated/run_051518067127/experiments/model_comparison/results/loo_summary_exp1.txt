@@ -1,0 +1,11 @@
+EXPERIMENT 1: NEGATIVE BINOMIAL GLM WITH QUADRATIC TREND
+======================================================================
+
+Status: REJECTED (residual ACF=0.596, PPC failed)
+
+ELPD_LOO: -170.96 ± 5.60
+p_LOO: 3.78
+Pareto-k: 40 good, 0 ok, 0 bad (max=0.471)
+
+MAE: 16.53, RMSE: 26.48, R²: 0.907
+90% PI Coverage: 97.5%

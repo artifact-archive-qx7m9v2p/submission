@@ -1,0 +1,30 @@
+{
+  "model1": {
+    "name": "Log-Log Linear",
+    "elpd_loo": 46.99215419082432,
+    "se": 3.109415450371369,
+    "p_loo": 2.430658661511437,
+    "parameters": 3,
+    "pareto_k_issues": 0,
+    "max_k": 0.47179428653225447,
+    "status": "ACCEPTED"
+  },
+  "model2": {
+    "name": "Heteroscedastic",
+    "elpd_loo": 23.56306012015811,
+    "se": 3.1545693349042008,
+    "p_loo": 3.4116199190399747,
+    "parameters": 4,
+    "pareto_k_issues": 1,
+    "max_k": 0.9635281608833952,
+    "status": "REJECTED"
+  },
+  "comparison": {
+    "delta_elpd": 23.429094070666213,
+    "delta_se": 4.429421196017163,
+    "sigma_difference": 5.289425645890965,
+    "decision": "Model 1 STRONGLY PREFERRED",
+    "winner": "Model 1 (Log-Log Linear)",
+    "reason": "Model 1 has significantly better predictive performance (\u0394 ELPD > 5\u03c3), simpler structure, and perfect LOO reliability"
+  }
+}

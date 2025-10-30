@@ -1,0 +1,41 @@
+{
+  "convergence": {
+    "r_hat": 1.0,
+    "ess_bulk": 3092.0,
+    "ess_tail": 2984.0,
+    "mcse_mean": 0.072,
+    "divergences": 0,
+    "max_treedepth_hits": 0
+  },
+  "posterior_summary": {
+    "mean": 7.403,
+    "median": 7.414892446757431,
+    "sd": 4.0,
+    "q05": 0.7369979018555789,
+    "q95": 13.85769971045643,
+    "q025": -0.6567861315564779,
+    "q975": 15.068605460760855,
+    "hdi_95_lower": -0.088,
+    "hdi_95_upper": 14.889
+  },
+  "tail_probabilities": {
+    "p_theta_gt_0": 0.965625,
+    "p_theta_gt_5": 0.727625,
+    "p_theta_gt_10": 0.263375
+  },
+  "analytical_validation": {
+    "analytical_mean": 7.379717727597258,
+    "analytical_sd": 3.9900621557952864,
+    "mcmc_mean": 7.403,
+    "mcmc_sd": 4.0,
+    "mean_error": 0.023282272402741278,
+    "sd_error": 0.009937844204713553,
+    "validation_pass": true
+  },
+  "sampling_config": {
+    "draws": 2000,
+    "tune": 1000,
+    "chains": 4,
+    "target_accept": 0.95
+  }
+}

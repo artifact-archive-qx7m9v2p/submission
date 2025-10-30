@@ -1,0 +1,15 @@
+{
+  "max_rhat": 1.0,
+  "min_ess_bulk": 2047.0,
+  "min_ess_tail": 2341.0,
+  "all_rhat_ok": true,
+  "all_ess_bulk_ok": true,
+  "all_ess_tail_ok": true,
+  "divergences": 0,
+  "divergence_rate": 0.0,
+  "runtime_seconds": 43.23016285896301,
+  "ess_per_second_mu": 60.999076237652076,
+  "parameterization": "non-centered",
+  "backend": "PyMC",
+  "status": "SUCCESS"
+}

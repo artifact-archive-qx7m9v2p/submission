@@ -1,0 +1,12 @@
+{
+  "coverage_pct": 96.29629629629629,
+  "r_squared": 0.8872805587626729,
+  "rmse": 0.09331332163730069,
+  "mae": 0.07815984345868394,
+  "mean_residual": 0.0015810215165386384,
+  "std_residual": 0.093299926934326,
+  "shapiro_p_value": 0.4401671992643872,
+  "n_observations": 27,
+  "n_ppc_samples": 1000,
+  "adequate": true
+}

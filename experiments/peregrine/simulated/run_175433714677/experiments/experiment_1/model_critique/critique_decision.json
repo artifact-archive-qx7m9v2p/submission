@@ -1,0 +1,206 @@
+{
+  "model_name": "Log-Linear Negative Binomial",
+  "experiment_id": "experiment_1",
+  "date": "2025-10-29",
+  "decision": "REJECT",
+  "decision_rationale": "Fundamental misspecification - model assumes constant exponential growth when data exhibit accelerating exponential growth",
+
+  "falsification_criteria": {
+    "loo_cv_delta_elpd": {
+      "threshold": 4,
+      "result": null,
+      "status": "PENDING",
+      "note": "Will be computed when quadratic model is available"
+    },
+    "systematic_curvature": {
+      "threshold": 1.0,
+      "result": -5.22,
+      "status": "FAIL",
+      "pattern": "inverted-U",
+      "severity": "critical"
+    },
+    "late_period_mae_ratio": {
+      "threshold": 2.0,
+      "result": 4.17,
+      "status": "FAIL",
+      "early_mae": 6.34,
+      "late_mae": 26.49,
+      "severity": "critical"
+    },
+    "variance_mean_ratio": {
+      "threshold": "[50, 90]",
+      "result": "[54.8, 130.9]",
+      "observed": 68.7,
+      "predicted_mean": 84.5,
+      "status": "FAIL",
+      "severity": "moderate"
+    },
+    "coverage": {
+      "threshold": 0.80,
+      "result": 1.00,
+      "status": "PASS",
+      "note": "Over-conservative - all observations within 90% PI"
+    }
+  },
+
+  "validation_stages": {
+    "prior_predictive_check": {
+      "status": "CONDITIONAL PASS",
+      "issues": ["minor zero inflation (4.8 per dataset)", "2.6% extreme values >10,000"],
+      "verdict": "Priors well-specified and appropriately uncertain"
+    },
+    "simulation_based_calibration": {
+      "status": "PASS WITH WARNINGS",
+      "simulations": 50,
+      "success_rate": 1.0,
+      "coverage": {"beta_0": 0.88, "beta_1": 0.92, "phi": 0.88},
+      "bias": {"beta_0": -0.040, "beta_1": 0.003, "phi": 0.043},
+      "rank_uniformity": {"beta_0": 0.035, "beta_1": 0.023, "phi": 0.063},
+      "verdict": "Model correctly recovers parameters under its own assumptions"
+    },
+    "posterior_inference": {
+      "status": "SUCCESS",
+      "convergence": {"r_hat": 1.0, "ess_bulk": 6600, "divergences": 0},
+      "parameters": {
+        "beta_0": {"mean": 4.355, "sd": 0.049, "hdi_90": [4.276, 4.435]},
+        "beta_1": {"mean": 0.863, "sd": 0.050, "hdi_90": [0.781, 0.944]},
+        "phi": {"mean": 13.835, "sd": 3.449, "hdi_90": [8.315, 19.774]}
+      },
+      "verdict": "Perfect convergence and parameter estimation"
+    },
+    "posterior_predictive_check": {
+      "status": "FAIL",
+      "checks_passed": 1,
+      "checks_failed": 3,
+      "metrics": {
+        "overall_mae": 14.53,
+        "overall_rmse": 21.81,
+        "mean_residual": -0.16,
+        "median_residual": -1.31
+      },
+      "verdict": "Systematic misspecification with 3 of 4 criteria violated"
+    }
+  },
+
+  "strengths": [
+    "Perfect convergence (R-hat=1.00, ESS>6000)",
+    "Accurate parameter recovery in SBC",
+    "Computational stability (0% failure rate)",
+    "Conservative coverage (100% at 90% level)",
+    "Good early-period fit (MAE=6.34)",
+    "Clear baseline for comparison"
+  ],
+
+  "weaknesses": [
+    {
+      "issue": "Fundamental trend misspecification",
+      "evidence": "Inverted-U residual curvature (coef=-5.22)",
+      "severity": "CRITICAL",
+      "fixable": false
+    },
+    {
+      "issue": "Deteriorating predictive performance",
+      "evidence": "4.17× increase in errors from early to late period",
+      "severity": "CRITICAL",
+      "fixable": false
+    },
+    {
+      "issue": "Overestimated dispersion",
+      "evidence": "Var/Mean 95% CI extends to 131 vs target 90",
+      "severity": "MODERATE",
+      "fixable": "partially (with better trend)"
+    },
+    {
+      "issue": "Over-conservative intervals",
+      "evidence": "100% coverage at 90% level",
+      "severity": "MINOR",
+      "fixable": "partially (with better trend)"
+    }
+  ],
+
+  "recommended_next_model": {
+    "name": "Quadratic Negative Binomial",
+    "specification": "log(mu[i]) = beta_0 + beta_1 * year[i] + beta_2 * year[i]^2",
+    "new_parameters": ["beta_2"],
+    "prior_beta_2": "Normal(0, 0.5)",
+    "expected_improvements": [
+      "Eliminate residual curvature (<1.0)",
+      "Reduce late/early MAE ratio (<2.0)",
+      "Improve Var/Mean recovery",
+      "LOO-CV DELTA_ELPD >10"
+    ],
+    "priority": "HIGH"
+  },
+
+  "alternative_models": [
+    {
+      "name": "Cubic polynomial",
+      "priority": "MEDIUM",
+      "condition": "If quadratic residuals still show curvature"
+    },
+    {
+      "name": "Time-varying dispersion",
+      "priority": "MEDIUM",
+      "condition": "If quadratic model shows heteroscedasticity"
+    },
+    {
+      "name": "Generalized logistic growth",
+      "priority": "LOW",
+      "condition": "If data approach asymptote"
+    },
+    {
+      "name": "Change-point model",
+      "priority": "LOW",
+      "condition": "If discrete regime shift evident"
+    }
+  ],
+
+  "computational_details": {
+    "ppl": "PyMC v5.26.1",
+    "chains": 4,
+    "iterations_per_chain": 4000,
+    "warmup": 2000,
+    "sampling": 2000,
+    "total_draws": 8000,
+    "target_accept": 0.95,
+    "seed": 42
+  },
+
+  "files_generated": {
+    "critique_summary": "experiments/experiment_1/model_critique/critique_summary.md",
+    "decision": "experiments/experiment_1/model_critique/decision.md",
+    "improvement_priorities": "experiments/experiment_1/model_critique/improvement_priorities.md",
+    "readme": "experiments/experiment_1/model_critique/README.md",
+    "this_file": "experiments/experiment_1/model_critique/critique_decision.json"
+  },
+
+  "key_plots": {
+    "residuals": "experiments/experiment_1/posterior_predictive_check/plots/residuals.png",
+    "early_vs_late": "experiments/experiment_1/posterior_predictive_check/plots/early_vs_late_fit.png",
+    "var_mean_recovery": "experiments/experiment_1/posterior_predictive_check/plots/var_mean_recovery.png",
+    "timeseries_fit": "experiments/experiment_1/posterior_predictive_check/plots/timeseries_fit.png"
+  },
+
+  "summary_statistics": {
+    "total_documents": 4,
+    "total_lines": 1721,
+    "total_size_kb": 64,
+    "estimated_reading_time_minutes": 60
+  },
+
+  "reproducibility": {
+    "all_code_available": true,
+    "seed_fixed": true,
+    "data_location": "data/counts.csv",
+    "inference_data": "experiments/experiment_1/posterior_inference/diagnostics/posterior_inference.netcdf",
+    "ppc_results": "experiments/experiment_1/posterior_predictive_check/ppc_results.json"
+  },
+
+  "meta": {
+    "analyst": "Model Criticism Specialist",
+    "framework": "Bayesian Workflow (Gelman et al., 2020)",
+    "validation_method": "Simulation-Based Calibration (Talts et al., 2018)",
+    "created": "2025-10-29",
+    "version": "1.0"
+  }
+}

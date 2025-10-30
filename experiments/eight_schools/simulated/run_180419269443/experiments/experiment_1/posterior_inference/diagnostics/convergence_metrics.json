@@ -1,0 +1,64 @@
+{
+  "decision": "FAIL",
+  "method": "Gibbs Sampler",
+  "reason_for_gibbs": "CmdStanPy unavailable (make tool not found)",
+  "iterations": {
+    "n_chains": 4,
+    "n_iter": 10000,
+    "n_warmup": 5000,
+    "n_samples": 5000,
+    "total_samples": 20000
+  },
+  "convergence": {
+    "all_rhat_ok": false,
+    "ess_ok": true,
+    "no_divergences": true,
+    "loo_ok": true,
+    "mean_acceptance_rate": 0.27930000000000005
+  },
+  "key_metrics": {
+    "mu": {
+      "rhat": 1.01,
+      "ess_bulk": 440.0,
+      "mean": 9.87,
+      "sd": 4.891,
+      "ci_3": 0.28,
+      "ci_97": 18.713
+    },
+    "tau": {
+      "rhat": 1.01,
+      "ess_bulk": 166.0,
+      "mean": 5.554,
+      "sd": 4.208,
+      "ci_3": 0.025,
+      "ci_97": 13.167
+    },
+    "I2": {
+      "mean": 0.17555439312077684,
+      "sd": 0.17189284220757065,
+      "ci_2.5": 9.119433696407746e-05,
+      "ci_97.5": 0.5990592761732221
+    }
+  },
+  "loo": {
+    "elpd_loo": -32.23067473236565,
+    "se": 1.1039471671627077,
+    "p_loo": 2.1103458739911503,
+    "n_samples": 20000,
+    "n_data_points": 8,
+    "warning": false,
+    "scale": "log",
+    "pareto_k": [
+      0.5272119316246241,
+      0.5632609384034052,
+      0.4950923336314603,
+      0.39814903730090295,
+      0.6467337927247758,
+      0.5854799087091421,
+      0.5489458747921859,
+      0.3982658478497793
+    ],
+    "max_pareto_k": 0.6467337927247758,
+    "n_high_pareto_k": 0
+  }
+}

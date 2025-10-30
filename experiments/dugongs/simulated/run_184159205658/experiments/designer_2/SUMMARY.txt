@@ -1,0 +1,173 @@
+================================================================================
+DESIGNER 2 - BAYESIAN MODEL PROPOSALS
+================================================================================
+
+OVERVIEW:
+Three theoretically distinct model classes for Y-x saturation relationship
+All use Stan/PyMC with normal likelihood (justified by EDA)
+Focus: Mechanistic interpretability and falsification criteria
+
+================================================================================
+MODEL RANKINGS
+================================================================================
+
+1. MICHAELIS-MENTEN SATURATION (PRIMARY)
+   Form:    Y = Y_max * x / (K + x)
+   Params:  Y_max (asymptote), K (half-saturation), σ
+   Why 1st: Most interpretable, widely applicable, bounded predictions
+   Risk:    K and Y_max correlation, possible divergences
+
+2. POWER-LAW WITH SATURATION (ALTERNATIVE 1)
+   Form:    Y = a + b * x^c,  where 0 < c < 1
+   Params:  a (intercept), b (scale), c (exponent), σ
+   Why 2nd: Flexible, tests for asymptote existence via posterior c
+   Risk:    Unbounded growth (Y→∞), 4 parameters vs 3
+
+3. EXPONENTIAL SATURATION (ALTERNATIVE 2)
+   Form:    Y = Y_max - (Y_max - Y_0) * exp(-r * x)
+   Params:  Y_max (asymptote), Y_0 (initial), r (rate), σ
+   Why 3rd: Physical equilibration, similar to MM in practice
+   Risk:    Rate r may be weakly identified, 4 parameters
+
+================================================================================
+KEY DESIGN PRINCIPLES
+================================================================================
+
+✓ Falsification-focused: Each model has explicit failure criteria
+✓ Mechanistic: Models represent different data-generating hypotheses  
+✓ Honest uncertainty: Wide intervals expected (N=27, sparse x>20)
+✓ Adaptive: Clear decision points for pivoting strategies
+
+================================================================================
+CRITICAL SUCCESS/FAILURE CRITERIA
+================================================================================
+
+ALL MODELS MUST:
+- R-hat < 1.01 (convergence)
+- ESS > 400 (sufficient samples)
+- No divergences or <1% (geometry compatible)
+- Pass posterior predictive checks (no residual patterns)
+- LOO Pareto-k < 0.7 (no influential outliers)
+
+ABANDON MODEL 1 (MM) IF:
+- Posterior Y_max < max(Y_observed) = 2.63
+- Posterior K > 20 with wide CI (saturation not identifiable)
+- Prior-posterior overlap >80% for K (data uninformative)
+- Persistent divergences despite tuning
+
+ABANDON MODEL 2 (POWER) IF:
+- Posterior c near 0 or 1 (reduce to log/linear)
+- Extrapolation predicts Y>5 at x=100 (implausible)
+- LOO-CV worse than logarithmic baseline
+
+ABANDON MODEL 3 (EXP) IF:
+- Posterior r < 0.01 (no saturation)
+- Half-saturation x > 50 (beyond data range)
+- LOO-CV worse than MM by >5 ELPD
+
+================================================================================
+DECISION TREE
+================================================================================
+
+START → Fit Model 1 (MM)
+  ↓
+  Converged & passes checks?
+  ├─ YES → Compare LOO-CV with Model 2
+  │         ├─ MM better/tied → ACCEPT Model 1 ✓
+  │         └─ Power better → ACCEPT Model 2 (if c∈[0.2,0.8]) ✓
+  └─ NO → Try Model 3 (Exponential)
+           ├─ Converged → Compare with Model 2 via LOO
+           └─ Failed → Use Model 2 (easiest to fit)
+
+IF ALL THREE FAIL:
+→ Try GP/splines (non-parametric)
+→ Try Student-t likelihood (robust)
+→ Try heteroscedastic variance
+→ Check for data issues/confounders
+
+================================================================================
+EXPECTED POSTERIORS (PREDICTIONS)
+================================================================================
+
+Model 1 (MM):
+  Y_max ≈ 2.62 [2.50, 2.75]
+  K     ≈ 3.5  [1.2, 8.5]   ← wide due to sparse high-x data
+  σ     ≈ 0.19 [0.15, 0.24]
+
+Model 2 (Power):
+  a ≈ 1.73 [1.55, 1.90]
+  b ≈ 0.45 [0.30, 0.65]
+  c ≈ 0.35 [0.20, 0.55]   ← moderately diminishing returns
+  σ ≈ 0.19 [0.15, 0.24]
+
+Model 3 (Exp):
+  Y_max ≈ 2.62 [2.50, 2.75]
+  Δ     ≈ 0.88 [0.70, 1.10]
+  r     ≈ 0.20 [0.08, 0.45]   ← wide due to limited range
+  σ     ≈ 0.19 [0.15, 0.24]
+
+================================================================================
+FILES CREATED
+================================================================================
+
+/workspace/experiments/designer_2/
+├── proposed_models.md              [MAIN: 15,000+ words, complete specs]
+├── model_comparison_summary.md     [REFERENCE: quick lookup tables]
+├── README.md                       [OVERVIEW: quick start guide]
+├── SUMMARY.txt                     [THIS FILE: ASCII summary]
+└── stan_models/
+    ├── model1_michaelis_menten.stan  [IMPLEMENTATION: ready to run]
+    ├── model2_powerlaw.stan          [IMPLEMENTATION: ready to run]
+    └── model3_exponential.stan       [IMPLEMENTATION: ready to run]
+
+================================================================================
+IMPLEMENTATION REQUIREMENTS
+================================================================================
+
+Software: Stan (preferred) or PyMC
+Sampling: 4 chains × 2000 iterations (1000 warmup)
+Time:     ~10 minutes total for all three models
+Data:     /workspace/data/data.csv (N=27)
+
+MCMC Settings:
+- adapt_delta = 0.90 (increase to 0.95 if divergences)
+- max_treedepth = 12 (allow deeper HMC trajectories)
+
+Required diagnostics:
+- R-hat, ESS (bulk and tail)
+- Divergences, energy (E-BFMI)
+- Pairs plots (check correlations)
+- Trace plots (check mixing)
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Read proposed_models.md (main document with full rationale)
+2. Fit Model 1 (Michaelis-Menten) using provided Stan code
+3. Check convergence diagnostics
+4. Run posterior predictive checks
+5. If adequate → compute LOO-CV and compare with alternatives
+6. If inadequate → follow decision tree to Model 2 or 3
+7. Report results with uncertainty (especially for x>20)
+
+================================================================================
+PHILOSOPHICAL NOTE
+================================================================================
+
+Success = Finding truth, not completing tasks
+- Discovering a model fails is PROGRESS, not failure
+- Wide credible intervals are HONESTY, not weakness  
+- Switching model classes shows LEARNING, not inconsistency
+
+With N=27 and sparse x>20, expect:
+- Wide posteriors for asymptote parameters
+- Uncertainty about exact saturation dynamics
+- Limited ability to extrapolate beyond x=35
+
+These are features, not bugs. Honest uncertainty quantification is the 
+strength of Bayesian inference.
+
+================================================================================
+END OF SUMMARY
+================================================================================

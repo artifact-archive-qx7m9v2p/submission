@@ -1,0 +1,5 @@
+Model,RMSE,MAE,Bias,Coverage_90,Coverage_95,Calibration
+Hierarchical,9.82451453060913,8.538621556204662,1.1974341143246992,1.0,1.0,Good
+Complete_Pooling,9.951819724611626,8.352014372037306,1.1278477950138766,1.0,1.0,Good
+Skeptical,,,,,,N/A
+Enthusiastic,,,,,,N/A

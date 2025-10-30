@@ -1,0 +1,173 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    DESIGNER 3: ALTERNATIVE PERSPECTIVES                      ║
+║                     Bayesian Model Experiment Design                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+EDA CONTEXT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Data: n=40 counts, range [21, 269]
+  Overdispersion: Var/Mean ≈ 70 (severe!)
+  EDA recommendation: Negative Binomial GLM
+  Growth: Exponential (135% per year) or quadratic acceleration
+  No outliers, no zero-inflation, no autocorrelation
+
+DESIGN PHILOSOPHY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ Challenge standard approaches
+  ✓ Explore overlooked model classes
+  ✓ Prioritize robustness & falsification
+  ✓ Alternative likelihoods & parameterizations
+
+THREE PROPOSED MODELS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ MODEL 1: Hierarchical Gamma-Poisson (Random Effects Decomposition)          │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Core Idea: Overdispersion = unobserved heterogeneity                        │
+│                                                                              │
+│ Structure:  C[i] ~ Poisson(λ[i])                                            │
+│             λ[i] ~ Gamma(μ[i]×φ, φ)                                         │
+│             log(μ[i]) = β₀ + β₁×year[i]                                     │
+│                                                                              │
+│ Key Parameters: β₀ ≈ 4.3, β₁ ≈ 0.85, φ ≈ 1.5                               │
+│                                                                              │
+│ Advantage: Explicit random effects, can identify heterogeneous observations  │
+│ Risk: May reduce to standard NegBin, computational cost                     │
+│                                                                              │
+│ Falsification: Abandon if λ[i] shows no pattern or correlates with time     │
+│ Runtime: ~5 minutes                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ MODEL 2: Student-t Regression on Log-Counts (Robust to Heavy Tails)         │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Core Idea: Log-transform counts, use robust regression                      │
+│                                                                              │
+│ Structure:  y[i] = log(C[i] + 0.5)                                          │
+│             y[i] ~ StudentT(ν, μ[i], σ)                                     │
+│             μ[i] = β₀ + β₁×year[i]                                          │
+│                                                                              │
+│ Key Parameters: β₀ ≈ 4.3, β₁ ≈ 0.85, σ ≈ 0.5-1.0, ν ≈ 4-10                │
+│                                                                              │
+│ Advantage: Robust to outliers, simple interpretation, direct growth rate    │
+│ Risk: Ignores count structure, back-transformation may fail                 │
+│                                                                              │
+│ Falsification: Abandon if ν > 30 (Normal-like) or back-transform fails KS   │
+│ Runtime: ~2 minutes                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ MODEL 3: Conway-Maxwell-Poisson (Flexible Dispersion, OPTIONAL)             │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Core Idea: Don't assume NegBin's variance-mean relationship                 │
+│                                                                              │
+│ Structure:  C[i] ~ COMPoisson(λ[i], ν)                                      │
+│             log(λ[i]) = β₀ + β₁×year[i]                                     │
+│             ν controls dispersion (ν=1: Poisson, ν<1: overdispersion)       │
+│                                                                              │
+│ Key Parameters: β₀ ≈ 4.3, β₁ ≈ 0.85, ν < 0.5 (severe overdispersion)       │
+│                                                                              │
+│ Advantage: Most flexible dispersion, tests NegBin assumptions               │
+│ Risk: Computationally expensive, may reduce to NegBin anyway                │
+│                                                                              │
+│ Falsification: Abandon if ν ≈ 1 (Poisson) or runtime > 1 hour              │
+│ Runtime: ~20-30 minutes (may be longer)                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+COMPARISON STRATEGY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Priority Order:  Model 2 (fastest) → Model 1 (moderate) → Model 3 (slowest)
+
+Comparison Metrics:
+  1. LOO-CV (ELPD): Primary model selection criterion
+  2. Var/Mean Recovery: Must reproduce ≈ 70 in posterior predictive
+  3. Convergence: Rhat < 1.01, ESS > 400, no divergences
+  4. Interpretability: Can we explain results scientifically?
+
+Decision Rules:
+  • ΔELPD > 4:  Clear winner, use that model
+  • ΔELPD < 2:  Tied, prefer simpler model
+  • All similar: Distributional choice doesn't matter (robust finding!)
+
+FALSIFICATION CRITERIA (EXPLICIT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Global Red Flags (Abandon ALL models if):
+  ✗ All fail Var/Mean check → Pivot to time-varying dispersion
+  ✗ All similar LOO-CV → Focus on functional form, not likelihood
+  ✗ Parameters inconsistent across models → Data weakly informative
+  ✗ High prior-posterior overlap → Need more data or stronger priors
+
+Model-Specific:
+  Model 1: Abandon if λ[i] correlates with time (|r| > 0.4)
+  Model 2: Abandon if ν > 30 or back-transform fails KS test
+  Model 3: Abandon if ν ≈ 1 or computational failure
+
+EXPECTED OUTCOMES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Scenario A: One alternative wins
+  → Use winner, report why (e.g., "better handles heavy tails")
+
+Scenario B: All perform similarly
+  → Results robust! Report: "β₁ ≈ 0.85 consistent across models"
+
+Scenario C: All alternatives fail
+  → Standard NegBin validated from multiple perspectives
+
+Scenario D: All fail Var/Mean
+  → Homogeneous dispersion assumption wrong, need time-varying model
+
+IMPLEMENTATION CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Read QUICK_START.md for step-by-step instructions
+□ Copy Stan code from implementation_guide.md
+□ Fit Model 2 (15 min)
+□ Fit Model 1 (20 min)
+□ Fit Model 3 (30 min, optional)
+□ Compare LOO-CV (5 min)
+□ Run posterior predictive checks (5 min)
+□ Check falsification criteria (5 min)
+□ Write summary report (10 min)
+
+TOTAL TIME: ~40 min (Models 1-2) or ~85 min (all three)
+
+KEY FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  README.md                  → Overview & philosophy (start here)
+  QUICK_START.md             → Practical steps (implementers)
+  proposed_models.md         → Full mathematical specifications
+  implementation_guide.md    → Stan code & Python scripts (copy-paste ready)
+  falsification_plan.md      → Rejection criteria & stress tests
+
+CORE PRINCIPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Finding truth > completing tasks
+  2. Plan for failure explicitly
+  3. Think adversarially about assumptions
+  4. Switching model classes = success, not failure
+  5. Honest uncertainty > false confidence
+
+SUCCESS DEFINITION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This experiment succeeds if we:
+  ✓ Understand which approach is best (or that they're equivalent)
+  ✓ Produce robust conclusions about growth rate
+  ✓ Report honest uncertainty where data is ambiguous
+  ✓ Learn from failures and pivot intelligently
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  "A good model design discovers it was wrong early and pivots quickly.      ║
+║   Success is finding a model that genuinely explains the data,              ║
+║   not completing a predetermined plan."                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Generated: 2025-10-29
+Designer: Alternative Perspectives Specialist (Designer 3)
+Status: READY FOR IMPLEMENTATION

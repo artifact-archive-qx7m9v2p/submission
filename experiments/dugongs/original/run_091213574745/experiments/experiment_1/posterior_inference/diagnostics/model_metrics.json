@@ -1,0 +1,49 @@
+{
+  "convergence": {
+    "rhat_max": 1.0,
+    "ess_bulk_min": 11380.0,
+    "ess_tail_min": 23622.0,
+    "acceptance_rate": 0.64140625,
+    "convergence_pass": true,
+    "warnings": [
+      "High acceptance rate (inefficient exploration): 0.641"
+    ],
+    "failures": [],
+    "sampler": "emcee (affine-invariant ensemble sampler)",
+    "note": "Valid MCMC method, though different from HMC/NUTS"
+  },
+  "fit": {
+    "R2_bayes": 0.8890722210259647,
+    "RMSE": 0.08669056287452986,
+    "MAE": 0.07036077275660241
+  },
+  "loo": {
+    "elpd_loo": 24.888818170108106,
+    "se_elpd_loo": 2.8211192345713614,
+    "p_loo": 2.2980025404351814,
+    "loo_ic": -49.77763634021621,
+    "n_high_pareto_k": 0,
+    "n_moderate_pareto_k": 0,
+    "max_pareto_k": 0.3249356489905801
+  },
+  "parameters": {
+    "beta_0": {
+      "mean": 1.774,
+      "sd": 0.044,
+      "hdi_3%": 1.69,
+      "hdi_97%": 1.856
+    },
+    "beta_1": {
+      "mean": 0.272,
+      "sd": 0.019,
+      "hdi_3%": 0.236,
+      "hdi_97%": 0.308
+    },
+    "sigma": {
+      "mean": 0.093,
+      "sd": 0.014,
+      "hdi_3%": 0.068,
+      "hdi_97%": 0.117
+    }
+  }
+}

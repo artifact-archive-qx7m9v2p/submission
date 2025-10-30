@@ -1,0 +1,4 @@
+  File "/workspace/experiments/model_comparison/code/comprehensive_comparison.py", line 25
+    MODEL1_PATH = "/workspace/experiments/model_comparison/idata1_with_predictions.netcdf"'
+                                                                                          ^
+SyntaxError: unterminated string literal (detected at line 25)

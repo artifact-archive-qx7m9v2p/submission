@@ -1,0 +1,168 @@
+================================================================================
+MODEL COMPARISON SUMMARY - Designer 3
+================================================================================
+
++-------------------+-----------------+------------------+------------------+
+|      Aspect       |    Model 1      |     Model 2      |     Model 3      |
++-------------------+-----------------+------------------+------------------+
+| NAME              | Weakly          | Prior-Data       | Skeptical-       |
+|                   | Informative     | Conflict         | Enthusiastic     |
+|                   | Hierarchical    | Detection        | Ensemble         |
++-------------------+-----------------+------------------+------------------+
+| PHILOSOPHY        | Standard        | Conflict-aware   | Adversarial      |
+|                   | Bayesian        | Bayesian         | validation       |
++-------------------+-----------------+------------------+------------------+
+| PRIOR ON MU       | N(0, 25)        | 0.5*N(0,25) +    | 3a: N(0, 10)     |
+|                   |                 | 0.5*N(11,8)      | 3b: N(15, 15)    |
++-------------------+-----------------+------------------+------------------+
+| PRIOR ON TAU      | HalfNormal      | 0.7*HN(0,5) +    | 3a: HN(0, 5)     |
+|                   | (0, 10)         | 0.3*HalfCauchy   | 3b: HC(0, 10)    |
++-------------------+-----------------+------------------+------------------+
+| PLATFORM          | Stan            | PyMC             | Stan (both)      |
++-------------------+-----------------+------------------+------------------+
+| PARAMETERS        | 2 (mu, tau)     | 4+ (mu, tau,     | 2 each           |
+|                   |                 | pi, z, inflate)  | (total: 4)       |
++-------------------+-----------------+------------------+------------------+
+| RUNTIME           | ~1 minute       | ~5 minutes       | ~2 minutes       |
+|                   |                 |                  | (both combined)  |
++-------------------+-----------------+------------------+------------------+
+| COMPLEXITY        | Low             | High             | Medium           |
++-------------------+-----------------+------------------+------------------+
+| CONVERGENCE       | Fast, reliable  | May struggle     | Fast, reliable   |
+|                   |                 | (discrete params)|                  |
++-------------------+-----------------+------------------+------------------+
+| WHEN TO USE       | Primary         | If outliers      | Mandatory        |
+|                   | analysis        | detected         | sensitivity      |
++-------------------+-----------------+------------------+------------------+
+| WHEN IT FAILS     | - Tau > 15      | - Unused         | - Converge       |
+|                   | - Pareto k >0.7 | - Overfitting    |   trivially      |
+|                   | - Poor PPC      | - Non-converge   | - Diverge >20    |
++-------------------+-----------------+------------------+------------------+
+| ABANDON IF        | Heterogeneity   | Conflict mech    | Stacking         |
+|                   | severely        | explains noise   | weights          |
+|                   | underestimated  | not signal       | unstable         |
++-------------------+-----------------+------------------+------------------+
+| BEST FOR          | Standard        | Outlier          | Robustness       |
+|                   | reporting       | detection        | testing          |
++-------------------+-----------------+------------------+------------------+
+| WORST CASE        | Overconfident   | Overfitting      | Uninformative    |
+|                   | pooling         |                  | agreement        |
++-------------------+-----------------+------------------+------------------+
+
+================================================================================
+FITTING ORDER (RECOMMENDED)
+================================================================================
+
+Phase 1: FIT MODEL 1 (baseline, ~1 min)
+   |
+   +-- Diagnostics PASS? --> Phase 2
+   |
+   +-- Diagnostics FAIL? --> Debug, reparameterize, or ABANDON
+
+Phase 2: FIT MODEL 3 (robustness, ~2 min)
+   |
+   +-- Models AGREE (|mu_diff| < 5)? --> DONE (robust inference)
+   |
+   +-- Models DIVERGE? --> Phase 3
+
+Phase 3: FIT MODEL 2 (diagnostic, ~5 min, ONLY IF NEEDED)
+   |
+   +-- Specific studies flagged? --> Refit without them
+   |
+   +-- Overall high uncertainty? --> Report honestly (data insufficient)
+
+================================================================================
+EXPECTED POSTERIOR ESTIMATES (Given EDA: I²=2.9%, pooled=11.27, tau=2.02)
+================================================================================
+
+Scenario A: EDA is Correct (80% probability)
+--------------------------------------------
+Model 1:  mu ~ 11 ± 4,  tau ~ 2 ± 2,   I² ~ 5% ± 5%
+Model 3a: mu ~ 9 ± 5,   tau ~ 2 ± 2,   I² ~ 5% ± 5%  (slightly shrunk to null)
+Model 3b: mu ~ 12 ± 5,  tau ~ 2 ± 2,   I² ~ 5% ± 5%  (slightly higher)
+Agreement: |mu_3a - mu_3b| ~ 3  --> AGREE --> Robust inference
+
+Scenario B: Heterogeneity Underestimated (15% probability)
+-----------------------------------------------------------
+Model 1:  mu ~ 11 ± 6,  tau ~ 7 ± 5,   I² ~ 20% ± 15%
+Model 3a: mu ~ 8 ± 7,   tau ~ 5 ± 4,   I² ~ 15% ± 12%
+Model 3b: mu ~ 14 ± 7,  tau ~ 8 ± 6,   I² ~ 25% ± 18%
+Agreement: |mu_3a - mu_3b| ~ 6  --> MARGINAL --> Report high uncertainty
+
+Scenario C: Study 4 is Outlier (5% probability)
+------------------------------------------------
+Model 1:  Pareto k_4 > 0.7  --> Influential
+Model 2:  P(z_4 = 1) > 0.8  --> Flagged
+Model 3:  Divergence in LOO-4 analysis
+Action:   Refit all models without Study 4
+
+================================================================================
+FALSIFICATION CRITERIA (ABANDON ALL MODELS IF)
+================================================================================
+
+1. Prior predictive failure: Observed data in extreme 5% tails
+   --> PIVOT: Try t-distribution or non-exchangeable models
+
+2. Study 4 dominates: >100% influence, Pareto k > 1.0
+   --> PIVOT: Abandon pooling, report individual studies
+
+3. High heterogeneity: All models give I² > 50%
+   --> PIVOT: Meta-regression or report "too heterogeneous to pool"
+
+4. Computational pathologies: Non-convergence across all models
+   --> PIVOT: Simplify to common-effect or use REML
+
+5. Posterior predictive failure: All models misfit systematically
+   --> PIVOT: Different model class (heavy tails, non-normal)
+
+================================================================================
+STRESS TESTS (ADVERSARIAL VALIDATION)
+================================================================================
+
+Test 1: Extreme Prior Sensitivity
+   Refit Model 1 with mu ~ N(0, 1000) [nearly flat]
+   PASS: Posterior mu changes < 20%
+   FAIL: Changes > 50% --> Data too weak
+
+Test 2: Outlier Injection
+   Add y_9 = 100, sigma_9 = 10
+   PASS: Pareto k_9 > 0.7 (detected)
+   FAIL: Undetected --> Model too flexible
+
+Test 3: Data Doubling
+   Duplicate all studies (J=16)
+   PASS: Uncertainty decreases by ~1/sqrt(2)
+   FAIL: tau also decreases --> Confounding within/between variance
+
+Test 4: Heterogeneity Injection
+   Simulate with tau=10 (not 2)
+   PASS: Recovers tau ~ 8-12
+   FAIL: tau stays at 2 --> Prior too strong
+
+================================================================================
+KEY INSIGHTS FOR J=8 META-ANALYSIS
+================================================================================
+
+1. Priors MATTER - Not academic, affects conclusions
+2. Heterogeneity uncertain - I² has huge sampling variance
+3. Individual studies dominate - Study 4: 33% influence (EDA)
+4. Robustness essential - Test opposing priors
+5. Honest uncertainty - If models disagree, report it
+
+================================================================================
+FILES DELIVERED (2,907 lines total)
+================================================================================
+
+proposed_models.md           1,021 lines  Main proposal, full specs
+diagnostics_checklist.md       494 lines  Systematic validation
+README.md                      318 lines  Quick start guide
+prior_predictive_checks.py     615 lines  Pre-data validation
+model_1_spec.stan               59 lines  Stan: baseline
+model_2_spec.py                276 lines  PyMC: conflict detection
+model_3a_spec.stan              62 lines  Stan: skeptical
+model_3b_spec.stan              62 lines  Stan: enthusiastic
+SUMMARY.md                     (this file)
+
+================================================================================
+STATUS: Ready for implementation
+================================================================================

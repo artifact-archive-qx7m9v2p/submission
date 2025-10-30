@@ -1,0 +1,17 @@
+{
+  "sample_size": 27,
+  "x_range": [
+    1.0,
+    31.5
+  ],
+  "y_range": [
+    1.77,
+    2.72
+  ],
+  "bootstrap_slope_mean": 0.03013084816354695,
+  "bootstrap_slope_std": 0.006743180260303316,
+  "bootstrap_slope_ci_lower": 0.01955853615516197,
+  "bootstrap_slope_ci_upper": 0.04583074950254239,
+  "high_leverage_points": 2,
+  "max_gap_in_x": 6.5
+}

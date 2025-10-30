@@ -1,0 +1,13 @@
+{
+  "rhat_max": 1.0,
+  "ess_bulk_min": 11380.0,
+  "ess_tail_min": 23622.0,
+  "acceptance_rate": 0.64140625,
+  "convergence_pass": true,
+  "warnings": [
+    "High acceptance rate (inefficient exploration): 0.641"
+  ],
+  "failures": [],
+  "sampler": "emcee (affine-invariant ensemble sampler)",
+  "note": "Valid MCMC method, though different from HMC/NUTS"
+}

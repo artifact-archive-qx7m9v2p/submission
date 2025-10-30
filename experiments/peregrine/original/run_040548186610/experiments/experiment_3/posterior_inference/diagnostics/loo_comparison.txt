@@ -1,0 +1,16 @@
+LOO-CV MODEL COMPARISON
+======================================================================
+
+Experiment 1 (Quadratic Trend Only):
+  LOO-ELPD: -174.17 ± 5.61
+  p_loo: 2.43
+
+Experiment 3 (Quadratic Trend + AR(1) Errors):
+  LOO-ELPD: -169.32 ± 4.93
+  p_loo: 3.84
+
+Comparison:
+  Δ ELPD (Exp3 - Exp1): 4.85 ± 7.47
+  Result: Experiment 3 is better (weak evidence)
+
+  Weight: Exp1=0.000, Exp3=1.000

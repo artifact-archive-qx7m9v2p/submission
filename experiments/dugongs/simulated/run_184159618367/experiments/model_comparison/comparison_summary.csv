@@ -1,0 +1,4 @@
+,ELPD,p_loo,RMSE,MAE,Coverage_90,Pareto_k_bad,Pareto_k_max,Parameters,Best_model,DELTA_ELPD,Decision_threshold_2SE,Significant_difference
+Experiment 1 (Asymptotic),22.19 ± 2.91,2.91,0.0933,0.0782,33.33%,0/27,0.455,4,,,,
+Experiment 3 (Log-Log),38.85 ± 3.29,2.79,0.1217,0.0957,33.33%,0/27,0.399,3,,,,
+Comparison,,,,,,,,,Exp3_LogLog,16.66 ± 2.60,5.21,True

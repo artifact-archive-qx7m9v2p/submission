@@ -1,0 +1,25 @@
+
+================================================================================
+ASSESSMENT SUMMARY: Model 1 (Robust Logarithmic Regression)
+================================================================================
+
+LOO-CV DIAGNOSTICS:
+  - ELPD_LOO: 23.71 ± 3.09
+  - p_LOO: 2.61 (vs 5 actual parameters)
+  - Pareto k: All 27 observations excellent (k < 0.5)
+  - Max Pareto k: 0.325
+  - Assessment: EXCELLENT
+
+OUTPUT FILES CREATED:
+  - /workspace/experiments/model_assessment/diagnostics/loo_diagnostics.json
+  - /workspace/experiments/model_assessment/diagnostics/performance_metrics.csv
+  - /workspace/experiments/model_assessment/diagnostics/parameter_interpretation.csv
+  - /workspace/experiments/model_assessment/plots/loo_pareto_k.png
+  - /workspace/experiments/model_assessment/plots/loo_pit.png
+  - /workspace/experiments/model_assessment/plots/calibration_plot.png
+  - /workspace/experiments/model_assessment/plots/performance_summary.png
+  - /workspace/experiments/model_assessment/plots/elpd_contributions.png
+
+================================================================================
+ASSESSMENT COMPLETE
+================================================================================

@@ -1,0 +1,268 @@
+================================================================================
+DESIGNER 3: ROBUST MODELS AND ALTERNATIVE SPECIFICATIONS
+================================================================================
+
+CORE QUESTION: Do we need robustness at all for the Eight Schools dataset?
+
+EDA CONTEXT:
+- NO outliers detected (all |z| < 2)
+- NO heterogeneity (Q p=0.696, I²=0%, tau²=0)
+- Strong evidence for complete pooling
+- Measurement uncertainty dominates signal
+
+DESIGN PHILOSOPHY:
+Testing whether robustness is NECESSARY, not assuming it is.
+If robust models converge to normal → VALIDATES normal assumptions.
+If robust models differ → REVEALS hidden issues EDA missed.
+
+================================================================================
+THREE MODEL CLASSES PROPOSED
+================================================================================
+
+1. STUDENT-T MODELS (Heavy-Tailed Alternatives)
+   ├─ Model 1A: Student-t data distribution
+   ├─ Model 1B: Student-t random effects
+   └─ Model 1C: Double Student-t (maximum robustness)
+
+   Falsification: If nu_posterior > 30 → abandon, use normal
+   Expected: nu ≈ 20-40 (converge to normal)
+
+2. MIXTURE MODELS (Outlier Detection)
+   ├─ Model 2A: Outlier indicator model (variance inflation)
+   ├─ Model 2B: Latent class model (two subgroups)
+   └─ Model 2C: Dirichlet process (fully nonparametric)
+
+   Falsification: If K=1 cluster → abandon, use simple hierarchical
+   Expected: All p_i < 0.2, no outliers detected
+
+3. PRIOR SENSITIVITY ANALYSIS
+   └─ Grid search: 6 mu priors × 6 tau priors = 36 models
+
+   Metric: Relative_Sensitivity = (max - min) / posterior_SD
+   Threshold: < 0.5 is robust, > 1.0 is sensitive
+   Expected: Rel_Sens < 0.5 (data dominate priors)
+
+================================================================================
+EXPECTED OUTCOMES (PROBABILISTIC PREDICTIONS)
+================================================================================
+
+MOST LIKELY (85%): Robustness NOT needed
+├─ nu_posterior > 30 (Student-t → normal)
+├─ All p_i < 0.2 (no outliers)
+├─ Relative_Sensitivity < 0.5 (low prior dependence)
+└─ CONCLUSION: Normal hierarchical model appropriate
+   ACTION: Report robustness checks as validation
+
+POSSIBLE (10%): Mild robustness benefits
+├─ nu_posterior = 10-30 (borderline heavy tails)
+├─ Some p_i = 0.2-0.5 (uncertain outliers)
+├─ Relative_Sensitivity = 0.5-1.0 (moderate dependence)
+└─ CONCLUSION: Report range, use conservative priors
+   ACTION: Sensitivity analysis in supplement
+
+UNLIKELY (5%): Strong robustness needed
+├─ nu_posterior < 10 (very heavy tails)
+├─ Some p_i > 0.7 (clear outliers)
+├─ Relative_Sensitivity > 1.0 (high dependence)
+└─ CONCLUSION: EDA missed something important
+   ACTION: Investigate cause, report robust model
+
+================================================================================
+IMPLEMENTATION ROADMAP (PRIORITY ORDER)
+================================================================================
+
+PHASE 1: Baseline (30 min) - ALWAYS DO
+├─ Fit normal hierarchical model
+├─ Posterior predictive checks
+├─ Establish LOO-CV baseline
+└─ CHECKPOINT: If R-hat > 1.05 → STOP, reconsider structure
+
+PHASE 2: Core Robustness (45 min) - ALWAYS DO
+├─ Fit Student-t model (1A)
+├─ Fit outlier indicator model (2A)
+├─ Compare LOO-CV to baseline
+└─ CHECKPOINT: If nu > 30 AND p_i < 0.2 → SKIP Phase 3
+
+PHASE 3: Extended Robustness (60 min) - CONDITIONAL
+├─ Fit Student-t variants (1B, 1C)
+├─ Fit latent class model (2B)
+└─ CONDITION: Only if Phase 2 found evidence for robustness
+
+PHASE 4: Prior Sensitivity (45 min) - ALWAYS DO
+├─ Fit 36 model combinations (parallelized)
+├─ Compute sensitivity metrics
+├─ Generate heatmaps
+└─ CHECKPOINT: If Rel_Sens > 1.0 → Report as high sensitivity
+
+PHASE 5: Synthesis (30 min) - ALWAYS DO
+├─ Model comparison table
+├─ Visualization suite
+└─ Final report with recommendations
+
+TOTAL TIME: 2-3 hours (parallelized)
+
+================================================================================
+KEY FALSIFICATION CRITERIA (WHEN TO ABANDON MODELS)
+================================================================================
+
+ABANDON STUDENT-T IF:
+✗ Posterior nu > 30 with 95% CI > 20
+✗ No improvement in LOO-CV (< 2 points)
+✗ Computational issues (divergences, poor mixing)
+✗ High correlation between nu and tau (non-identifiability)
+
+ABANDON MIXTURE MODELS IF:
+✗ Posterior favors K=1 cluster (probability > 0.9)
+✗ Label switching prevents inference
+✗ WAIC/LOO worse than simple model (> 5 penalty)
+✗ Outlier assignments are arbitrary (all p_i ≈ 0.5)
+
+REPORT HIGH PRIOR SENSITIVITY IF:
+✗ Relative_Sensitivity > 1.0 for mu or tau
+✗ Different priors give contradictory conclusions
+✗ Prior-data conflict (posterior far from both)
+
+ABANDON ALL MODELS IF (FUNDAMENTAL RED FLAGS):
+✗ Prior-posterior conflict across ALL model classes
+✗ Extreme parameter values (tau > 50, nu < 3)
+✗ Computational breakdown in simple models
+✗ Posterior predictive checks fail universally
+✗ Inconsistent results across independent designers
+
+================================================================================
+UNIQUE CONTRIBUTIONS (vs OTHER DESIGNERS)
+================================================================================
+
+Designer 3's Focus:
+├─ Systematic distributional robustness
+├─ Quantitative sensitivity metrics
+├─ Decision thresholds and falsification criteria
+├─ Critical perspective: "Is robustness even needed?"
+└─ Adversarial testing of assumptions
+
+Expected Overlap:
+├─ All designers: hierarchical models
+├─ Some designers: Student-t alternatives
+└─ Most designers: prior sensitivity
+
+Value of Multiple Designers:
+├─ If converge → strong evidence for conclusions
+├─ If diverge → reveals genuine uncertainty
+└─ Either outcome is scientifically valuable
+
+================================================================================
+QUICK REFERENCE: INTERPRETATION THRESHOLDS
+================================================================================
+
+STUDENT-T DEGREES OF FREEDOM (nu):
+  > 30    : Effectively normal → use normal model
+  10-30   : Borderline heavy tails → report sensitivity
+  < 10    : Strong evidence for heavy tails → use robust model
+
+OUTLIER PROBABILITY (p_i):
+  < 0.2   : Not an outlier → standard analysis
+  0.2-0.7 : Uncertain → investigate
+  > 0.7   : Likely outlier → validate, consider removal
+
+PRIOR SENSITIVITY (Relative_Sensitivity):
+  < 0.5   : Low sensitivity → robust to priors
+  0.5-1.0 : Moderate sensitivity → report range
+  > 1.0   : High sensitivity → need more data or informative prior
+
+LOO-CV DIFFERENCE (vs baseline):
+  < 1     : Negligible → stick with simpler model
+  1-3     : Modest → report as sensitivity
+  > 3     : Substantial → consider robust model
+
+================================================================================
+FILE MANIFEST
+================================================================================
+
+KEY DOCUMENTS (READ THESE):
+├─ README.md (7 KB)               - Quick start and navigation
+├─ proposed_models.md (32 KB)     - Full mathematical specifications
+├─ model_comparison_matrix.md (10 KB) - Decision tables and thresholds
+└─ implementation_roadmap.md (16 KB)  - Step-by-step implementation guide
+
+TOTAL CONTENT: ~9,500 words across 4 comprehensive documents
+
+FUTURE CODE (TO BE IMPLEMENTED):
+├─ code/baseline_normal_model.py
+├─ code/model_1a_student_t.py
+├─ code/model_2a_outlier_indicators.py
+├─ code/fit_prior_grid.py
+└─ code/comparison_plots.py
+
+EXPECTED OUTPUTS:
+├─ results/model_comparison.csv
+├─ results/prior_sensitivity_results.csv
+├─ results/robustness_report.md
+├─ figures/comparison_forest.png
+└─ figures/prior_sensitivity_heatmap.png
+
+================================================================================
+INTEGRATION WITH OTHER DESIGNERS
+================================================================================
+
+PARALLEL DESIGN STRUCTURE:
+├─ Designer 1: [Unknown focus - likely standard hierarchical variants]
+├─ Designer 2: [Unknown focus - likely alternative model classes]
+└─ Designer 3: Robust models and sensitivity (THIS DESIGN)
+
+SYNTHESIS APPROACH:
+1. Compare model classes proposed by all designers
+2. Identify overlap (validate consensus)
+3. Focus on disagreements (investigate causes)
+4. Use robustness to test if distributional assumptions explain differences
+
+IF ALL AGREE:
+└─ Report consensus + robustness validation
+
+IF WE DISAGREE:
+└─ Investigate if disagreement is due to:
+   ├─ Distributional assumptions (Student-t vs Normal)
+   ├─ Prior choices (sensitivity analysis reveals)
+   └─ Model structure (fundamentally different approaches)
+
+EITHER OUTCOME IS VALUABLE:
+├─ Agreement → strong evidence
+└─ Disagreement → honest uncertainty, guide future research
+
+================================================================================
+CORE PHILOSOPHY (FINAL STATEMENT)
+================================================================================
+
+"The goal is NOT to prove robustness is needed.
+ The goal is to TEST whether assumptions matter.
+
+ If robust models converge to normal models,
+ that is EVIDENCE that normality is appropriate.
+
+ Negative results (robustness not needed) are
+ just as valuable as positive results (robustness matters).
+
+ Success = Learning whether assumptions matter,
+ not always preferring complex models.
+
+ Parsimony is a virtue when it's justified."
+
+================================================================================
+
+STATUS: DESIGN COMPLETE - READY FOR IMPLEMENTATION
+
+Next Steps:
+1. Await main agent signal to begin implementation
+2. Coordinate with other designers on shared models
+3. Execute phases 1-5 according to priority order
+4. Synthesize findings across all three designers
+5. Report integrated conclusions with robustness validation
+
+Estimated Time: 2-3 hours (with parallelization)
+Computational Resources: 8 cores, 16 GB RAM
+
+================================================================================
+END OF SUMMARY
+================================================================================
+Designer: Designer 3 (Robust Models Specialist)
+Date: 2025-10-28
+Location: /workspace/experiments/designer_3/

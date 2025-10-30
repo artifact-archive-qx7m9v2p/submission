@@ -1,0 +1,168 @@
+{
+  "bayesian_p_values": {
+    "mean": {
+      "observed": 2.3189416169672836,
+      "rep_mean": 2.318721943913585,
+      "rep_std": 0.034410248282832685,
+      "rep_025": 2.2504231712722254,
+      "rep_975": 2.3864849338716128,
+      "p_value_greater": 0.49935,
+      "p_value_less": 0.50065,
+      "p_value_two_sided": 0.9987
+    },
+    "std": {
+      "observed": 0.2832301247080389,
+      "rep_mean": 0.2869515580807574,
+      "rep_std": 0.032991876975277376,
+      "rep_025": 0.2252207347174127,
+      "rep_975": 0.35510800507215856,
+      "p_value_greater": 0.534075,
+      "p_value_less": 0.465925,
+      "p_value_two_sided": 0.93185
+    },
+    "min": {
+      "observed": 1.7119872064398671,
+      "rep_mean": 1.6880917017484964,
+      "rep_std": 0.10845313918276701,
+      "rep_025": 1.4575029449611134,
+      "rep_975": 1.8841285289193483,
+      "p_value_greater": 0.4322,
+      "p_value_less": 0.5678,
+      "p_value_two_sided": 0.8644
+    },
+    "max": {
+      "observed": 2.631654981259288,
+      "rep_mean": 2.791746575659439,
+      "rep_std": 0.09680596970813805,
+      "rep_025": 2.6254199742608266,
+      "rep_975": 3.0061740228446143,
+      "p_value_greater": 0.969525,
+      "p_value_less": 0.030475,
+      "p_value_two_sided": 0.06095
+    },
+    "median": {
+      "observed": 2.4305510716235874,
+      "rep_mean": 2.3680172436118543,
+      "rep_std": 0.047779813425699695,
+      "rep_025": 2.271522058182474,
+      "rep_975": 2.4600580857137397,
+      "p_value_greater": 0.090475,
+      "p_value_less": 0.909525,
+      "p_value_two_sided": 0.18095
+    },
+    "q25": {
+      "observed": 2.162557462692702,
+      "rep_mean": 2.167555255444296,
+      "rep_std": 0.05826369301171367,
+      "rep_025": 2.047273545808383,
+      "rep_975": 2.276241715320852,
+      "p_value_greater": 0.5476,
+      "p_value_less": 0.4524,
+      "p_value_two_sided": 0.9048
+    },
+    "q75": {
+      "observed": 2.534916210548098,
+      "rep_mean": 2.511947515031998,
+      "rep_std": 0.04949566231148455,
+      "rep_025": 2.4173921539536414,
+      "rep_975": 2.6126079938093256,
+      "p_value_greater": 0.311425,
+      "p_value_less": 0.688575,
+      "p_value_two_sided": 0.62285
+    },
+    "range": {
+      "observed": 0.9196677748194211,
+      "rep_mean": 1.1036548739109433,
+      "rep_std": 0.15316815955210075,
+      "rep_025": 0.8299113611981277,
+      "rep_975": 1.4310805588950934,
+      "p_value_greater": 0.8945,
+      "p_value_less": 0.1055,
+      "p_value_two_sided": 0.211
+    },
+    "skewness": {
+      "observed": -0.8301955058429337,
+      "rep_mean": -0.5524631186883592,
+      "rep_std": 0.2681832003078542,
+      "rep_025": -1.048757944068898,
+      "rep_975": 0.010352144311953424,
+      "p_value_greater": 0.85935,
+      "p_value_less": 0.14065,
+      "p_value_two_sided": 0.2813
+    },
+    "kurtosis": {
+      "observed": -0.5955616428625912,
+      "rep_mean": -0.27453545146667263,
+      "rep_std": 0.45084498530682043,
+      "rep_025": -0.9791652343839666,
+      "rep_975": 0.7711814493787683,
+      "p_value_greater": 0.7614,
+      "p_value_less": 0.2386,
+      "p_value_two_sided": 0.4772
+    },
+    "correlation_xy": {
+      "observed": 0.7200334804517744,
+      "rep_mean": 0.8006463522717338,
+      "rep_std": 0.05583386633469434,
+      "rep_025": 0.6704340357289804,
+      "rep_975": 0.8886108343784936,
+      "p_value_greater": 0.9185,
+      "p_value_less": 0.0815,
+      "p_value_two_sided": 0.163
+    },
+    "max_abs_residual": {
+      "observed": 0.24616669683350167,
+      "rep_mean": 0.29552264031101094,
+      "rep_std": 0.07428001346612276,
+      "rep_025": 0.17819938053865664,
+      "rep_975": 0.4695608490772643,
+      "p_value_greater": 0.732925,
+      "p_value_less": 0.267075,
+      "p_value_two_sided": 0.732925
+    }
+  },
+  "coverage_calibration": {
+    "50": {
+      "expected": 50,
+      "observed": 51.85185185185185,
+      "n_in": 14.0,
+      "n_total": 27
+    },
+    "80": {
+      "expected": 80,
+      "observed": 81.48148148148148,
+      "n_in": 22.0,
+      "n_total": 27
+    },
+    "90": {
+      "expected": 90,
+      "observed": 92.5925925925926,
+      "n_in": 25.0,
+      "n_total": 27
+    },
+    "95": {
+      "expected": 95,
+      "observed": 100.0,
+      "n_in": 27.0,
+      "n_total": 27
+    },
+    "99": {
+      "expected": 99,
+      "observed": 100.0,
+      "n_in": 27.0,
+      "n_total": 27
+    }
+  },
+  "pareto_k_summary": {
+    "k_lt_05": 27,
+    "k_05_07": 0,
+    "k_gt_07": 0,
+    "max_k": 0.36327906949381367,
+    "influential_observations": []
+  },
+  "pointwise_coverage": {
+    "n_in_95_interval": 27,
+    "n_outside_95_interval": 0,
+    "observations_outside": []
+  }
+}

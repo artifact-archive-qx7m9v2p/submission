@@ -1,0 +1,56 @@
+INITIAL DATA EXPLORATION SUMMARY
+================================================================================
+
+Dataset: /workspace/data/data.csv
+Shape: (27, 2)
+Variables: ['x', 'Y']
+
+QUALITY METRICS:
+  n_obs: 27
+  n_vars: 2
+  missing_total: 0
+  duplicates: 1
+  data_types: {'x': dtype('float64'), 'Y': dtype('float64')}
+
+QUALITY REPORT:
+  x_numeric: True
+  Y_numeric: True
+  x_range: (np.float64(1.0), np.float64(31.5), np.float64(30.5))
+  Y_range: (np.float64(1.77), np.float64(2.72), np.float64(0.9500000000000002))
+  x_zeros: 0
+  x_negative: 0
+  Y_zeros: 0
+  Y_negative: 0
+  x_outliers: 1
+  Y_outliers: 0
+  x_duplicates: 6
+
+ADVANCED STATISTICS:
+
+x:
+  mean: 10.944444444444445
+  median: 9.5
+  std: 7.8695290316185496
+  variance: 61.92948717948718
+  cv: 71.90432617722531
+  skewness: 0.947231345812247
+  kurtosis: 0.6442129789770759
+  iqr: 10.0
+  q25: 5.0
+  q75: 15.0
+  shapiro_stat: 0.9156618601848217
+  shapiro_p: 0.031074981216772345
+
+Y:
+  mean: 2.334074074074074
+  median: 2.4
+  std: 0.27465025674985916
+  variance: 0.07543276353276354
+  cv: 11.766989736982222
+  skewness: -0.699522014183169
+  kurtosis: -0.4425257331205459
+  iqr: 0.3050000000000006
+  q25: 2.2249999999999996
+  q75: 2.5300000000000002
+  shapiro_stat: 0.9229844733037376
+  shapiro_p: 0.04661012456784468

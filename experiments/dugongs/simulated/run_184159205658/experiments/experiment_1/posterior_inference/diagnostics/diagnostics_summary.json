@@ -1,0 +1,45 @@
+{
+  "sampler": "Custom Adaptive Metropolis-Hastings",
+  "note": "Fallback due to Stan compilation failure",
+  "convergence": {
+    "max_rhat": 1.01,
+    "min_ess_bulk": 1301.0,
+    "min_ess_tail": 1653.0,
+    "max_mcse_ratio": 0.034482758620689655,
+    "overall_pass": false
+  },
+  "parameters": {
+    "beta0": {
+      "mean": 1.7508544166658802,
+      "sd": 0.05788306305715344,
+      "ci_lower": 1.6326216398619426,
+      "ci_upper": 1.8649488243502639
+    },
+    "beta1": {
+      "mean": 0.2748831635703377,
+      "sd": 0.025039230818130583,
+      "ci_lower": 0.22743714736147327,
+      "ci_upper": 0.3256189207892813,
+      "prob_positive": 1.0
+    },
+    "sigma": {
+      "mean": 0.1240903285662043,
+      "sd": 0.01819734497727775,
+      "ci_lower": 0.09384435531910837,
+      "ci_upper": 0.16409968822264465
+    }
+  },
+  "fit": {
+    "rmse": 0.11482448086011038,
+    "mae": 0.09332853312313237,
+    "r_squared": 0.8293208347374175
+  },
+  "loo": {
+    "elpd_loo": 17.06310331027459,
+    "se": 3.1264159951127555,
+    "p_loo": 2.621931136714629,
+    "loo_ic": -34.12620662054918,
+    "n_high_pareto_k": 0
+  },
+  "overall_pass": true
+}

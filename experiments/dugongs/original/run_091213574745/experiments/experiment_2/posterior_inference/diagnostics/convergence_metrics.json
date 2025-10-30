@@ -1,0 +1,19 @@
+{
+  "rhat_max": 1.17,
+  "ess_bulk_min": 17.0,
+  "ess_tail_min": 12.0,
+  "convergence_acceptable": false,
+  "warnings": [
+    "ESS bulk < 400 (min = 17) - longer chains recommended",
+    "ESS tail < 400 (min = 12) - longer chains recommended"
+  ],
+  "failures": [
+    "R-hat > 1.05 (max = 1.1700) - CRITICAL",
+    "ESS bulk < 100 (min = 17) - CRITICAL",
+    "ESS tail < 100 (min = 12) - CRITICAL"
+  ],
+  "nu_mean": 22.799,
+  "nu_hdi_low": 3.369,
+  "nu_hdi_high": 50.624,
+  "nu_interpretation": "Borderline"
+}

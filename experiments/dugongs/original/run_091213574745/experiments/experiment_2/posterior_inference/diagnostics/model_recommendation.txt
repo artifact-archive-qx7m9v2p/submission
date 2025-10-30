@@ -1,0 +1,6 @@
+Model Recommendation: Prefer Model 1
+ν = 22.80 [3.37, 50.62]
+ν interpretation: Borderline
+ΔLOO = -1.06 ± 4.00
+LOO interpretation: Models equivalent
+Convergence: POOR

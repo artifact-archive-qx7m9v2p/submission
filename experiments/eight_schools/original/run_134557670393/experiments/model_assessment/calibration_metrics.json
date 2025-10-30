@@ -1,0 +1,21 @@
+{
+  "loo_pit_values": [
+    0.9134224266599256,
+    0.5047244510134851,
+    0.2596386005574106,
+    0.4647139437728771,
+    0.15333328602617124,
+    0.2751438446097283,
+    0.8430997782604169,
+    0.5954312066818934
+  ],
+  "ks_statistic": 0.15456879331810658,
+  "ks_pvalue": 0.9751168097517431,
+  "calibration_assessment": "well_calibrated",
+  "coverage_50_pct": 25.0,
+  "coverage_90_pct": 75.0,
+  "coverage_50_nominal": 50.0,
+  "coverage_90_nominal": 90.0,
+  "coverage_50_deviation": -25.0,
+  "coverage_90_deviation": -15.000000000000002
+}

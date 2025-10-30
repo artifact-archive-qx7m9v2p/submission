@@ -1,0 +1,8 @@
+{
+  "max_rhat": 1.0,
+  "min_ess_bulk": 1354.0,
+  "min_ess_tail": 2025.0,
+  "num_divergences": 0,
+  "converged": true,
+  "target_accept": 0.95
+}

@@ -1,0 +1,205 @@
+"""
+Summary of Key EDA Findings
+============================
+Purpose: Concise summary with key statistics and visualizations
+"""
+
+import pandas as pd
+import numpy as np
+from scipy import stats
+
+# Load data
+data = pd.read_csv('/workspace/data/data.csv')
+C = data['C'].values
+year = data['year'].values
+
+print("="*80)
+print("EXPLORATORY DATA ANALYSIS - KEY FINDINGS SUMMARY")
+print("="*80)
+print()
+
+print("DATASET OVERVIEW")
+print("-"*80)
+print(f"Observations: {len(data)}")
+print(f"Time range: [{year.min():.3f}, {year.max():.3f}]")
+print(f"Count range: [{C.min()}, {C.max()}]")
+print(f"Data quality: No missing values, no outliers, no duplicates")
+print()
+
+print("CRITICAL FINDING #1: EXTREME OVERDISPERSION")
+print("-"*80)
+mean_C = np.mean(C)
+var_C = np.var(C, ddof=1)
+ratio = var_C / mean_C
+print(f"Mean: {mean_C:.2f}")
+print(f"Variance: {var_C:.2f}")
+print(f"Variance/Mean Ratio: {ratio:.2f}")
+print(f"")
+print(f"INTERPRETATION:")
+print(f"  - Poisson models assume Var/Mean ≈ 1")
+print(f"  - Observed ratio of {ratio:.0f} indicates EXTREME overdispersion")
+print(f"  - This is one of the most severe cases of overdispersion")
+print(f"  - POISSON MODELS WILL FAIL - Use Negative Binomial or Quasi-Poisson")
+print()
+
+print("CRITICAL FINDING #2: STRONG GROWTH TREND")
+print("-"*80)
+initial = C[0]
+final = C[-1]
+growth_factor = final / initial
+pct_growth = (final - initial) / initial * 100
+print(f"Initial count: {initial}")
+print(f"Final count: {final}")
+print(f"Growth factor: {growth_factor:.2f}x")
+print(f"Percentage growth: {pct_growth:.1f}%")
+print(f"")
+slope, intercept, r_value, p_value, std_err = stats.linregress(year, C)
+print(f"Linear model: R² = {r_value**2:.4f}")
+log_C = np.log(C)
+slope_log, intercept_log, r_log, p_log, se_log = stats.linregress(year, log_C)
+print(f"Exponential model: R² = {r_log**2:.4f} (on log scale)")
+print(f"")
+print(f"INTERPRETATION:")
+print(f"  - Exponential growth pattern dominates")
+print(f"  - Growth rate ≈ {(np.exp(slope_log)-1)*100:.1f}% per standardized year")
+print(f"  - Polynomial (quadratic/cubic) models also fit well")
+print()
+
+print("CRITICAL FINDING #3: MASSIVE AUTOCORRELATION")
+print("-"*80)
+acf_1 = np.corrcoef(C[:-1], C[1:])[0, 1]
+lag1_r2 = acf_1**2
+residuals = C - (slope * year + intercept)
+dw = np.sum(np.diff(residuals)**2) / np.sum(residuals**2)
+print(f"ACF at lag-1: {acf_1:.4f}")
+print(f"Lag-1 R²: {lag1_r2:.4f}")
+print(f"Durbin-Watson statistic: {dw:.3f}")
+print(f"")
+print(f"INTERPRETATION:")
+print(f"  - ACF ≈ 0.99 is near-perfect autocorrelation")
+print(f"  - Each value almost perfectly predicts the next")
+print(f"  - D-W << 2 confirms strong positive autocorrelation")
+print(f"  - Standard GLM independence assumption VIOLATED")
+print(f"  - Must use: GEE with AR(1), robust SE, or time series models")
+print()
+
+print("CRITICAL FINDING #4: HETEROSCEDASTICITY")
+print("-"*80)
+mid_point = np.median(year)
+early_C = C[year < mid_point]
+late_C = C[year >= mid_point]
+var_early = np.var(early_C, ddof=1)
+var_late = np.var(late_C, ddof=1)
+var_ratio = var_late / var_early
+print(f"Early period (year < {mid_point:.2f}):")
+print(f"  Mean: {np.mean(early_C):.2f}, Variance: {var_early:.2f}")
+print(f"Late period (year >= {mid_point:.2f}):")
+print(f"  Mean: {np.mean(late_C):.2f}, Variance: {var_late:.2f}")
+print(f"Variance ratio (late/early): {var_ratio:.2f}")
+F_stat = var_late / var_early
+p_f = 1 - stats.f.cdf(F_stat, len(late_C)-1, len(early_C)-1)
+print(f"F-test p-value: {p_f:.6f}")
+print(f"")
+print(f"INTERPRETATION:")
+print(f"  - Variance increases {var_ratio:.0f}× from early to late period")
+print(f"  - F-test strongly rejects equal variances (p < 0.0001)")
+print(f"  - Heteroscedasticity is severe")
+print(f"  - Negative Binomial naturally handles this via μ + μ²/θ structure")
+print()
+
+print("CRITICAL FINDING #5: POTENTIAL CHANGEPOINT")
+print("-"*80)
+mean_C = np.mean(C)
+cusum = np.cumsum(C - mean_C)
+changepoint_idx = np.argmax(np.abs(cusum))
+changepoint_year = year[changepoint_idx]
+before = C[:changepoint_idx+1]
+after = C[changepoint_idx+1:]
+if len(before) > 1 and len(after) > 1:
+    t_stat, p_val = stats.ttest_ind(before, after)
+    print(f"CUSUM detects changepoint at: year = {changepoint_year:.3f} (index {changepoint_idx})")
+    print(f"Before changepoint: Mean = {np.mean(before):.2f}")
+    print(f"After changepoint: Mean = {np.mean(after):.2f}")
+    print(f"Mean difference: {np.mean(after) - np.mean(before):.2f} ({(np.mean(after)/np.mean(before)):.2f}x)")
+    print(f"T-test p-value: {p_val:.2e}")
+    print(f"")
+    print(f"INTERPRETATION:")
+    print(f"  - Significant regime shift detected (p < 0.0001)")
+    print(f"  - Mean increases {np.mean(after)/np.mean(before):.1f}× after changepoint")
+    print(f"  - Consider piecewise/changepoint models")
+    print(f"  - Alternative: smooth exponential curve (no discrete break)")
+print()
+
+print("="*80)
+print("MODEL RECOMMENDATIONS (PRIORITIZED)")
+print("="*80)
+print()
+print("RANK 1: Negative Binomial GLM with Nonlinear Trend")
+print("  Model: C ~ NegBin(μ, θ) with log(μ) = β₀ + β₁*year + β₂*year²")
+print("  Why: Addresses overdispersion + captures nonlinearity")
+print("  Caution: May need GEE or robust SE for autocorrelation")
+print()
+print("RANK 2: Negative Binomial GLM with Exponential Trend")
+print("  Model: C ~ NegBin(μ, θ) with log(μ) = β₀ + β₁*year")
+print("  Why: Natural for exponential growth, good interpretability")
+print("  Caution: May underfit slight curvature in trend")
+print()
+print("RANK 3: Changepoint Model")
+print("  Model: Two-regime NB model with break at year ≈ 0.3")
+print("  Why: Tests structural break hypothesis")
+print("  Caution: Assumes discrete break vs smooth transition")
+print()
+print("RANK 4: Time Series Count Model")
+print("  Model: ARIMA-like or state-space with NB observation")
+print("  Why: Natural for strong autocorrelation (ACF = 0.99)")
+print("  Caution: More complex, requires specialized methods")
+print()
+
+print("="*80)
+print("KEY MODELING REQUIREMENTS")
+print("="*80)
+print()
+print("[MANDATORY]")
+print("  1. Use Negative Binomial or Quasi-Poisson (NOT Poisson)")
+print("  2. Address autocorrelation (GEE, robust SE, or lagged DV)")
+print("  3. Include nonlinear trend (quadratic, cubic, or exponential)")
+print()
+print("[RECOMMENDED]")
+print("  4. Test changepoint at year ≈ 0.3")
+print("  5. Validate with out-of-sample prediction")
+print("  6. Check ACF of residuals (should be < 0.3)")
+print()
+print("[AVOID]")
+print("  7. Do NOT use standard Poisson GLM (will severely underfit)")
+print("  8. Do NOT ignore autocorrelation (SE will be too small)")
+print("  9. Do NOT use linear trend only (residuals will show pattern)")
+print()
+
+print("="*80)
+print("VISUALIZATIONS GENERATED")
+print("="*80)
+print()
+print("  /workspace/eda/visualizations/01_distribution_analysis.png")
+print("    → Distribution properties, overdispersion, normality tests")
+print()
+print("  /workspace/eda/visualizations/02_temporal_analysis.png")
+print("    → Trend analysis, model comparison, heteroscedasticity")
+print()
+print("  /workspace/eda/visualizations/03_advanced_diagnostics.png")
+print("    → ACF/PACF, changepoint detection, lag-1 dependence")
+print()
+
+print("="*80)
+print("REPORTS GENERATED")
+print("="*80)
+print()
+print("  /workspace/eda/eda_report.md")
+print("    → Comprehensive EDA report with modeling recommendations")
+print()
+print("  /workspace/eda/eda_log.md")
+print("    → Detailed exploration process and intermediate findings")
+print()
+
+print("="*80)
+print("EDA COMPLETE - Ready for Bayesian Modeling")
+print("="*80)
