@@ -1,0 +1,220 @@
+======================================================================
+SIMULATION-BASED CALIBRATION FOR HIERARCHICAL LOGIT MODEL
+(Using MAP + Laplace Approximation)
+======================================================================
+
+Configuration:
+  - SBC iterations: 150
+  - Posterior samples: 4000 (from Laplace approx)
+  - Number of trials: 12
+  - Sample sizes: [ 47 148 119 810 211 196 148 215 207  97 256 360]
+
+Priors:
+  - mu_logit ~ Normal(-2.53, 1.0)
+  - sigma ~ HalfNormal(0, 1.0)
+  - eta_i ~ Normal(0, 1)
+
+Inference method:
+  - MAP estimation via L-BFGS-B
+  - Laplace approximation (normal at MAP)
+  - Hessian-based covariance
+
+Note: This approximation may underestimate uncertainty
+      compared to full MCMC sampling.
+
+======================================================================
+
+Running 150 SBC iterations...
+----------------------------------------------------------------------
+SBC iteration 1/150... ✓ (mu: -2.03, sigma: 0.14)
+SBC iteration 2/150... ✓ (mu: -1.64, sigma: 0.81)
+SBC iteration 3/150... ✓ (mu: -1.15, sigma: 0.48)
+SBC iteration 4/150... ✓ (mu: -4.25, sigma: 0.70)
+SBC iteration 5/150... ✓ (mu: -3.12, sigma: 0.52)
+SBC iteration 6/150... ✓ (mu: -2.61, sigma: 0.03)
+SBC iteration 7/150... ✓ (mu: -1.62, sigma: 0.84)
+SBC iteration 8/150... ✓ (mu: -2.52, sigma: 0.01)
+SBC iteration 9/150... ✓ (mu: -3.61, sigma: 0.69)
+SBC iteration 10/150... ✓ (mu: -2.28, sigma: 0.22)
+SBC iteration 11/150... ✓ (mu: -3.09, sigma: 0.80)
+SBC iteration 12/150... ✓ (mu: -1.65, sigma: 0.17)
+SBC iteration 13/150... ✓ (mu: -1.94, sigma: 1.40)
+SBC iteration 14/150... ✓ (mu: -4.61, sigma: 1.99)
+SBC iteration 15/150... ✓ (mu: -2.53, sigma: 0.92)
+SBC iteration 16/150... ✓ (mu: -3.06, sigma: 1.36)
+SBC iteration 17/150... ✓ (mu: -2.47, sigma: 0.59)
+SBC iteration 18/150... ✓ (mu: -3.11, sigma: 0.99)
+SBC iteration 19/150... ✓ (mu: -4.16, sigma: 0.03)
+SBC iteration 20/150... ✓ (mu: -2.41, sigma: 0.93)
+SBC iteration 21/150... ✓ (mu: 0.05, sigma: 1.01)
+SBC iteration 22/150... ✓ (mu: -1.23, sigma: 0.19)
+SBC iteration 23/150... ✓ (mu: -3.57, sigma: 0.34)
+SBC iteration 24/150... ✓ (mu: -1.15, sigma: 0.16)
+SBC iteration 25/150... ✓ (mu: -2.28, sigma: 0.58)
+SBC iteration 26/150... ✓ (mu: -0.94, sigma: 0.33)
+SBC iteration 27/150... ✓ (mu: -4.16, sigma: 0.07)
+SBC iteration 28/150... ✓ (mu: -1.59, sigma: 1.58)
+SBC iteration 29/150... ✓ (mu: -2.13, sigma: 1.25)
+SBC iteration 30/150... ✓ (mu: -3.93, sigma: 1.81)
+SBC iteration 31/150... ✓ (mu: -3.47, sigma: 1.04)
+SBC iteration 32/150... ✓ (mu: -1.78, sigma: 1.75)
+SBC iteration 33/150... ✓ (mu: -2.17, sigma: 0.65)
+SBC iteration 34/150... ✓ (mu: -2.87, sigma: 0.68)
+SBC iteration 35/150... ✓ (mu: -3.78, sigma: 1.43)
+SBC iteration 36/150... ✓ (mu: -1.98, sigma: 0.02)
+SBC iteration 37/150... ✓ (mu: -1.97, sigma: 1.32)
+SBC iteration 38/150... ✓ (mu: -5.68, sigma: 0.16)
+SBC iteration 39/150... ✓ (mu: -1.07, sigma: 0.76)
+SBC iteration 40/150... ✓ (mu: -1.95, sigma: 2.07)
+SBC iteration 41/150... ✓ (mu: -3.02, sigma: 1.21)
+SBC iteration 42/150... ✓ (mu: -2.68, sigma: 1.07)
+SBC iteration 43/150... ✓ (mu: -3.49, sigma: 1.97)
+SBC iteration 44/150... ✓ (mu: -3.04, sigma: 0.82)
+SBC iteration 45/150... ✓ (mu: -0.85, sigma: 0.93)
+SBC iteration 46/150... ✓ (mu: -3.97, sigma: 0.27)
+SBC iteration 47/150... ✓ (mu: -2.40, sigma: 0.55)
+SBC iteration 48/150... ✓ (mu: -0.38, sigma: 0.91)
+SBC iteration 49/150... ✓ (mu: -2.25, sigma: 1.23)
+SBC iteration 50/150... ✓ (mu: -3.36, sigma: 1.16)
+SBC iteration 51/150... ✓ (mu: -2.95, sigma: 0.11)
+SBC iteration 52/150... ✓ (mu: -2.72, sigma: 2.36)
+SBC iteration 53/150... ✓ (mu: -1.33, sigma: 0.88)
+SBC iteration 54/150... ✓ (mu: -2.19, sigma: 0.45)
+SBC iteration 55/150... ✓ (mu: -3.55, sigma: 1.14)
+SBC iteration 56/150... ✓ (mu: -2.56, sigma: 0.28)
+SBC iteration 57/150... ✓ (mu: -1.79, sigma: 0.32)
+SBC iteration 58/150... ✓ (mu: -2.18, sigma: 0.19)
+SBC iteration 59/150... ✓ (mu: -3.26, sigma: 0.53)
+SBC iteration 60/150... ✓ (mu: -2.59, sigma: 1.36)
+SBC iteration 61/150... ✓ (mu: -2.32, sigma: 0.78)
+SBC iteration 62/150... ✓ (mu: -3.69, sigma: 0.01)
+SBC iteration 63/150... ✓ (mu: -3.79, sigma: 1.21)
+SBC iteration 64/150... ✓ (mu: -2.97, sigma: 0.51)
+SBC iteration 65/150... ✓ (mu: -4.03, sigma: 0.77)
+SBC iteration 66/150... ✓ (mu: -2.88, sigma: 0.66)
+SBC iteration 67/150... ✓ (mu: -2.99, sigma: 0.91)
+SBC iteration 68/150... ✓ (mu: -0.81, sigma: 1.47)
+SBC iteration 69/150... ✓ (mu: -2.05, sigma: 0.86)
+SBC iteration 70/150... ✓ (mu: -1.46, sigma: 1.55)
+SBC iteration 71/150... ✓ (mu: -3.07, sigma: 0.03)
+SBC iteration 72/150... ✓ (mu: -1.31, sigma: 1.44)
+SBC iteration 73/150... ✓ (mu: -3.21, sigma: 1.22)
+SBC iteration 74/150... ✓ (mu: -2.75, sigma: 2.00)
+SBC iteration 75/150... ✓ (mu: -2.43, sigma: 1.36)
+SBC iteration 76/150... ✓ (mu: -3.49, sigma: 0.72)
+SBC iteration 77/150... ✓ (mu: -2.90, sigma: 0.41)
+SBC iteration 78/150... ✓ (mu: -3.92, sigma: 0.12)
+SBC iteration 79/150... ✓ (mu: -2.63, sigma: 0.96)
+SBC iteration 80/150... ✓ (mu: -1.92, sigma: 0.04)
+SBC iteration 81/150... ✓ (mu: -3.82, sigma: 2.04)
+SBC iteration 82/150... ✓ (mu: -2.74, sigma: 1.01)
+SBC iteration 83/150... ✓ (mu: -2.19, sigma: 0.72)
+SBC iteration 84/150... ✓ (mu: -2.50, sigma: 0.62)
+SBC iteration 85/150... ✓ (mu: -4.30, sigma: 0.79)
+SBC iteration 86/150... ✓ (mu: -1.75, sigma: 1.08)
+SBC iteration 87/150... ✓ (mu: -2.57, sigma: 1.06)
+SBC iteration 88/150... ✓ (mu: -2.56, sigma: 1.11)
+SBC iteration 89/150... ✓ (mu: -2.33, sigma: 0.30)
+SBC iteration 90/150... ✓ (mu: -2.62, sigma: 0.34)
+SBC iteration 91/150... ✓ (mu: -3.10, sigma: 0.10)
+SBC iteration 92/150... ✓ (mu: -1.99, sigma: 0.26)
+SBC iteration 93/150... ✓ (mu: -4.31, sigma: 0.77)
+SBC iteration 94/150... ✓ (mu: -3.16, sigma: 2.17)
+SBC iteration 95/150... ✓ (mu: -1.88, sigma: 0.80)
+SBC iteration 96/150... ✓ (mu: -2.55, sigma: 0.63)
+SBC iteration 97/150... ✓ (mu: -1.77, sigma: 1.46)
+SBC iteration 98/150... ✓ (mu: -2.78, sigma: 0.93)
+SBC iteration 99/150... ✓ (mu: -4.24, sigma: 0.14)
+SBC iteration 100/150... ✓ (mu: -3.01, sigma: 0.59)
+SBC iteration 101/150... ✓ (mu: -1.99, sigma: 1.69)
+SBC iteration 102/150... ✓ (mu: -1.69, sigma: 1.37)
+SBC iteration 103/150... ✓ (mu: -2.95, sigma: 1.32)
+SBC iteration 104/150... ✓ (mu: -3.55, sigma: 0.72)
+SBC iteration 105/150... ✓ (mu: -2.60, sigma: 0.45)
+SBC iteration 106/150... ✓ (mu: -3.39, sigma: 0.61)
+SBC iteration 107/150... ✓ (mu: -3.21, sigma: 0.89)
+SBC iteration 108/150... ✓ (mu: -2.69, sigma: 0.15)
+SBC iteration 109/150... ✓ (mu: -4.78, sigma: 0.49)
+SBC iteration 110/150... ✓ (mu: -1.41, sigma: 0.52)
+SBC iteration 111/150... ✓ (mu: -2.25, sigma: 1.57)
+SBC iteration 112/150... ✓ (mu: -3.37, sigma: 0.16)
+SBC iteration 113/150... ✓ (mu: -1.62, sigma: 0.26)
+SBC iteration 114/150... ✓ (mu: -3.18, sigma: 1.12)
+SBC iteration 115/150... ✓ (mu: -2.27, sigma: 1.86)
+SBC iteration 116/150... ✓ (mu: -2.44, sigma: 0.51)
+SBC iteration 117/150... ✓ (mu: -0.37, sigma: 0.54)
+SBC iteration 118/150... ✓ (mu: -2.91, sigma: 1.76)
+SBC iteration 119/150... ✓ (mu: -2.50, sigma: 0.40)
+SBC iteration 120/150... ✓ (mu: -3.06, sigma: 1.88)
+SBC iteration 121/150... ✓ (mu: -0.57, sigma: 1.21)
+SBC iteration 122/150... ✓ (mu: -1.50, sigma: 0.52)
+SBC iteration 123/150... ✓ (mu: -3.31, sigma: 0.32)
+SBC iteration 124/150... ✓ (mu: -1.63, sigma: 0.39)
+SBC iteration 125/150... ✓ (mu: -3.31, sigma: 0.16)
+SBC iteration 126/150... ✓ (mu: -1.12, sigma: 2.18)
+SBC iteration 127/150... ✓ (mu: -1.77, sigma: 0.18)
+SBC iteration 128/150... ✓ (mu: -2.14, sigma: 0.21)
+SBC iteration 129/150... ✓ (mu: -2.10, sigma: 1.01)
+SBC iteration 130/150... ✓ (mu: -0.83, sigma: 0.77)
+SBC iteration 131/150... ✓ (mu: -0.67, sigma: 0.20)
+SBC iteration 132/150... ✓ (mu: -3.11, sigma: 0.84)
+SBC iteration 133/150... ✓ (mu: -3.78, sigma: 0.57)
+SBC iteration 134/150... ✓ (mu: -1.64, sigma: 0.18)
+SBC iteration 135/150... ✓ (mu: -1.42, sigma: 0.27)
+SBC iteration 136/150... ✓ (mu: -2.23, sigma: 0.44)
+SBC iteration 137/150... ✓ (mu: -2.89, sigma: 0.45)
+SBC iteration 138/150... ✓ (mu: -5.26, sigma: 0.91)
+SBC iteration 139/150... ✓ (mu: -2.85, sigma: 0.92)
+SBC iteration 140/150... ✓ (mu: -2.24, sigma: 1.01)
+SBC iteration 141/150... ✓ (mu: -4.68, sigma: 0.06)
+SBC iteration 142/150... ✓ (mu: -3.53, sigma: 1.42)
+SBC iteration 143/150... ✓ (mu: -2.06, sigma: 2.07)
+SBC iteration 144/150... ✓ (mu: -1.18, sigma: 0.50)
+SBC iteration 145/150... ✓ (mu: -2.72, sigma: 0.54)
+SBC iteration 146/150... ✓ (mu: -1.89, sigma: 0.75)
+SBC iteration 147/150... ✓ (mu: -2.39, sigma: 0.86)
+SBC iteration 148/150... ✓ (mu: -2.47, sigma: 1.44)
+SBC iteration 149/150... ✓ (mu: -3.00, sigma: 0.72)
+SBC iteration 150/150... ✓ (mu: -1.14, sigma: 2.13)
+----------------------------------------------------------------------
+
+Completed: 150/150 successful fits
+
+✓ Results saved to: /workspace/experiments/experiment_2/simulation_based_validation/results/sbc_results.csv
+
+======================================================================
+SBC SUMMARY STATISTICS
+======================================================================
+
+Coverage Rates:
+  mu_logit:
+    - 95% CI: 0.407 (target: 0.950)
+    - 90% CI: 0.327 (target: 0.900)
+    - 80% CI: 0.227 (target: 0.800)
+  sigma:
+    - 95% CI: 0.020 (target: 0.950)
+    - 90% CI: 0.013 (target: 0.900)
+    - 80% CI: 0.007 (target: 0.800)
+
+Bias (posterior mean - true value):
+  - mu_logit: -0.0162 (target: ~0)
+  - sigma:    1.0453 (target: ~0)
+
+RMSE (root mean squared error):
+  - mu_logit: 0.3544
+  - sigma:    1.0875
+
+Posterior Contraction (posterior SD / prior SD):
+  - mu_logit: 0.0785 / 1.0000 = 0.079
+  - sigma:    0.2194 / 0.6028 = 0.364
+
+Convergence Rate: 1.000 (target: >0.90)
+
+Rank Statistics (uniformity test):
+  - mu_logit ranks: χ² = 567.60, p = 0.000
+  - sigma ranks:    χ² = 2770.80, p = 0.000
+  (p > 0.05 suggests uniform ranks → good calibration)
+
+✓ Summary saved to: /workspace/experiments/experiment_2/simulation_based_validation/results/sbc_summary.json
+
+======================================================================

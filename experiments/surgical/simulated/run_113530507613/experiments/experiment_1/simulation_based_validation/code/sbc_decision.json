@@ -1,0 +1,18 @@
+{
+  "decision": "FAIL",
+  "rank_pass": false,
+  "coverage_pass": false,
+  "bias_pass": false,
+  "computational_pass": true,
+  "mu_p_value": 0.1941,
+  "tau_p_value": 0.0,
+  "theta_p_value": 0.0,
+  "mu_coverage": 0.982,
+  "tau_coverage": 0.193,
+  "theta_coverage": 0.955,
+  "mu_bias": 0.032,
+  "tau_bias": 0.6171,
+  "theta_bias": -0.0201,
+  "method": "Laplace approximation",
+  "note": "Laplace approximation had 43% failure rate, indicating challenging posterior geometry. Full MCMC with proper adaptation recommended."
+}

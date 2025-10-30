@@ -1,0 +1,9 @@
+metric,value
+rmse_counts,1.0654738404114215
+mae_counts,0.8947457195847367
+rmse_rates,0.011252152583109921
+mae_rates,0.006572476254676481
+avg_ci_width_counts,39.0
+avg_ci_width_rates,0.17258356510351047
+coverage_90,1.0
+elpd_loo,-41.124623771541664

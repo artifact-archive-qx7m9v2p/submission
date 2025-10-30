@@ -1,0 +1,44 @@
+================================================================================
+CONVERGENCE DIAGNOSTICS REPORT
+================================================================================
+
+MODEL: Hierarchical Binomial (Non-Centered Parameterization)
+DATE: 2025-10-30 12:31:03.403611
+SAMPLING TIME: 92.3 seconds
+
+MCMC CONFIGURATION:
+--------------------------------------------------------------------------------
+Chains: 4
+Warmup: 2000 iterations per chain
+Sampling: 2000 iterations per chain
+Total samples: 8000
+Target accept: 0.95
+
+QUANTITATIVE DIAGNOSTICS:
+--------------------------------------------------------------------------------
+R-hat (worst):     1.0000 (parameter: mu)
+ESS bulk (min):    2423 (parameter: tau)
+ESS tail (min):    3486 (parameter: tau)
+Divergences:       0 / 8000 (0.00%)
+E-BFMI (min):      0.685
+
+CONVERGENCE CRITERIA:
+--------------------------------------------------------------------------------
+rhat: PASS
+ess_bulk: PASS
+ess_tail: PASS
+divergences: PASS
+bfmi: PASS
+
+OVERALL STATUS:
+--------------------------------------------------------------------------------
+PASS - All convergence criteria met.
+Inference is reliable. Proceed to posterior predictive check.
+
+VISUAL DIAGNOSTICS:
+--------------------------------------------------------------------------------
+Generated plots:
+  - trace_plots.png: Trace and distribution plots for all parameters
+  - rank_plots.png: Rank plots for checking uniformity
+  - forest_plot.png: Forest plot of group-level success rates
+

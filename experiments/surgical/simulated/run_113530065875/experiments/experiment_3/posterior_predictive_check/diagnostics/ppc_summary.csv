@@ -1,0 +1,6 @@
+Test,Result,Status
+Overdispersion,"φ_obs = 0.017, p = 0.744",PASS
+Range (min),p = 0.760,PASS
+Range (max),p = 0.806,PASS
+LOO Pareto k,0/12 groups k ≥ 0.7,PASS
+Group Fit,0/12 groups p < 0.05,PASS

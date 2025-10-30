@@ -1,0 +1,4 @@
+model,rmse,mae,r2,notes
+hierarchical,7.636611716613287,6.660219155567694,0.4636884582666222,Partial pooling with shrinkage
+complete_pooling,10.42778666864137,9.276629945323101,0.0,All schools predicted as grand mean
+no_pooling,0.0,0.0,1.0,Perfect fit to observed data (overfit)

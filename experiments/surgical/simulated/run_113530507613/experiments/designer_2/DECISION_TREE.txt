@@ -1,0 +1,163 @@
+================================================================================
+MODEL SELECTION DECISION TREE
+Designer 2: Alternative Bayesian Approaches
+================================================================================
+
+START: Fit all 3 models (FMM-3, Robust-HBB, DP-MBB)
+  |
+  ├─ CHECKPOINT 1: Computational Diagnostics
+  |   |
+  |   ├─ Any Rhat > 1.01? ──────────────────────────> REJECT that model
+  |   ├─ Divergences > 2%? ─────────────────────────> REJECT that model
+  |   └─ All pass ──────────────────────────────────> Continue
+  |
+  ├─ CHECKPOINT 2: Falsification Tests
+  |   |
+  |   ├─ FMM-3:
+  |   |   ├─ Cluster certainty < 0.6? ──────────────> REJECT (ambiguous)
+  |   |   ├─ Cluster separation < 2σ? ──────────────> REJECT (collapsed)
+  |   |   ├─ K_effective < 2? ──────────────────────> REJECT (no clusters)
+  |   |   └─ All pass ──────────────────────────────> ACCEPT FMM-3 ✓
+  |   |
+  |   ├─ Robust-HBB:
+  |   |   ├─ nu > 30 AND kappa > 1000? ─────────────> REJECT (not needed)
+  |   |   └─ nu < 30 OR kappa < 1000? ──────────────> ACCEPT Robust-HBB ✓
+  |   |
+  |   └─ DP-MBB:
+  |       ├─ K_effective = 1? ───────────────────────> REJECT (single cluster)
+  |       ├─ K_effective > 6? ───────────────────────> REJECT (overfitting)
+  |       ├─ Singletons > 5? ───────────────────────> REJECT (fragmented)
+  |       └─ All pass ──────────────────────────────> ACCEPT DP-MBB ✓
+  |
+  ├─ CHECKPOINT 3: LOO-CV Comparison (only ACCEPTED models)
+  |   |
+  |   ├─ No models accepted? ────────────────────────> USE STANDARD HIERARCHY
+  |   |
+  |   ├─ Single model accepted? ────────────────────> USE THAT MODEL
+  |   |
+  |   └─ Multiple models accepted?
+  |       |
+  |       ├─ LOO delta > 5? ────────────────────────> CLEAR WINNER
+  |       |   └─> Use best model for inference
+  |       |
+  |       ├─ 2 < LOO delta < 5? ────────────────────> MODERATE PREFERENCE
+  |       |   └─> Use best but report sensitivity
+  |       |
+  |       └─ LOO delta < 2? ────────────────────────> MODEL UNCERTAINTY
+  |           └─> Use model averaging (stacking weights)
+  |
+  └─ CHECKPOINT 4: Posterior Predictive Checks
+      |
+      ├─ Data outside 95% envelope? ────────────────> WARNING: Poor fit
+      |   └─> Reconsider all models
+      |
+      └─ Data well-calibrated? ─────────────────────> FINAL VALIDATION ✓
+
+================================================================================
+OUTCOME SCENARIOS
+================================================================================
+
+SCENARIO 1: Mixture Model Wins
+├─ FMM-3 accepted (passes falsification)
+├─ LOO-ELPD best (delta > 3)
+├─ Clear cluster assignments (>70% certainty)
+└─> CONCLUSION: Discrete heterogeneity (3 subpopulations)
+    ACTION: Use FMM-3 for inference
+
+SCENARIO 2: Robust Model Wins
+├─ Robust-HBB accepted (nu < 30 or kappa < 1000)
+├─ LOO-ELPD best or similar to FMM-3
+├─ Outliers downweighted effectively
+└─> CONCLUSION: Continuous heterogeneity + extreme outliers
+    ACTION: Use Robust-HBB for inference
+
+SCENARIO 3: Standard Hierarchy Wins
+├─ All alternatives REJECTED (fail falsification)
+├─ FMM clusters collapsed
+├─ Robust-HBB: nu > 30 (normal tails sufficient)
+├─ DP-MBB: K_effective = 1
+└─> CONCLUSION: EDA clusters are sampling artifacts
+    ACTION: Use Designer 1's standard hierarchy
+
+SCENARIO 4: Model Uncertainty
+├─ Multiple models accepted
+├─ LOO delta < 2 (no clear winner)
+├─ All models fit well but similar performance
+└─> CONCLUSION: Cluster structure weak/ambiguous
+    ACTION: Model averaging (Bayesian stacking)
+
+SCENARIO 5: All Models Fail (RED FLAG)
+├─ All models rejected OR poor posterior predictive fit
+├─ Prior-data conflict OR computational failure
+└─> CONCLUSION: Fundamental misspecification
+    ACTION: Reconsider model class entirely
+    OPTIONS:
+      - Add covariates (sample size, time)
+      - Non-binomial likelihood
+      - Check data quality issues
+
+================================================================================
+FALSIFICATION QUICK REFERENCE
+================================================================================
+
+MODEL          | REJECT IF...                    | THRESHOLD
+---------------|--------------------------------|------------------
+FMM-3          | Cluster certainty low          | < 0.6
+FMM-3          | Clusters overlap               | separation < 2σ
+FMM-3          | K_effective too low            | < 2
+               |                                |
+Robust-HBB     | Tails collapse to normal       | nu > 30
+Robust-HBB     | No overdispersion              | kappa > 1000
+               |                                |
+DP-MBB         | Single cluster                 | K_eff = 1
+DP-MBB         | Too many clusters              | K_eff > 6
+DP-MBB         | High fragmentation             | singletons > 5
+
+================================================================================
+COMPARISON TO STANDARD HIERARCHY
+================================================================================
+
+If standard hierarchy (Designer 1) has:
+├─ LOO-ELPD better than all alternatives ────────> Use standard hierarchy
+├─ LOO-ELPD within 2 of best alternative ────────> Report both
+└─ LOO-ELPD worse by > 3 ────────────────────────> Alternative wins
+
+Special case: If FMM-3 wins but DP-MBB has K_effective ≠ 3
+└─> Suggests cluster number uncertainty
+    └─> Report range of plausible K values
+
+================================================================================
+DECISION SUPPORT METRICS
+================================================================================
+
+Metric                      | Good Sign              | Bad Sign
+----------------------------|------------------------|------------------
+Max Rhat                    | < 1.01                 | > 1.01
+Min ESS (bulk)              | > 400                  | < 400
+Divergences                 | < 1%                   | > 2%
+Cluster certainty (FMM)     | > 0.7                  | < 0.5
+Cluster separation (FMM)    | > 3σ                   | < 1σ
+nu (Robust)                 | 4-15 (moderate)        | > 30 or < 2
+kappa (Robust)              | 20-100 (moderate)      | > 1000
+K_effective (DP)            | 2-5                    | 1 or > 6
+LOO Pareto-k                | < 0.7                  | > 0.7
+PPC calibration             | 5-15% outside 90% CI   | > 25% outside
+
+================================================================================
+IMPLEMENTATION COMMANDS
+================================================================================
+
+# Fit all models
+python /workspace/experiments/designer_2/fit_alternatives.py
+
+# Compare models (includes LOO-CV)
+python /workspace/experiments/designer_2/compare_models.py
+
+# Run falsification tests
+python /workspace/experiments/designer_2/falsification_tests.py
+
+# Check results
+cat /workspace/experiments/designer_2/results/comparison/comparison_report.json
+cat /workspace/experiments/designer_2/results/falsification/falsification_report.json
+
+================================================================================

@@ -1,0 +1,27 @@
+PRIOR PREDICTIVE CHECK SUMMARY
+================================================================================
+
+OBSERVED DATA:
+  Pooled success rate: 0.0739
+  Overdispersion (phi): 1.02
+  Groups with zero successes: 1
+  Max group rate: 0.1442
+
+PRIOR PARAMETER QUANTILES:
+  mu: [0.01338431 0.05061151 0.08672471 0.13465273 0.25719041]
+  kappa: [ 2.4357992   9.4957344  16.52318513 26.73398151 56.16180975]
+  phi: [1.01780569 1.03740558 1.06052102 1.10531045 1.41054288]
+
+PRIOR PREDICTIVE QUANTILES:
+  Pooled rate: [0.00922175 0.04690832 0.08528785 0.14072495 0.26273099]
+  Phi: [1.00893242 1.02916836 1.04935652 1.08779997 1.30033334]
+  Max rate: [0.04739336 0.15540541 0.23014264 0.31914894 0.58366597]
+
+CRITICAL CHECKS:
+  1. validity: PASS
+  2. mean_coverage: PASS
+  3. phi_coverage: PASS
+  4. zero_plausibility: PASS
+  5. phi_range: FAIL
+
+OVERALL: FAIL

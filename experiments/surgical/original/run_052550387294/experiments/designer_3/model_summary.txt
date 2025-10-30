@@ -1,0 +1,161 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║           DESIGNER 3: ALTERNATIVE MODEL PROPOSALS SUMMARY                  ║
+╔════════════════════════════════════════════════════════════════════════════╗
+
+THREE FUNDAMENTALLY DIFFERENT APPROACHES TO OVERDISPERSION:
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ MODEL 1: FINITE MIXTURE OF BINOMIALS                                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│ Philosophy: Trials come from K discrete populations                     │
+│                                                                          │
+│ Specification:                                                           │
+│   z_i ~ Categorical(π)           # Latent class (K=2 or 3)             │
+│   r_i | z_i ~ Binomial(n_i, p_{z_i})                                   │
+│   p_1 < p_2 < p_3  (ordered)                                           │
+│                                                                          │
+│ Key Insight: EDA tercile groups (p ≈ 0.04, 0.07, 0.11)                 │
+│                                                                          │
+│ ABANDON IF:                                                             │
+│   - Poor component separation (max posterior < 0.6)                     │
+│   - Overdispersion persists WITHIN clusters                             │
+│   - Unstable cluster assignments across MCMC                            │
+│   - K increases indefinitely (no elbow)                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ MODEL 2: ROBUST CONTAMINATION MODEL                                     │
+├─────────────────────────────────────────────────────────────────────────┤
+│ Philosophy: Beta-Binomial + rare outlier process                        │
+│                                                                          │
+│ Specification:                                                           │
+│   δ_i ~ Bernoulli(λ)             # Contamination flag                  │
+│   If δ_i = 0: θ_i ~ Beta(α,β)    # Clean process                       │
+│   If δ_i = 1: θ_i ~ Uniform(0,1) # Outlier process                     │
+│   r_i ~ Binomial(n_i, θ_i)                                             │
+│                                                                          │
+│ Key Insight: Trial 1 (0/47) and Trial 8 (31/215) suspicious            │
+│                                                                          │
+│ ABANDON IF:                                                             │
+│   - No trials flagged (λ → 0)                                           │
+│   - Too many flagged (λ > 0.3)                                          │
+│   - Wrong trials flagged (not 1 or 8)                                   │
+│   - Clean subset still overdispersed                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ MODEL 3: LATENT BETA-BINOMIAL + STRUCTURED OUTLIER DETECTION           │
+├─────────────────────────────────────────────────────────────────────────┤
+│ Philosophy: Learn outlier definition from residuals                     │
+│                                                                          │
+│ Specification:                                                           │
+│   θ_i ~ Beta(α,β)                # Base heterogeneity                  │
+│   ψ_i = logit(η₀ + η₁|z_i|)      # Outlier prob (residual-based)      │
+│   ω_i ~ Bernoulli(ψ_i)           # Outlier indicator                   │
+│   θ_eff = ω_i·θ*_i + (1-ω_i)·θ_i # Mix base & outlier                 │
+│                                                                          │
+│ Key Insight: Data-driven outlier detection, not ad-hoc                  │
+│                                                                          │
+│ ABANDON IF:                                                             │
+│   - Mechanism unnecessary (all ω < 0.2)                                 │
+│   - Computational instability (divergences)                             │
+│   - Circular reasoning (unstable across seeds)                          │
+│   - Worse fit than simpler models                                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+╔════════════════════════════════════════════════════════════════════════╗
+║                    UNIFIED DECISION FRAMEWORK                          ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+STEP 1: Fit all three + Beta-Binomial baseline
+        ↓
+STEP 2: Check computational health (R̂, ESS, divergences)
+        ↓
+STEP 3: Compare to baseline (ΔWAIC)
+        ├─→ IF ALL ΔWAIC > -2: Use Beta-Binomial, STOP
+        └─→ ELSE: Continue
+        ↓
+STEP 4: Apply falsification criteria
+        ├─→ Eliminate failed models
+        └─→ Document failure modes
+        ↓
+STEP 5: Stress tests (jackknife, prior sensitivity)
+        ↓
+STEP 6: Select simplest viable model
+        ├─→ ONE winner: Report with caveats
+        ├─→ MULTIPLE viable: Model ensemble
+        └─→ NONE viable: Pivot to alternatives
+
+╔════════════════════════════════════════════════════════════════════════╗
+║                         KEY PRINCIPLES                                 ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+✓ FALSIFICATION OVER CONFIRMATION
+  - Explicit criteria for rejecting each model
+  - "Abandon if..." statements for every model
+
+✓ COMPUTATIONAL HEALTH = MODEL HEALTH
+  - Divergences indicate misspecification
+  - Poor convergence means rethink model
+
+✓ SIMPLICITY WHEN TIED
+  - If ΔWAIC < 2, prefer simpler model
+  - Don't overfit with N=12 observations
+
+✓ HONEST UNCERTAINTY
+  - If models disagree, report that
+  - Model-specific vs robust conclusions
+
+✓ PREPARED TO PIVOT
+  - Backup plans if all fail
+  - Non-parametric, alternative likelihoods
+
+╔════════════════════════════════════════════════════════════════════════╗
+║                    EXPECTED SCENARIOS                                  ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+SCENARIO A: Finite Mixture Wins
+  → Discrete population structure confirmed
+  → Report group probabilities and mixing
+
+SCENARIO B: Robust Contamination Wins
+  → Identify and flag outlier trials
+  → Report clean population parameters
+
+SCENARIO C: All Alternatives Fail
+  → Beta-Binomial is sufficient
+  → Pivot to prior specification focus
+
+SCENARIO D: Multiple Models Viable
+  → Fundamental DGP uncertainty
+  → Model ensemble or sensitivity reporting
+
+╔════════════════════════════════════════════════════════════════════════╗
+║                      STRESS TESTS                                      ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+1. TRIAL DELETION: Refit without trials 1, 4, 8
+   → Conclusions should be robust
+
+2. PRIOR PERTURBATION: Weak/strong/very weak priors
+   → Posteriors should be similar
+
+3. ALTERNATIVE LIKELIHOOD: Beta-Binomial vs Quasibinomial
+   → Binomial should be adequate
+
+4. POSTERIOR PREDICTIVE EXTREMES: Can model generate data this extreme?
+   → Should capture observed range
+
+═══════════════════════════════════════════════════════════════════════════
+                       IMPLEMENTATION TOOLS
+═══════════════════════════════════════════════════════════════════════════
+
+Model 1 (Finite Mixture):      Stan (ordered parameters, marginal mixture)
+Model 2 (Contamination):       Stan (log_mix function)
+Model 3 (Structured Outlier):  PyMC (discrete latents, flexibility)
+Baseline:                      Stan/PyMC (Beta-Binomial)
+
+═══════════════════════════════════════════════════════════════════════════
+
+Files: /workspace/experiments/designer_3/proposed_models.md
+       /workspace/experiments/designer_3/model_summary.txt

@@ -1,0 +1,30 @@
+{
+  "overall_decision": "PASS",
+  "n_criteria_passed": 7,
+  "n_criteria_total": 7,
+  "criteria": {
+    "all_pvals_reasonable": true,
+    "total_successes_ok": true,
+    "variance_ok": true,
+    "can_generate_zeros": true,
+    "can_generate_extremes": true,
+    "pareto_k_ok": true,
+    "pareto_k_borderline": true
+  },
+  "p_values": {
+    "total_successes": 0.6057,
+    "variance_rates": 0.714,
+    "max_rate": 0.7178,
+    "min_rate": 1.0,
+    "num_zeros": 0.1733,
+    "range_rates": 0.5533,
+    "chi_square": 0.8953
+  },
+  "pareto_k_summary": {
+    "mean": 0.0948,
+    "max": 0.3481,
+    "n_good": 12,
+    "n_ok": 0,
+    "n_problematic": 0
+  }
+}

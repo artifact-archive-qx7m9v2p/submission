@@ -1,0 +1,31 @@
+{
+  "n_iterations": 150,
+  "success_rate": 1.0,
+  "convergence_rate": 1.0,
+  "coverage": {
+    "mu_logit_95": 0.4066666666666667,
+    "mu_logit_90": 0.32666666666666666,
+    "mu_logit_80": 0.22666666666666666,
+    "sigma_95": 0.02,
+    "sigma_90": 0.013333333333333334,
+    "sigma_80": 0.006666666666666667
+  },
+  "bias": {
+    "mu_logit": -0.016190212430975764,
+    "sigma": 1.0453100444783188
+  },
+  "rmse": {
+    "mu_logit": 0.35435721477742943,
+    "sigma": 1.0875315891353676
+  },
+  "contraction": {
+    "mu_logit": 0.07851362836715085,
+    "sigma": 0.36400241649687914
+  },
+  "rank_uniformity": {
+    "mu_logit_chisq": 567.5999999999999,
+    "mu_logit_pvalue": 0.0,
+    "sigma_chisq": 2770.7999999999997,
+    "sigma_pvalue": 0.0
+  }
+}

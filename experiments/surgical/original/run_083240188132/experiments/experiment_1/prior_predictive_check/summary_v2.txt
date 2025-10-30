@@ -1,0 +1,33 @@
+PRIOR PREDICTIVE CHECK - VERSION 2 SUMMARY
+============================================
+
+STATUS: CONDITIONAL PASS
+
+REVISED PRIORS:
+- μ ~ Beta(2, 18)         [unchanged from v1]
+- κ ~ Gamma(1.5, 0.5)     [REVISED from Gamma(2, 0.1)]
+
+KEY RESULTS:
+- Prior φ range: [1.05, 95.70]
+- Prior φ 90% interval: [1.13, 3.92]
+- Observed φ range: [3.5, 5.1] ✓ COVERED
+- Prior mass in observed φ range: 2.7%
+- Prior mass in reasonable range [2, 10]: 17.5%
+
+CRITICAL IMPROVEMENT FROM V1:
+- v1: φ ≈ 1.05 (too concentrated, FAILED)
+- v2: φ range up to 95.7 (covers observed, PASSED)
+
+DECISION RATIONALE:
+✓ Overdispersion coverage: PASS (v1 failed this)
+✓ Prior predictive coverage: PASS (82.4% have range ≥ observed)
+✓ No computational issues: PASS
+⚠ Prior somewhat diffuse: ACCEPTABLE (weakly informative by design)
+
+RECOMMENDATION: Proceed to simulation-based validation with these priors.
+
+FILES:
+- Code: code/prior_predictive_check_v2.py
+- Findings: findings_v2.md
+- Plots: plots/v2_*.png (4 diagnostic plots)
+- Data: plots/v2_summary_statistics.csv

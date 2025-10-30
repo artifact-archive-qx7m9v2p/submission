@@ -1,0 +1,21 @@
+{
+  "quality": "GOOD",
+  "ready_phase5": "YES",
+  "concerns": [
+    "Despite high Pareto k, predictive performance is good - proceed with caution",
+    "High Pareto k values (10/12 groups > 0.7) - LOO may be unreliable for some observations"
+  ],
+  "loo_reliable": false,
+  "loo_mostly_reliable": false,
+  "calibration_good": true,
+  "predictive_accuracy_good": true,
+  "n_high_pareto_k": 10,
+  "mean_pareto_k": 0.796,
+  "coverage": 100.0,
+  "mae": 1.49,
+  "rmse": 1.87,
+  "relative_mae": 8.6,
+  "elpd_loo": -38.41,
+  "elpd_loo_se": 2.29,
+  "p_loo": 7.84
+}

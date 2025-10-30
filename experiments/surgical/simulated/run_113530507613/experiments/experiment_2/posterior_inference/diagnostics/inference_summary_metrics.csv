@@ -1,0 +1,2 @@
+convergence_status,falsification_status,rhat_max,ess_min,divergences,divergence_pct,K_eff_mean,separation_12_mean,separation_23_mean,mean_certainty,n_uncertain_06,n_uncertain_07
+MARGINAL,MARGINAL,1.02,341.0,4,0.2,2.3043228138463445,0.4670311382340932,0.48359797256284554,0.4588423412748976,12,12

@@ -1,0 +1,21 @@
+================================================================================
+SIMULATION-BASED CALIBRATION ASSESSMENT
+Experiment 2: Random Effects Logistic Regression
+================================================================================
+
+Overall Result: FAIL
+
+Key Metrics:
+  Convergence Rate: 60.0% (Target: >=80%)
+  Coverage μ: 91.7% (Target: >=85%)
+  Coverage τ: 91.7% (Target: >=85%)
+  Mean Rel. Error μ: 4.2%
+  Mean Rel. Error τ: 204.0%
+  KS Test μ: p=0.7952
+  KS Test τ: p=0.9752
+  Divergence Rate: 0.000%
+
+High Heterogeneity Scenario (τ=1.2, ICC=0.66):
+  Convergence: 67%
+  Rel. Error μ: 4.2%
+  Rel. Error τ: 7.4%

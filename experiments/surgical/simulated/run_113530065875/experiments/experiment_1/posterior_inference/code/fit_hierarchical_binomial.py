@@ -1,0 +1,461 @@
+#!/usr/bin/env python3
+"""
+Bayesian Hierarchical Binomial Model - MCMC Fitting with PyMC
+==============================================================
+
+Model: Non-centered parameterization for hierarchical logit-binomial
+Data: 12 groups with varying sample sizes and success counts
+
+Critical: Computes pointwise log-likelihood for LOO-CV in Phase 4
+"""
+
+import sys
+import time
+from pathlib import Path
+
+# Add PyMC to path
+sys.path.insert(0, '/tmp/agent-home/.local/lib/python3.13/site-packages')
+
+import numpy as np
+import pandas as pd
+import pymc as pm
+import arviz as az
+import matplotlib.pyplot as plt
+import warnings
+
+# Suppress convergence warnings during sampling (we check manually)
+warnings.filterwarnings('ignore', category=UserWarning)
+
+print("=" * 80)
+print("BAYESIAN HIERARCHICAL BINOMIAL MODEL - MCMC FITTING")
+print("=" * 80)
+print(f"PyMC version: {pm.__version__}")
+print(f"ArviZ version: {az.__version__}")
+print()
+
+# ==============================================================================
+# CONFIGURATION
+# ==============================================================================
+
+# Paths
+DATA_PATH = Path("/workspace/data/data.csv")
+OUTPUT_DIR = Path("/workspace/experiments/experiment_1/posterior_inference")
+DIAGNOSTICS_DIR = OUTPUT_DIR / "diagnostics"
+PLOTS_DIR = OUTPUT_DIR / "plots"
+
+# MCMC Configuration
+N_CHAINS = 4
+N_WARMUP = 2000
+N_SAMPLES = 2000
+TARGET_ACCEPT = 0.95  # High for hierarchical models
+
+# Convergence criteria
+RHAT_THRESHOLD = 1.01
+ESS_THRESHOLD = 400
+DIV_THRESHOLD_PCT = 1.0  # Max 1% divergences
+BFMI_THRESHOLD = 0.2
+
+# ==============================================================================
+# LOAD DATA
+# ==============================================================================
+
+print("Loading data...")
+data = pd.read_csv(DATA_PATH)
+J = len(data)
+n = data['n'].values
+r = data['r'].values
+
+print(f"  J = {J} groups")
+print(f"  n = {n.tolist()}")
+print(f"  r = {r.tolist()}")
+print(f"  Observed rates: {np.round(r/n, 3).tolist()}")
+print()
+
+# ==============================================================================
+# BUILD MODEL
+# ==============================================================================
+
+print("Building PyMC model (non-centered parameterization)...")
+print()
+
+with pm.Model() as model:
+    # Priors
+    mu = pm.Normal('mu', mu=-2.5, sigma=1)
+    tau = pm.HalfCauchy('tau', beta=1)
+    theta_raw = pm.Normal('theta_raw', mu=0, sigma=1, shape=J)
+
+    # Non-centered parameterization
+    theta = pm.Deterministic('theta', mu + tau * theta_raw)
+
+    # Success probabilities
+    p = pm.Deterministic('p', pm.math.invlogit(theta))
+
+    # Likelihood
+    y_obs = pm.Binomial('y_obs', n=n, p=p, observed=r)
+
+    # CRITICAL: Pointwise log-likelihood for LOO-CV
+    # This must be computed manually for each observation
+    log_lik = pm.Deterministic('log_lik',
+                                pm.logp(pm.Binomial.dist(n=n, p=p), r))
+
+print("Model specification:")
+print(model)
+print()
+
+# ==============================================================================
+# SAMPLE FROM POSTERIOR
+# ==============================================================================
+
+print("=" * 80)
+print("SAMPLING FROM POSTERIOR (Adaptive Strategy)")
+print("=" * 80)
+print(f"Chains: {N_CHAINS}")
+print(f"Warmup: {N_WARMUP} iterations per chain")
+print(f"Sampling: {N_SAMPLES} iterations per chain")
+print(f"Total samples: {N_CHAINS * N_SAMPLES} post-warmup")
+print(f"Target accept: {TARGET_ACCEPT}")
+print()
+
+start_time = time.time()
+
+with model:
+    trace = pm.sample(
+        draws=N_SAMPLES,
+        tune=N_WARMUP,
+        chains=N_CHAINS,
+        target_accept=TARGET_ACCEPT,
+        random_seed=42,
+        return_inferencedata=True,
+        idata_kwargs={"log_likelihood": True}  # Ensure log_lik is saved
+    )
+
+elapsed = time.time() - start_time
+print()
+print(f"Sampling completed in {elapsed:.1f} seconds ({elapsed/60:.1f} minutes)")
+print()
+
+# ==============================================================================
+# CONVERGENCE DIAGNOSTICS
+# ==============================================================================
+
+print("=" * 80)
+print("CONVERGENCE DIAGNOSTICS")
+print("=" * 80)
+
+# Get summary statistics (default includes all diagnostics)
+summary = az.summary(trace, var_names=['mu', 'tau', 'theta', 'p'])
+
+print("\nParameter Summary:")
+print(summary)
+print()
+
+# Extract key diagnostics - handle different ArviZ versions
+if 'r_hat' in summary.columns:
+    rhat_col = 'r_hat'
+elif 'rhat' in summary.columns:
+    rhat_col = 'rhat'
+else:
+    # Compute manually
+    print("Warning: r_hat not in summary, computing manually")
+    rhat_col = None
+
+if rhat_col:
+    rhat_values = summary[rhat_col].values
+    worst_rhat = np.max(rhat_values[~np.isnan(rhat_values)])
+    worst_rhat_param = summary.index[np.nanargmax(rhat_values)]
+else:
+    # Manual computation
+    from arviz.stats import rhat
+    rhat_dict = {}
+    for var in ['mu', 'tau', 'theta', 'p']:
+        r = rhat(trace.posterior[var])
+        if hasattr(r, 'values'):
+            rhat_dict[var] = r.values
+        else:
+            rhat_dict[var] = float(r)
+    worst_rhat = max([np.max(v) if isinstance(v, np.ndarray) else v for v in rhat_dict.values()])
+    worst_rhat_param = "computed manually"
+
+ess_bulk_values = summary['ess_bulk'].values if 'ess_bulk' in summary.columns else summary['ess_mean'].values
+ess_tail_values = summary['ess_tail'].values if 'ess_tail' in summary.columns else summary['ess_mean'].values
+
+min_ess_bulk = np.min(ess_bulk_values[~np.isnan(ess_bulk_values)])
+min_ess_bulk_param = summary.index[np.nanargmin(ess_bulk_values)]
+min_ess_tail = np.min(ess_tail_values[~np.isnan(ess_tail_values)])
+min_ess_tail_param = summary.index[np.nanargmin(ess_tail_values)]
+
+# Divergences
+divergences = trace.sample_stats.diverging.values.sum()
+total_samples = N_CHAINS * N_SAMPLES
+div_pct = 100 * divergences / total_samples
+
+# Energy diagnostic
+bfmi = az.bfmi(trace)
+min_bfmi = np.min(bfmi)
+
+print("QUANTITATIVE DIAGNOSTICS:")
+print("-" * 80)
+print(f"R-hat (worst):     {worst_rhat:.4f} (parameter: {worst_rhat_param})")
+print(f"ESS bulk (min):    {min_ess_bulk:.0f} (parameter: {min_ess_bulk_param})")
+print(f"ESS tail (min):    {min_ess_tail:.0f} (parameter: {min_ess_tail_param})")
+print(f"Divergences:       {divergences} / {total_samples} ({div_pct:.2f}%)")
+print(f"E-BFMI (min):      {min_bfmi:.3f}")
+print()
+
+# Convergence checks
+convergence_checks = {
+    'rhat': worst_rhat < RHAT_THRESHOLD,
+    'ess_bulk': min_ess_bulk > ESS_THRESHOLD,
+    'ess_tail': min_ess_tail > ESS_THRESHOLD,
+    'divergences': div_pct < DIV_THRESHOLD_PCT,
+    'bfmi': min_bfmi > BFMI_THRESHOLD
+}
+
+print("CONVERGENCE CRITERIA:")
+print("-" * 80)
+print(f"R-hat < {RHAT_THRESHOLD}:          {'PASS' if convergence_checks['rhat'] else 'FAIL'}")
+print(f"ESS bulk > {ESS_THRESHOLD}:        {'PASS' if convergence_checks['ess_bulk'] else 'FAIL'}")
+print(f"ESS tail > {ESS_THRESHOLD}:        {'PASS' if convergence_checks['ess_tail'] else 'FAIL'}")
+print(f"Divergences < {DIV_THRESHOLD_PCT}%:      {'PASS' if convergence_checks['divergences'] else 'FAIL'}")
+print(f"E-BFMI > {BFMI_THRESHOLD}:            {'PASS' if convergence_checks['bfmi'] else 'FAIL'}")
+print()
+
+all_pass = all(convergence_checks.values())
+if all_pass:
+    print("*** CONVERGENCE STATUS: PASS ***")
+    print("All convergence criteria met. Inference is reliable.")
+else:
+    print("*** CONVERGENCE STATUS: INVESTIGATE ***")
+    failed = [k for k, v in convergence_checks.items() if not v]
+    print(f"Failed checks: {', '.join(failed)}")
+    print("Review diagnostic plots and consider refitting with adjusted parameters.")
+
+print()
+
+# ==============================================================================
+# VERIFY LOG-LIKELIHOOD GROUP
+# ==============================================================================
+
+print("=" * 80)
+print("LOG-LIKELIHOOD VERIFICATION (Critical for Phase 4)")
+print("=" * 80)
+
+if 'log_likelihood' in trace.groups():
+    log_lik_data = trace.log_likelihood
+    print(f"Log-likelihood group: PRESENT")
+    print(f"Variables: {list(log_lik_data.data_vars.keys())}")
+    # Get the actual variable name (PyMC uses observed var name)
+    log_lik_vars = list(log_lik_data.data_vars.keys())
+    log_lik_var_name = log_lik_vars[0] if log_lik_vars else None
+    
+    if log_lik_var_name:
+        print(f"Variable name: {log_lik_var_name}")
+        print(f"Shape: {log_lik_data[log_lik_var_name].shape}")
+        print(f"Expected: (chains={N_CHAINS}, draws={N_SAMPLES}, observations={J})")
+
+        # Test LOO computation
+        try:
+            loo = az.loo(trace, var_name=log_lik_var_name)
+            print(f"\nLOO-CV Test: SUCCESS")
+            print(f"  ELPD_loo: {loo.elpd_loo:.2f}")
+            print(f"  p_loo: {loo.p_loo:.2f}")
+            print(f"  Max Pareto k: {np.max(loo.pareto_k.values):.3f}")
+        except Exception as e:
+            print(f"\nLOO-CV Test: FAILED")
+            print(f"  Error: {e}")
+else:
+    print("WARNING: log_likelihood group NOT FOUND in InferenceData")
+    print("This will prevent LOO-CV in Phase 4. Investigate model specification.")
+
+print()
+
+# ==============================================================================
+# SAVE RESULTS
+# ==============================================================================
+
+print("=" * 80)
+print("SAVING RESULTS")
+print("=" * 80)
+
+# Save InferenceData (with log_likelihood)
+idata_path = DIAGNOSTICS_DIR / "posterior_inference.netcdf"
+trace.to_netcdf(idata_path)
+print(f"Saved InferenceData: {idata_path}")
+
+# Save summary table
+summary_path = DIAGNOSTICS_DIR / "summary_table.csv"
+summary.to_csv(summary_path)
+print(f"Saved summary table: {summary_path}")
+
+# Save convergence report
+report_path = DIAGNOSTICS_DIR / "convergence_report.txt"
+with open(report_path, 'w') as f:
+    f.write("=" * 80 + "\n")
+    f.write("CONVERGENCE DIAGNOSTICS REPORT\n")
+    f.write("=" * 80 + "\n\n")
+
+    f.write("MODEL: Hierarchical Binomial (Non-Centered Parameterization)\n")
+    f.write(f"DATE: {pd.Timestamp.now()}\n")
+    f.write(f"SAMPLING TIME: {elapsed:.1f} seconds\n\n")
+
+    f.write("MCMC CONFIGURATION:\n")
+    f.write("-" * 80 + "\n")
+    f.write(f"Chains: {N_CHAINS}\n")
+    f.write(f"Warmup: {N_WARMUP} iterations per chain\n")
+    f.write(f"Sampling: {N_SAMPLES} iterations per chain\n")
+    f.write(f"Total samples: {total_samples}\n")
+    f.write(f"Target accept: {TARGET_ACCEPT}\n\n")
+
+    f.write("QUANTITATIVE DIAGNOSTICS:\n")
+    f.write("-" * 80 + "\n")
+    f.write(f"R-hat (worst):     {worst_rhat:.4f} (parameter: {worst_rhat_param})\n")
+    f.write(f"ESS bulk (min):    {min_ess_bulk:.0f} (parameter: {min_ess_bulk_param})\n")
+    f.write(f"ESS tail (min):    {min_ess_tail:.0f} (parameter: {min_ess_tail_param})\n")
+    f.write(f"Divergences:       {divergences} / {total_samples} ({div_pct:.2f}%)\n")
+    f.write(f"E-BFMI (min):      {min_bfmi:.3f}\n\n")
+
+    f.write("CONVERGENCE CRITERIA:\n")
+    f.write("-" * 80 + "\n")
+    for criterion, passed in convergence_checks.items():
+        status = "PASS" if passed else "FAIL"
+        f.write(f"{criterion}: {status}\n")
+    f.write("\n")
+
+    f.write("OVERALL STATUS:\n")
+    f.write("-" * 80 + "\n")
+    if all_pass:
+        f.write("PASS - All convergence criteria met.\n")
+        f.write("Inference is reliable. Proceed to posterior predictive check.\n")
+    else:
+        f.write("INVESTIGATE - Some convergence criteria not met.\n")
+        f.write(f"Failed checks: {', '.join(failed)}\n")
+        f.write("Review diagnostic plots before proceeding.\n")
+    f.write("\n")
+
+    f.write("VISUAL DIAGNOSTICS:\n")
+    f.write("-" * 80 + "\n")
+    f.write("Generated plots:\n")
+    f.write("  - trace_plots.png: Trace and distribution plots for all parameters\n")
+    f.write("  - rank_plots.png: Rank plots for checking uniformity\n")
+    f.write("  - forest_plot.png: Forest plot of group-level success rates\n")
+    f.write("\n")
+
+print(f"Saved convergence report: {report_path}")
+print()
+
+# ==============================================================================
+# DIAGNOSTIC PLOTS
+# ==============================================================================
+
+print("Generating diagnostic plots...")
+
+# 1. Trace plots (comprehensive)
+fig, axes = plt.subplots(4, 3, figsize=(15, 12))
+az.plot_trace(trace, var_names=['mu', 'tau'], axes=axes[:2, :], compact=False)
+az.plot_trace(trace, var_names=['theta'], axes=axes[2:, :], compact=True,
+              combined=True)
+plt.tight_layout()
+plt.savefig(PLOTS_DIR / "trace_plots.png", dpi=150, bbox_inches='tight')
+plt.close()
+print(f"  - Saved trace plots")
+
+# 2. Rank plots (uniformity check)
+fig = plt.figure(figsize=(12, 8))
+az.plot_rank(trace, var_names=['mu', 'tau', 'theta'])
+plt.tight_layout()
+plt.savefig(PLOTS_DIR / "rank_plots.png", dpi=150, bbox_inches='tight')
+plt.close()
+print(f"  - Saved rank plots")
+
+# 3. Forest plot (group-level success rates)
+fig, ax = plt.subplots(figsize=(10, 8))
+az.plot_forest(trace, var_names=['p'], combined=True,
+               hdi_prob=0.95, ax=ax)
+ax.set_xlabel('Success Probability')
+ax.set_title('Group-Level Success Rates (95% HDI)')
+plt.tight_layout()
+plt.savefig(PLOTS_DIR / "forest_plot.png", dpi=150, bbox_inches='tight')
+plt.close()
+print(f"  - Saved forest plot")
+
+# 4. Parameter distributions (hyperparameters)
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+az.plot_posterior(trace, var_names=['mu'], hdi_prob=0.95, ax=axes[0])
+axes[0].set_title('Population Mean (logit scale)')
+az.plot_posterior(trace, var_names=['tau'], hdi_prob=0.95, ax=axes[1])
+axes[1].set_title('Between-Group SD (logit scale)')
+plt.tight_layout()
+plt.savefig(PLOTS_DIR / "hyperparameter_distributions.png", dpi=150, bbox_inches='tight')
+plt.close()
+print(f"  - Saved hyperparameter distributions")
+
+# 5. Shrinkage plot
+observed_rates = r / n
+p_samples = trace.posterior['p'].values.reshape(-1, J)
+p_mean = p_samples.mean(axis=0)
+p_lower = np.percentile(p_samples, 2.5, axis=0)
+p_upper = np.percentile(p_samples, 97.5, axis=0)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.scatter(n, observed_rates, s=100, alpha=0.7, label='Observed', zorder=3)
+ax.scatter(n, p_mean, s=100, alpha=0.7, label='Posterior Mean', zorder=3)
+for i in range(J):
+    ax.plot([n[i], n[i]], [p_lower[i], p_upper[i]], 'k-', alpha=0.3, linewidth=1)
+    ax.plot([n[i], n[i]], [observed_rates[i], p_mean[i]], 'r--', alpha=0.5, linewidth=1)
+ax.set_xlabel('Sample Size (n)', fontsize=12)
+ax.set_ylabel('Success Rate', fontsize=12)
+ax.set_title('Hierarchical Shrinkage: Observed vs Posterior Rates', fontsize=14)
+ax.legend()
+ax.grid(alpha=0.3)
+plt.tight_layout()
+plt.savefig(PLOTS_DIR / "shrinkage_plot.png", dpi=150, bbox_inches='tight')
+plt.close()
+print(f"  - Saved shrinkage plot")
+
+print()
+print("=" * 80)
+print("FITTING COMPLETE")
+print("=" * 80)
+print()
+print("Next steps:")
+if all_pass:
+    print("  1. Review diagnostic plots in plots/")
+    print("  2. Examine parameter estimates in diagnostics/summary_table.csv")
+    print("  3. Proceed to posterior predictive check")
+else:
+    print("  1. Review diagnostic plots to identify issues")
+    print("  2. Check convergence_report.txt for details")
+    print("  3. Consider refitting with adjusted parameters")
+print()
+
+# ==============================================================================
+# PARAMETER ESTIMATES SUMMARY
+# ==============================================================================
+
+print("KEY PARAMETER ESTIMATES:")
+print("-" * 80)
+
+# Hyperparameters
+mu_mean = trace.posterior['mu'].values.mean()
+mu_std = trace.posterior['mu'].values.std()
+tau_mean = trace.posterior['tau'].values.mean()
+tau_std = trace.posterior['tau'].values.std()
+
+print(f"mu (population mean, logit): {mu_mean:.3f} ± {mu_std:.3f}")
+print(f"tau (between-group SD, logit): {tau_mean:.3f} ± {tau_std:.3f}")
+print()
+
+# Group-level rates
+print("Group-level success rates (posterior mean ± SD):")
+for i in range(J):
+    obs_rate = observed_rates[i]
+    post_rate = p_mean[i]
+    post_std = p_samples[:, i].std()
+    shrinkage = abs(post_rate - obs_rate) / abs(obs_rate - observed_rates.mean()) if abs(obs_rate - observed_rates.mean()) > 1e-6 else 0
+    print(f"  Group {i+1:2d} (n={n[i]:3d}): "
+          f"Observed={obs_rate:.4f}, "
+          f"Posterior={post_rate:.4f}±{post_std:.4f}, "
+          f"Shrinkage={shrinkage:.1%}")
+
+print()
+print("=" * 80)

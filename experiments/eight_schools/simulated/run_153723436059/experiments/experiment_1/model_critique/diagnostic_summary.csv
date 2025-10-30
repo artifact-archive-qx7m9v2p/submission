@@ -1,0 +1,22 @@
+Category,Metric,Threshold,Actual,Status,Notes
+COMPUTATIONAL,R-hat (all params),< 1.01,1.00,PASS,Perfect convergence
+COMPUTATIONAL,ESS (minimum),> 400,"2,150",PASS,5.4x above threshold
+COMPUTATIONAL,Divergent transitions,= 0,0,PASS,No numerical issues
+COMPUTATIONAL,E-BFMI,> 0.2,0.871,PASS,Excellent energy transitions
+COMPUTATIONAL,MCSE/SD (max),< 5%,2.0%,PASS,Negligible MC error
+,,,,,
+PREDICTIVE,Test statistics pass,"[0.05, 0.95]",11/11 (100%),PASS,All test stats in range
+PREDICTIVE,Schools well-calibrated,"p in [0.05, 0.95]",8/8 (100%),PASS,No outlier schools
+PREDICTIVE,Mean p-value,"[0.05, 0.95]",0.381,PASS,Well-centered
+PREDICTIVE,SD p-value,"[0.05, 0.95]",0.750,PASS,Typical spread
+PREDICTIVE,Range p-value,"[0.05, 0.95]",0.789,PASS,Typical range
+,,,,,
+COVERAGE,50% interval,~50%,62.5%,PASS,+12.5% (acceptable)
+COVERAGE,80% interval,~80%,100%,FLAG,"+20% (conservative, small-n artifact)"
+COVERAGE,90% interval,~90%,100%,PASS,+10% (acceptable)
+COVERAGE,95% interval,~95%,100%,PASS,+5% (excellent)
+,,,,,
+INFLUENCE,Max Pareto-k,< 0.7,0.695,PASS,"School 2, within acceptable range"
+INFLUENCE,Schools with k>0.7,= 0,0,PASS,No influential observations
+,,,,,
+FALSIFICATION,Rejection criteria,0 triggered,0/8,PASS,All acceptance criteria met

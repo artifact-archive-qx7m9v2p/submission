@@ -1,0 +1,15 @@
+PRIOR PREDICTIVE CHECK SUMMARY
+================================================================================
+
+Decision: FAIL
+
+Checks:
+  [PASS] mu_coverage
+  [FAIL] phi_range
+  [PASS] p_plausible
+  [PASS] coverage_adequate
+  [PASS] no_extreme_params
+  [PASS] no_severe_conflict
+
+Coverage: 12/12 groups within 95% CI
+Extreme tails: 0/12 groups

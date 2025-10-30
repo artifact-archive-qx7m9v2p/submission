@@ -1,0 +1,214 @@
+# Software Environment for Eight Schools Bayesian Analysis
+# Date: October 29, 2025
+# Platform: Linux 6.14.0-33-generic
+
+## Core Dependencies
+
+# Bayesian modeling and MCMC
+pymc==5.26.1
+arviz==0.22.0
+
+# Scientific computing
+numpy==2.3.4
+scipy>=1.11.0
+
+# Data manipulation
+pandas==2.3.3
+
+# Visualization
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Additional utilities
+pytensor>=2.18.0  # PyMC backend
+xarray>=2023.1.0  # Multi-dimensional arrays (used by ArviZ)
+
+## Python Version
+# Python 3.13
+
+## Installation Instructions
+
+### Option 1: pip (recommended)
+```bash
+pip install pymc==5.26.1 arviz==0.22.0 numpy==2.3.4 pandas==2.3.3 matplotlib seaborn scipy
+```
+
+### Option 2: conda
+```bash
+conda create -n eight_schools python=3.13
+conda activate eight_schools
+conda install -c conda-forge pymc arviz numpy pandas matplotlib seaborn scipy
+```
+
+### Option 3: Requirements file
+```bash
+pip install -r environment.txt
+```
+
+## Verification
+
+### Test Installation
+```python
+import pymc as pm
+import arviz as az
+import numpy as np
+import pandas as pd
+
+print(f"PyMC: {pm.__version__}")
+print(f"ArviZ: {az.__version__}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+
+# Expected output:
+# PyMC: 5.26.1
+# ArviZ: 0.22.0
+# NumPy: 2.3.4
+# Pandas: 2.3.3
+```
+
+### Test Sampling
+```python
+import pymc as pm
+
+# Simple test model
+with pm.Model() as model:
+    mu = pm.Normal('mu', 0, 1)
+    y = pm.Normal('y', mu, 1, observed=[1, 2, 3])
+    trace = pm.sample(100, tune=100, chains=2, random_seed=42)
+
+print("Sampling successful!")
+print(f"R-hat: {az.rhat(trace)['mu'].values:.3f}")
+# Expected: R-hat near 1.00
+```
+
+## Hardware Requirements
+
+### Minimum
+- CPU: 2 cores
+- RAM: 4 GB
+- Disk: 1 GB free space
+
+### Recommended
+- CPU: 4+ cores
+- RAM: 8 GB
+- Disk: 5 GB free space
+
+### Actual Usage (Eight Schools Analysis)
+- Runtime: ~2 minutes for 8,000 MCMC draws
+- Memory: <2 GB RAM
+- Disk: ~50 MB for all outputs
+- GPU: Not required (CPU sampling sufficient)
+
+## Operating System
+
+### Tested On
+- Linux (Ubuntu-like, kernel 6.14.0-33-generic)
+
+### Should Work On
+- Linux (any modern distribution)
+- macOS (10.15+)
+- Windows 10/11 (with WSL or native Python)
+
+### Known Issues
+- Windows native: May require Microsoft C++ Build Tools for PyMC compilation
+- macOS M1/M2: Should use conda-forge channel for ARM-native builds
+- Linux ARM: May need to build from source (pytensor dependencies)
+
+## Optional Dependencies
+
+### For Development
+```bash
+pip install jupyter jupyterlab ipython
+```
+
+### For Additional Diagnostics
+```bash
+pip install scikit-learn  # For additional metrics
+pip install netcdf4  # For netCDF file handling
+```
+
+### For Publication Figures
+```bash
+pip install adjustText  # For non-overlapping labels
+pip install matplotlib-scalebar  # For scale bars
+```
+
+## Troubleshooting
+
+### Issue: ImportError for pytensor
+**Solution**: Install pytensor explicitly
+```bash
+pip install pytensor>=2.18.0
+```
+
+### Issue: Slow MCMC sampling
+**Solution**: Check number of cores
+```python
+import pymc as pm
+print(pm.get_cpu_count())  # Should show available cores
+```
+
+### Issue: "Cannot allocate memory" during sampling
+**Solution**: Reduce number of chains or samples
+```python
+trace = pm.sample(1000, chains=2)  # Instead of 2000 samples, 4 chains
+```
+
+### Issue: Divergent transitions
+**Solution**: Increase adapt_delta (already set to 0.95 in analysis)
+```python
+trace = pm.sample(adapt_delta=0.99)
+```
+
+## Version History
+
+### PyMC Evolution
+- **PyMC 5.26.1** (used in analysis): Stable, recommended
+- PyMC 5.x: Modern API with pytensor backend
+- PyMC 4.x: Deprecated (use 5.x)
+- PyMC3: Legacy (different API, not compatible)
+
+### ArviZ Evolution
+- **ArviZ 0.22.0** (used in analysis): Stable
+- ArviZ 0.20+: Compatible with PyMC 5
+- ArviZ <0.20: May have compatibility issues
+
+## Reproducibility Notes
+
+### Random Seeds
+Set in all scripts for full reproducibility:
+- EDA: seed=42
+- Prior predictive: seed=42
+- SBC: seed=123
+- Posterior inference: seed=123
+- Posterior predictive: seed=456
+
+### Numerical Precision
+- All computations use default NumPy float64 precision
+- No mixed-precision arithmetic
+- Results should be bit-for-bit reproducible on same platform
+
+### MCMC Settings
+Consistent across all sampling:
+- Sampler: NUTS (No-U-Turn Sampler)
+- Target accept: 0.95
+- Max tree depth: 12
+- Adapt delta: 0.95
+- Initialization: Auto (jitter+adapt)
+
+## Contact
+
+For environment issues specific to this analysis:
+- Check `/workspace/final_report/README.md`
+- Consult PyMC documentation: https://www.pymc.io/
+- Consult ArviZ documentation: https://arviz-devs.github.io/arviz/
+
+For general PyMC/ArviZ issues:
+- PyMC Discourse: https://discourse.pymc.io/
+- ArviZ GitHub: https://github.com/arviz-devs/arviz/issues
+
+---
+
+**Generated**: October 29, 2025
+**Tested**: Linux 6.14.0-33-generic, Python 3.13
+**Status**: Verified working

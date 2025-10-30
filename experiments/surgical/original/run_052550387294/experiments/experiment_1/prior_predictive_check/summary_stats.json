@@ -1,0 +1,33 @@
+{
+  "decision": "PASS",
+  "issues": [],
+  "warnings": [
+    "1 trial at extreme percentile"
+  ],
+  "total_successes_percentile": 63.1,
+  "variance_inflation_percentile": 27.1,
+  "extreme_trials": 1,
+  "marginal_trials": 0,
+  "mu_prior_mean": 0.07363385631555722,
+  "mu_prior_ci": [
+    0.00933253273275329,
+    0.20231266005162715
+  ],
+  "phi_prior_mean": 1.0236347494745808,
+  "phi_prior_ci": [
+    0.1297948248819893,
+    2.910222445208879
+  ],
+  "total_succ_prior_mean": 206.4425,
+  "total_succ_prior_ci": [
+    0.0,
+    853.2999999999984
+  ],
+  "total_succ_obs": 208,
+  "var_infl_prior_mean": 0.4864771452561794,
+  "var_infl_prior_ci": [
+    0.0,
+    2.1710399913275005
+  ],
+  "var_infl_obs": 0.01978902021755895
+}

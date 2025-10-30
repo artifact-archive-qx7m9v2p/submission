@@ -1,0 +1,2 @@
+phi_obs,phi_median,phi_ci_lower,phi_ci_upper,phi_pvalue,phi_pass,extreme_groups_pass,shrinkage_pass,pit_pass,group_fit_pass,loo_pass,decision,recommendation
+5.921816709988005,7.173667897789383,3.791783073925443,12.610484237206233,0.73175,True,True,True,,True,False,INVESTIGATE,Proceed to model critique with documented concerns

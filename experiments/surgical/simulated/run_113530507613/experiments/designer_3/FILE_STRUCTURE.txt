@@ -1,0 +1,160 @@
+experiments/designer_3/
+│
+├── experiment_plan.md (24 KB) ★ PRIMARY DELIVERABLE ★
+│   └── Complete experiment plan with decision points, falsification
+│       criteria, timeline, and integration strategy
+│
+├── proposed_models.md (39 KB) ★ TECHNICAL SPECIFICATION ★
+│   └── Detailed mathematical specifications, theoretical justifications,
+│       Stan implementations, computational considerations for all 3 models
+│
+├── model1_size_covariate.stan (2.3 KB)
+│   └── Hierarchical logistic regression with log(sample size) covariate
+│       Tests: Does sample size predict success rate?
+│
+├── model2_quadratic_group.stan (2.6 KB)
+│   └── Hierarchical logistic regression with quadratic group effect
+│       Tests: Is there non-linear sequential structure?
+│
+├── model3_random_slopes.stan (3.5 KB)
+│   └── Hierarchical logistic regression with varying slopes
+│       Tests: Does size-response vary across groups?
+│
+├── fit_models.py (16 KB) ★ IMPLEMENTATION ★
+│   └── Complete Python script to compile, fit, diagnose, compare models
+│       Command-line interface with automated workflow
+│
+├── README.md (13 KB)
+│   └── Detailed usage guide with interpretation, diagnostics,
+│       integration with other designers
+│
+├── QUICKSTART.md (9.4 KB)
+│   └── 30-second summary + 10-minute implementation guide
+│       For the impatient analyst
+│
+├── SUMMARY.txt (7.7 KB)
+│   └── Executive overview with key insights and file manifest
+│
+└── FILE_STRUCTURE.txt (this file)
+    └── Visual file tree and descriptions
+
+TOTAL: 9 files, ~3665 lines of code/documentation
+
+================================================================================
+READING ORDER
+================================================================================
+
+For Quick Implementation:
+  1. QUICKSTART.md (10 min)
+  2. Run fit_models.py
+  3. Check output
+
+For Complete Understanding:
+  1. SUMMARY.txt (5 min overview)
+  2. experiment_plan.md (30 min - decision points)
+  3. proposed_models.md (1 hour - full theory)
+  4. README.md (20 min - usage details)
+
+For Code Development:
+  1. fit_models.py (implementation)
+  2. model*.stan (Stan code)
+  3. proposed_models.md (specifications)
+
+================================================================================
+KEY FILES BY AUDIENCE
+================================================================================
+
+Project Manager / Coordinator:
+  → SUMMARY.txt, experiment_plan.md (Sections 1-3, Timeline)
+
+Statistician / Modeler:
+  → proposed_models.md, model*.stan, fit_models.py
+
+Applied Researcher:
+  → QUICKSTART.md, README.md (Interpretation Guide)
+
+Code Reviewer:
+  → fit_models.py, model*.stan
+
+Domain Expert:
+  → experiment_plan.md (Problem Formulation, Interpretation)
+
+================================================================================
+IMPLEMENTATION CHECKLIST
+================================================================================
+
+Prerequisites:
+  [ ] Python 3.8+ installed
+  [ ] Stan installed (via cmdstanpy)
+  [ ] Data file available (group_id, n_trials, r_successes)
+
+Setup:
+  [ ] Install packages: pip install cmdstanpy arviz numpy pandas matplotlib
+  [ ] Install CmdStan: python -m cmdstanpy.install_cmdstan
+  [ ] Verify data format (CSV with 3 required columns)
+
+Execution:
+  [ ] Run: python fit_models.py --data <path> --output ./results
+  [ ] Check console for MCMC diagnostics
+  [ ] Review LOO comparison table
+  [ ] Examine plots in results/
+
+Analysis:
+  [ ] Apply decision rules (ΔLOO thresholds)
+  [ ] Check falsification criteria
+  [ ] Run posterior predictive checks
+  [ ] Perform sensitivity analysis
+
+Reporting:
+  [ ] Document model selection
+  [ ] Report coefficients with uncertainty
+  [ ] Integrate with other designers
+  [ ] Acknowledge limitations
+
+================================================================================
+DECISION TREE
+================================================================================
+
+START: Fit all 3 models + baseline
+  │
+  ├─> Check diagnostics (Rhat, ESS, divergences)
+  │   ├─> FAIL: Increase adapt_delta, run longer, or pivot
+  │   └─> PASS: Proceed to LOO comparison
+  │
+  ├─> Compute LOO for all models
+  │   └─> Compare ΔLOO values
+  │
+  ├─> ΔLOO > 4: Strong evidence
+  │   └─> Report best model, investigate implications
+  │
+  ├─> 2 < ΔLOO < 4: Weak evidence
+  │   └─> Report top 2 models, quantify uncertainty
+  │
+  ├─> ΔLOO < 2: No clear winner
+  │   ├─> If baseline wins: Covariates uninformative
+  │   │   └─> Use random effects only (Designer 1)
+  │   └─> If tie between complex models: Model averaging
+  │
+  └─> All models fail diagnostics: Pivot
+      └─> Try mixture model (Designer 2) or robust approach
+
+================================================================================
+CONTACT AND VERSION INFO
+================================================================================
+
+Designer: Model Designer 3 (Regression/Covariate Specialist)
+Version: 1.0
+Date: 2025-10-30
+Status: COMPLETE - Ready for Implementation
+
+Dataset: 12 groups with binomial data
+EDA Findings: ICC = 0.42, r(n_trials, rate) = -0.34 (p = 0.278)
+
+Models Proposed: 3 competing regression models + baseline
+Expected Runtime: ~2 hours (including diagnostics and plots)
+Expected Outcome: 35% chance that covariates are uninformative (H0)
+
+Questions? See README.md or proposed_models.md
+Issues? Check QUICKSTART.md troubleshooting section
+
+================================================================================

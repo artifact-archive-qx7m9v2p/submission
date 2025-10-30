@@ -1,0 +1,176 @@
+WARNING (pytensor.configdefaults): g++ not detected!  PyTensor will be unable to compile C-implementations and will default to Python. Performance may be severely degraded. To remove this warning, set PyTensor flags cxx to an empty string.
+============================================================
+LOADING DATA
+============================================================
+
+Data shape: (12, 4)
+
+First few rows:
+   group_id  n_trials  r_successes  success_rate
+0         1        47            6      0.127660
+1         2       148           19      0.128378
+2         3       119            8      0.067227
+3         4       810           34      0.041975
+4         5       211           12      0.056872
+
+Number of groups (J): 12
+Trial counts range: [47, 810]
+Success counts range: [3, 34]
+Observed success rates range: [0.0309, 0.1395]
+
+============================================================
+BUILDING PYMC MODEL
+============================================================
+
+✓ Model built successfully
+  - Hyperparameters: mu, tau
+  - Group parameters: theta[12], p[12]
+  - Likelihood: Binomial with logit link
+
+============================================================
+PHASE 1: INITIAL PROBE (SHORT CHAINS)
+============================================================
+Purpose: Quick assessment of model behavior
+Strategy: 4 chains, 200 iterations (100 warmup, 100 sampling)
+
+Starting probe sampling...
+Multiprocess sampling (4 chains in 4 jobs)
+CompoundStep
+>NUTS: [mu, tau, theta_raw]
+>Metropolis: [y_pred]
+                                                                                
+                       Step   Grad                 Acce…   Sam…                 
+  Pro…   Dra…   Div…   size   eva…   Tun…   Sca…   Rate    Spe…   Elap…   Rem…  
+ ────────────────────────────────────────────────────────────────────────────── 
+  ━━━━   200    0      0.0…   63     Fal…   1.00   0.97    16.…   0:00…   0:0…  
+                                                           dra…                 
+  ━━━━   200    0      0.0…   15     Fal…   1.00   0.97    15.…   0:00…   0:0…  
+                                                           dra…                 
+  ━━━━   200    0      0.0…   31     Fal…   1.00   0.87    17.…   0:00…   0:0…  
+                                                           dra…                 
+  ━━━━   200    0      0.1…   31     Fal…   1.00   0.91    15.…   0:00…   0:0…  
+                                                           dra…                 
+                                                                                
+Sampling 4 chains for 100 tune and 100 draw iterations (400 + 400 draws total) took 13 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+
+✓ Probe sampling completed!
+
+------------------------------------------------------------
+PROBE DIAGNOSTICS
+------------------------------------------------------------
+
+Hyperparameter summary:
+      mean     sd  hdi_3%  hdi_97%  ess_bulk  ess_tail  r_hat
+mu  -2.514  0.132  -2.733   -2.260      39.0     262.0   1.08
+tau  0.364  0.147   0.145    0.626      15.0     131.0   1.21
+
+Divergent transitions: 0 (0.0%)
+Max R-hat: 1.2100
+Min ESS (bulk): 15.0
+
+! Probe shows issues - will increase adapt_delta for main sampling
+
+============================================================
+ATTEMPTING MAIN SAMPLING WITH HIGH ADAPT_DELTA
+============================================================
+Multiprocess sampling (4 chains in 4 jobs)
+CompoundStep
+>NUTS: [mu, tau, theta_raw]
+>Metropolis: [y_pred]
+                                                                                
+                       Step   Grad                 Acce…   Sam…                 
+  Pro…   Dra…   Div…   size   eva…   Tun…   Sca…   Rate    Spe…   Elap…   Rem…  
+ ────────────────────────────────────────────────────────────────────────────── 
+  ━━━━   4000   0      0.1…   15     Fal…   9.10   0.75    19.…   0:03…   0:0…  
+                                                           dra…                 
+  ━━━━   4000   0      0.1…   31     Fal…   9.09   0.67    19.…   0:03…   0:0…  
+                                                           dra…                 
+  ━━━━   4000   0      0.1…   31     Fal…   9.69   0.26    18.…   0:03…   0:0…  
+                                                           dra…                 
+  ━━━━   4000   0      0.0…   31     Fal…   9.09   1.35    17.…   0:03…   0:0…  
+                                                           dra…                 
+                                                                                
+Sampling 4 chains for 2_000 tune and 2_000 draw iterations (8_000 + 8_000 draws total) took 226 seconds.
+Sampling: [y]
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:00
+
+============================================================
+SAVING INFERENCEDATA
+============================================================
+✓ Saved to: /workspace/experiments/experiment_1/posterior_inference/diagnostics/posterior_inference.netcdf
+
+Verifying log_likelihood group:
+<xarray.Dataset> Size: 784kB
+Dimensions:  (chain: 4, draw: 2000, y_dim_0: 12)
+Coordinates:
+  * chain    (chain) int64 32B 0 1 2 3
+  * draw     (draw) int64 16kB 0 1 2 3 4 5 6 ... 1994 1995 1996 1997 1998 1999
+  * y_dim_0  (y_dim_0) int64 96B 0 1 2 3 4 5 6 7 8 9 10 11
+Data variables:
+    y        (chain, draw, y_dim_0) float64 768kB -2.059 -3.603 ... -3.381
+Attributes:
+    created_at:                 2025-10-30T12:31:27.550954+00:00
+    arviz_version:              0.22.0
+    inference_library:          pymc
+    inference_library_version:  5.26.1
+
+============================================================
+FULL MCMC DIAGNOSTICS
+============================================================
+
+Parameter summary (selected):
+                mean     sd  hdi_3%  hdi_97%  ess_bulk  ess_tail  r_hat
+mu            -2.549  0.144  -2.841   -2.296    1362.0    2520.0    1.0
+theta_raw[0]   0.607  0.802  -0.966    2.047    3010.0    4730.0    1.0
+theta_raw[1]   1.053  0.657  -0.122    2.353    2011.0    3970.0    1.0
+theta_raw[2]  -0.132  0.713  -1.489    1.187    2609.0    3854.0    1.0
+theta_raw[3]  -1.293  0.581  -2.353   -0.228    1675.0    3260.0    1.0
+theta_raw[4]  -0.456  0.654  -1.648    0.813    2306.0    3262.0    1.0
+theta_raw[5]  -0.186  0.655  -1.412    1.027    2287.0    3614.0    1.0
+theta_raw[6]  -0.285  0.707  -1.685    0.975    2074.0    3974.0    1.0
+theta_raw[7]   1.424  0.603   0.328    2.597    2249.0    4049.0    1.0
+theta_raw[8]   0.082  0.625  -1.063    1.311    1929.0    3896.0    1.0
+theta_raw[9]  -0.849  0.792  -2.341    0.631    2647.0    3681.0    1.0
+theta_raw[10]  0.033  0.607  -1.101    1.172    2013.0    3452.0    1.0
+theta_raw[11]  0.056  0.563  -1.054    1.067    1800.0    3115.0    1.0
+tau            0.394  0.128   0.175    0.632    1024.0    2086.0    1.0
+theta[0]      -2.304  0.326  -2.905   -1.679    2202.0    3602.0    1.0
+theta[1]      -2.145  0.239  -2.584   -1.697    1579.0    2853.0    1.0
+theta[2]      -2.603  0.272  -3.127   -2.125    1978.0    2908.0    1.0
+theta[3]      -3.026  0.165  -3.317   -2.707    1356.0    2419.0    1.0
+theta[4]      -2.724  0.236  -3.191   -2.318    1865.0    3352.0    1.0
+theta[5]      -2.618  0.228  -3.063   -2.210    2203.0    4227.0    1.0
+theta[6]      -2.662  0.262  -3.166   -2.180    1933.0    3382.0    1.0
+theta[7]      -2.012  0.205  -2.414   -1.651    1301.0    2573.0    1.0
+theta[8]      -2.518  0.218  -2.918   -2.104    2035.0    3718.0    1.0
+theta[9]      -2.890  0.338  -3.498   -2.266    1578.0    3382.0    1.0
+theta[10]     -2.537  0.201  -2.921   -2.163    1933.0    3759.0    1.0
+theta[11]     -2.527  0.178  -2.865   -2.207    1720.0    3236.0    1.0
+
+✓ Full summary saved to: /workspace/experiments/experiment_1/posterior_inference/diagnostics/parameter_summary.csv
+
+------------------------------------------------------------
+CONVERGENCE CHECKS
+------------------------------------------------------------
+
+Divergent transitions: 0 / 8000 (0.00%)
+Max R-hat: 1.00000
+Min ESS (bulk): 1024.0
+Min ESS (tail): 2086.0
+
+------------------------------------------------------------
+PASS/FAIL CRITERIA
+------------------------------------------------------------
+✓ PASS: R-hat < 1.01
+✓ PASS: ESS (bulk) > 400
+✓ PASS: ESS (tail) > 400
+✓ PASS: Divergences < 1%
+✓ PASS: Log-likelihood saved
+
+============================================================
+OVERALL: PASS
+============================================================
+
+✓ Fitting complete! Proceed to diagnostic plots.

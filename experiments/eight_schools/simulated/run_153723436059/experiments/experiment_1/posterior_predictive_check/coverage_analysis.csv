@@ -1,0 +1,5 @@
+Nominal Coverage,Actual Coverage,Schools Covered,Difference,Status
+50%,62.5%,5/8,+12.5%,PASS
+80%,100.0%,8/8,+20.0%,FLAG
+90%,100.0%,8/8,+10.0%,PASS
+95%,100.0%,8/8,+5.0%,PASS

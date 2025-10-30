@@ -1,0 +1,84 @@
+{
+  "comparison_date": "2025-10-30",
+  "experiment_1": {
+    "model": "Hierarchical Binomial (Logit-Normal)",
+    "parameters": 14,
+    "sampling_time_sec": 90,
+    "loo": {
+      "elpd": -38.76292989790748,
+      "se": 2.9364238629630437,
+      "p_loo": 8.268559017184558,
+      "pareto_k_max": 1.0598516544066334,
+      "pareto_k_bad_count": 10,
+      "reliability": "UNRELIABLE"
+    },
+    "waic": {
+      "elpd": -36.085846766118195,
+      "se": 2.100118869906922,
+      "p_waic": 5.591475885395278,
+      "warning": "True"
+    },
+    "status": "CONDITIONAL ACCEPT",
+    "strengths": [
+      "Group-specific inference",
+      "Estimates heterogeneity (tau)",
+      "Hierarchical shrinkage",
+      "Slightly better ELPD (unreliable estimate)"
+    ],
+    "weaknesses": [
+      "10/12 groups have unreliable LOO",
+      "Complex (14 parameters)",
+      "Slow sampling (90 seconds)",
+      "Sensitive to extreme groups"
+    ]
+  },
+  "experiment_3": {
+    "model": "Beta-Binomial (Population-level)",
+    "parameters": 2,
+    "sampling_time_sec": 6,
+    "loo": {
+      "elpd": -40.2766680206189,
+      "se": 2.194841930136985,
+      "p_loo": 0.6057824829880829,
+      "pareto_k_max": 0.2042739362035469,
+      "pareto_k_bad_count": 0,
+      "reliability": "RELIABLE"
+    },
+    "waic": {
+      "elpd": -40.271557001484375,
+      "se": 2.1932809143472816,
+      "p_waic": 0.6006714638535586,
+      "warning": "False"
+    },
+    "status": "ACCEPT",
+    "strengths": [
+      "Perfect LOO reliability (0/12 bad k)",
+      "Very simple (2 parameters)",
+      "Fast sampling (6 seconds)",
+      "Easy interpretation (probability scale)"
+    ],
+    "weaknesses": [
+      "No group-specific estimates",
+      "Cannot quantify between-group variation directly",
+      "Slightly worse ELPD (but reliable estimate)"
+    ]
+  },
+  "comparison": {
+    "loo_difference": {
+      "delta_elpd": -1.5137381227114162,
+      "se": 3.666049126957555,
+      "magnitude_in_se": 0.41290721163021177,
+      "decision": "EQUIVALENT"
+    },
+    "waic_difference": {
+      "delta_elpd": -4.18571023536618,
+      "se": 3.0366067307076783
+    },
+    "key_insight": "Models have equivalent predictive performance, but Exp3 has dramatically superior LOO reliability",
+    "parsimony_winner": "Exp3 (2 vs 14 parameters)",
+    "speed_winner": "Exp3 (6 vs 90 seconds)",
+    "reliability_winner": "Exp3 (0 vs 10 bad k)",
+    "elpd_winner": "Exp1 (by 1.5 ELPD, but unreliable)",
+    "overall_recommendation": "Exp3 for most purposes; Exp1 only if group-specific inference essential"
+  }
+}

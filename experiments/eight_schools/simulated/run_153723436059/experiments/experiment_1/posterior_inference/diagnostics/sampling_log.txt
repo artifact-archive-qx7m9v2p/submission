@@ -1,0 +1,152 @@
+WARNING (pytensor.configdefaults): g++ not detected!  PyTensor will be unable to compile C-implementations and will default to Python. Performance may be severely degraded. To remove this warning, set PyTensor flags cxx to an empty string.
+================================================================================
+HIERARCHICAL EIGHT SCHOOLS MODEL - HMC SAMPLING WITH PYMC
+================================================================================
+
+[1] Loading data...
+
+Data loaded: 8 schools
+ school    effect  sigma
+      1 20.016890     15
+      2 15.295026     10
+      3 26.079686     16
+      4 25.733241     11
+      5 -4.881792      9
+      6  6.075414     11
+      7  3.170006     10
+      8  8.548175     18
+
+Observed effects: mean=12.50, std=10.43, range=[-4.88, 26.08]
+
+[2] Building hierarchical model with non-centered parameterization...
+
+Model structure:
+<pymc.model.core.Model object at 0x756dbcabbb60>
+
+================================================================================
+PHASE 1: INITIAL PROBE (200 iterations)
+================================================================================
+
+Running short chains to assess model behavior...
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, tau, theta_raw, y_rep]
+                                                                                
+                              Step      Grad      Sampli…                       
+  Progre…   Draws   Diverg…   size      evals     Speed     Elapsed   Remaini…  
+ ────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━   400     0         0.096     31        19.94     0:00:20   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   400     0         0.224     31        19.77     0:00:20   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   400     0         0.176     31        20.35     0:00:19   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   400     0         0.127     15        19.77     0:00:20   0:00:00   
+                                                  draws/s                       
+                                                                                
+Sampling 4 chains for 200 tune and 200 draw iterations (800 + 800 draws total) took 20 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+
+Probe summary (mu, tau):
+       mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+mu   10.667  5.236   0.941   20.169  ...    0.199     646.0     608.0    1.0
+tau   7.529  5.276   0.066   17.083  ...    0.191     356.0     453.0    1.0
+
+[2 rows x 9 columns]
+
+Probe diagnostics:
+  Max R-hat: 1.0000
+  Min ESS_bulk: 356.0
+  Divergences: 0
+
+*** Probe successful! Model behavior looks good. ***
+
+================================================================================
+PHASE 2: MAIN SAMPLING
+================================================================================
+
+Running full MCMC chains...
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, tau, theta_raw, y_rep]
+                                                                                
+                              Step      Grad      Sampli…                       
+  Progre…   Draws   Diverg…   size      evals     Speed     Elapsed   Remaini…  
+ ────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━   4000    0         0.209     15        57.09     0:01:10   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   4000    0         0.153     31        52.67     0:01:15   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   4000    0         0.185     31        55.31     0:01:12   0:00:00   
+                                                  draws/s                       
+  ━━━━━━━   4000    0         0.133     31        53.22     0:01:15   0:00:00   
+                                                  draws/s                       
+                                                                                
+Sampling 4 chains for 2_000 tune and 2_000 draw iterations (8_000 + 8_000 draws total) took 76 seconds.
+Sampling: [y]
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:00
+
+*** Sampling complete! ***
+
+================================================================================
+PHASE 3: CONVERGENCE DIAGNOSTICS
+================================================================================
+
+Posterior summary (all parameters):
+            mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+mu        10.759  5.235   1.188   20.860  ...    0.078    4038.0    3474.0    1.0
+tau        7.493  5.438   0.006   16.841  ...    0.075    2150.0    3100.0    1.0
+theta[0]  12.640  8.080  -1.634   29.188  ...    0.094    5484.0    5659.0    1.0
+theta[1]  12.036  6.611  -0.053   24.955  ...    0.068    6495.0    7029.0    1.0
+theta[2]  13.685  8.728  -2.542   30.526  ...    0.115    5709.0    5883.0    1.0
+theta[3]  15.015  7.905   1.793   30.962  ...    0.086    4774.0    6112.0    1.0
+theta[4]   4.930  7.189  -9.720   16.874  ...    0.073    4369.0    6511.0    1.0
+theta[5]   9.264  7.020  -3.989   23.047  ...    0.082    7958.0    6656.0    1.0
+theta[6]   8.053  6.853  -5.036   20.803  ...    0.076    5664.0    6381.0    1.0
+theta[7]  10.198  8.394  -5.547   27.776  ...    0.114    6458.0    5577.0    1.0
+
+[10 rows x 9 columns]
+
+Summary saved to: /workspace/experiments/experiment_1/posterior_inference/diagnostics/posterior_summary.csv
+
+================================================================================
+CONVERGENCE REPORT
+================================================================================
+
+[1] R-hat (convergence criterion: < 1.01)
+    Max R-hat: 1.0000
+    ✓ All parameters converged (R-hat < 1.01)
+
+[2] Effective Sample Size (criterion: > 400)
+    Min ESS_bulk: 2150.0
+    Min ESS_tail: 3100.0
+    ✓ All parameters have sufficient ESS (> 400)
+
+[3] Divergent Transitions (criterion: 0)
+    Divergences: 0 / 8000 (0.00%)
+    ✓ No divergent transitions
+
+[4] Energy Diagnostic (E-BFMI, criterion: > 0.2)
+    E-BFMI: 0.871
+    ✓ No energy transition problems
+
+================================================================================
+OVERALL ASSESSMENT
+================================================================================
+
+✓✓✓ SAMPLING SUCCESSFUL - ALL CRITERIA MET ✓✓✓
+
+The model has converged properly and is ready for inference.
+
+[4] Saving posterior samples...
+
+InferenceData saved to: /workspace/experiments/experiment_1/posterior_inference/diagnostics/posterior_inference.netcdf
+  - posterior group: ['mu', 'theta_raw', 'y_rep', 'tau', 'theta']
+  - posterior_predictive group: ['y']
+  - log_likelihood group: ['y']
+  ✓ log_likelihood included (required for LOO-CV)
+
+================================================================================
+Posterior inference complete!
+================================================================================

@@ -1,0 +1,17 @@
+{
+  "n_simulations": 25,
+  "n_converged": 25,
+  "convergence_rate": 1.0,
+  "mu_coverage_95": 0.84,
+  "kappa_coverage_95": 0.64,
+  "phi_coverage_95": 0.64,
+  "mu_bias": -0.00174605124198113,
+  "kappa_bias": 44.124547888602144,
+  "phi_bias": -0.006199231103976919,
+  "mu_ci_width": 0.066987610955078,
+  "kappa_ci_width": 123.99425253362443,
+  "phi_ci_width": 0.15070975868883962,
+  "mean_runtime_sec": 17.214148120880125,
+  "overall_pass": false,
+  "method": "MLE + parametric bootstrap"
+}
